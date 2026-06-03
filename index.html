@@ -159,6 +159,72 @@
       text-transform: uppercase;
       padding: 6px 10px;
     }
+
+    /* ─── Scroll-reveal ──────────────────────────────────────────────
+       Elements marked [data-fade-up] start hidden and rise into place
+       once they enter the viewport. Wired by the IntersectionObserver
+       script at the bottom of the body. Reveal-once: we unobserve
+       after the first intersection so scrolling back up doesn't
+       re-trigger the animation. */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+      will-change: opacity, transform;
+    }
+    .fade-up.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── Hero drift blobs ───────────────────────────────────────────
+       Three soft gradient circles slow-drifting in the hero background.
+       Pure CSS, no images, pointer-events:none so they never block
+       clicks. The parent hero section needs `position:relative` and
+       `overflow:hidden` so the blobs stay clipped to the section. */
+    @keyframes infocomiva-drift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%      { transform: translate(40px, -30px) scale(1.08); }
+      66%      { transform: translate(-30px, 20px) scale(0.95); }
+    }
+    .drift-blob {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(80px);
+      pointer-events: none;
+      animation: infocomiva-drift 22s ease-in-out infinite;
+    }
+
+    /* ─── Card hover lift ────────────────────────────────────────────
+       Opt-in class; cards rise 3px and gain a soft shadow on hover.
+       Cheap interactivity that signals "this is something to interact
+       with" without becoming jumpy. */
+    .lift-card {
+      transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+    }
+    .lift-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -10px rgba(15, 31, 94, 0.18);
+    }
+
+    /* ─── Dot grid backdrop ──────────────────────────────────────────
+       Subtle texture behind text-heavy sections. Tiled radial dots,
+       low opacity, so it never competes with the foreground copy. */
+    .dot-grid {
+      background-image: radial-gradient(circle, rgba(30, 58, 138, 0.10) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    /* ─── Reduced-motion guard ───────────────────────────────────────
+       Honors the OS-level reduce-motion preference. Decorative drift,
+       fade-up, and hover lift all switch off so users sensitive to
+       motion get the same content with no animation. */
+    @media (prefers-reduced-motion: reduce) {
+      .fade-up, .fade-up.is-visible { opacity: 1; transform: none; transition: none; }
+      .drift-blob { animation: none; }
+      .lift-card { transition: none; }
+      .lift-card:hover { transform: none; box-shadow: none; }
+    }
   </style>
 
   <!-- GA4 + Clarity placeholders — paste your IDs when ready -->
@@ -238,42 +304,104 @@
 
   <!-- =================================================================== -->
   <!-- HERO                                                                 -->
+  <!-- Added `relative overflow-hidden` so the three drift-blobs inside     -->
+  <!-- stay clipped to the section. Blobs are absolutely-positioned         -->
+  <!-- soft-blurred gradient circles that slow-drift in the background —    -->
+  <!-- pure CSS, no images, no JS. Right-side SVG illustration shows up     -->
+  <!-- on >=lg screens as a stylized "dashboard / stack of work" mark,      -->
+  <!-- giving the hero a piece of imagery without using stock photography. -->
   <!-- =================================================================== -->
-  <section class="bg-ink-900 text-white">
-    <div class="max-w-6xl mx-auto px-5 pt-12 pb-20 sm:pt-20 sm:pb-28">
-      <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-500 uppercase mb-4">
-        Software · Web · Mobile · AI · Marketing
-      </div>
-      <h1 class="font-display text-4xl sm:text-6xl md:text-7xl font-black leading-[1.05] tracking-tight max-w-4xl">
-        We build what you <span class="grad-text">envision</span> —
-        from a clean idea to a live product.
-      </h1>
-      <p class="mt-6 text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed">
-        A builder-operator team that ships software, web &amp; mobile, ERP, AI products
-        and digital marketing for Indian businesses. Production-grade by default. Same
-        team through discovery, launch and day-500 support &mdash; no sub-contracting,
-        no handoff after go-live.
-      </p>
-      <div class="mt-8 flex flex-col sm:flex-row gap-3">
-        <a href="#contact" data-lead class="inline-flex items-center justify-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-6 py-3 rounded-lg text-sm font-semibold">
-          Book a free consultation
-        </a>
-        <a href="#why" class="inline-flex items-center justify-center gap-1.5 border border-white/15 hover:border-white/35 transition px-6 py-3 rounded-lg text-sm font-semibold">
-          Why hire us (read first)
-        </a>
-      </div>
-      <div class="mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-xl text-sm">
+  <section class="bg-ink-900 text-white relative overflow-hidden">
+    <!-- Decorative gradient drift-blobs. Marked aria-hidden so screen
+         readers skip them; pointer-events handled in CSS. -->
+    <div aria-hidden="true" class="drift-blob" style="width:520px; height:520px; top:-160px; left:-120px; background: radial-gradient(circle, rgba(37,99,235,0.55) 0%, rgba(37,99,235,0) 70%);"></div>
+    <div aria-hidden="true" class="drift-blob" style="width:420px; height:420px; top:120px; right:-100px; background: radial-gradient(circle, rgba(30,58,138,0.55) 0%, rgba(30,58,138,0) 70%); animation-duration: 28s; animation-direction: reverse;"></div>
+    <div aria-hidden="true" class="drift-blob" style="width:340px; height:340px; bottom:-120px; left:30%; background: radial-gradient(circle, rgba(37,99,235,0.35) 0%, rgba(37,99,235,0) 70%); animation-duration: 34s;"></div>
+
+    <div class="max-w-6xl mx-auto px-5 pt-12 pb-20 sm:pt-20 sm:pb-28 relative">
+      <div class="grid lg:grid-cols-[1fr_auto] gap-10 items-center">
         <div>
-          <div class="font-display font-black text-2xl sm:text-3xl text-white">5+</div>
-          <div class="text-white/55 text-xs sm:text-sm leading-tight mt-1">Live products in production today</div>
+          <div data-fade-up class="text-xs sm:text-sm font-semibold tracking-widest text-azure-500 uppercase mb-4">
+            Software · Web · Mobile · AI · Marketing
+          </div>
+          <h1 data-fade-up class="font-display text-4xl sm:text-6xl md:text-7xl font-black leading-[1.05] tracking-tight max-w-4xl">
+            We build what you <span class="grad-text">envision</span> &mdash;
+            from a clean idea to a live product.
+          </h1>
+          <p data-fade-up class="mt-6 text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed">
+            A builder-operator team that ships software, web &amp; mobile, ERP, AI products
+            and digital marketing for Indian businesses. Production-grade by default. Same
+            team through discovery, launch and day-500 support &mdash; no sub-contracting,
+            no handoff after go-live.
+          </p>
+          <div data-fade-up class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a href="#contact" data-lead class="inline-flex items-center justify-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-6 py-3 rounded-lg text-sm font-semibold">
+              Book a free consultation
+            </a>
+            <a href="#why" class="inline-flex items-center justify-center gap-1.5 border border-white/15 hover:border-white/35 transition px-6 py-3 rounded-lg text-sm font-semibold">
+              Why hire us (read first)
+            </a>
+          </div>
+          <div data-fade-up class="mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-xl text-sm">
+            <div>
+              <div class="font-display font-black text-2xl sm:text-3xl text-white">5+</div>
+              <div class="text-white/55 text-xs sm:text-sm leading-tight mt-1">Live products in production today</div>
+            </div>
+            <div>
+              <div class="font-display font-black text-2xl sm:text-3xl text-white">Own</div>
+              <div class="text-white/55 text-xs sm:text-sm leading-tight mt-1">Your code, domain &amp; cloud &mdash; from day one</div>
+            </div>
+            <div>
+              <div class="font-display font-black text-2xl sm:text-3xl text-white">24h</div>
+              <div class="text-white/55 text-xs sm:text-sm leading-tight mt-1">First-response SLA on every enquiry</div>
+            </div>
+          </div>
         </div>
-        <div>
-          <div class="font-display font-black text-2xl sm:text-3xl text-white">Own</div>
-          <div class="text-white/55 text-xs sm:text-sm leading-tight mt-1">Your code, domain &amp; cloud — from day one</div>
-        </div>
-        <div>
-          <div class="font-display font-black text-2xl sm:text-3xl text-white">24h</div>
-          <div class="text-white/55 text-xs sm:text-sm leading-tight mt-1">First-response SLA on every enquiry</div>
+
+        <!-- Decorative SVG illustration: a stylized "dashboard stack" —
+             three nested cards with a tiny chart and a row of bars.
+             Hidden below lg so it never crowds the headline on phones
+             or tablets. aria-hidden because it conveys no information
+             a screen reader would need; the H1 + paragraph carry the
+             meaning. Animated glow ring uses the same drift keyframes
+             so the whole hero shares one motion vocabulary. -->
+        <div aria-hidden="true" class="hidden lg:block relative w-[360px] h-[360px]" data-fade-up>
+          <div class="drift-blob" style="inset:0; background: radial-gradient(circle, rgba(37,99,235,0.4) 0%, rgba(37,99,235,0) 65%); animation-duration: 20s;"></div>
+          <svg viewBox="0 0 360 360" class="relative w-full h-full">
+            <defs>
+              <linearGradient id="card-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#2563eb" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#1e3a8a" stop-opacity="0.85"/>
+              </linearGradient>
+              <linearGradient id="bar-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#60a5fa"/>
+                <stop offset="100%" stop-color="#2563eb"/>
+              </linearGradient>
+            </defs>
+            <!-- Back card -->
+            <rect x="60" y="50" width="240" height="160" rx="16" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+            <!-- Middle card -->
+            <rect x="40" y="90" width="240" height="160" rx="16" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
+            <!-- Front card (the "dashboard") -->
+            <rect x="20" y="130" width="260" height="180" rx="18" fill="url(#card-grad)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <!-- Header line + dot row inside front card -->
+            <rect x="40" y="150" width="80" height="8" rx="4" fill="rgba(255,255,255,0.7)"/>
+            <rect x="40" y="166" width="140" height="6" rx="3" fill="rgba(255,255,255,0.35)"/>
+            <circle cx="252" cy="156" r="4" fill="rgba(255,255,255,0.45)"/>
+            <circle cx="240" cy="156" r="4" fill="rgba(255,255,255,0.45)"/>
+            <circle cx="228" cy="156" r="4" fill="rgba(255,255,255,0.45)"/>
+            <!-- Bar chart -->
+            <rect x="40"  y="240" width="22" height="50" rx="4" fill="url(#bar-grad)"/>
+            <rect x="72"  y="220" width="22" height="70" rx="4" fill="url(#bar-grad)"/>
+            <rect x="104" y="200" width="22" height="90" rx="4" fill="url(#bar-grad)"/>
+            <rect x="136" y="180" width="22" height="110" rx="4" fill="url(#bar-grad)"/>
+            <rect x="168" y="210" width="22" height="80" rx="4" fill="url(#bar-grad)"/>
+            <rect x="200" y="170" width="22" height="120" rx="4" fill="url(#bar-grad)"/>
+            <rect x="232" y="150" width="22" height="140" rx="4" fill="url(#bar-grad)"/>
+            <!-- Trend line over the bars -->
+            <polyline points="51,240 83,220 115,200 147,180 179,210 211,170 243,150" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="243" cy="150" r="5" fill="#fff"/>
+          </svg>
         </div>
       </div>
     </div>
@@ -347,7 +475,7 @@
         <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-700 uppercase mb-4">
           What we do
         </div>
-        <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
+        <h2 data-fade-up class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
           Eight practice areas. <span class="grad-text">One accountable team.</span>
         </h2>
         <p class="mt-4 text-ink-700 text-base leading-relaxed">
@@ -356,10 +484,10 @@
         </p>
       </div>
 
-      <div class="mt-12 grid sm:grid-cols-2 gap-5">
+      <div data-fade-up class="mt-12 grid sm:grid-cols-2 gap-5">
 
         <!-- 1. Custom Software -->
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">01</div>
             <h3 class="font-display font-black text-xl text-ink-900">Custom Software</h3>
@@ -380,7 +508,7 @@
         </div>
 
         <!-- 2. Web Development -->
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">02</div>
             <h3 class="font-display font-black text-xl text-ink-900">Web &amp; E-Commerce</h3>
@@ -402,7 +530,7 @@
         </div>
 
         <!-- 3. Mobile Apps -->
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">03</div>
             <h3 class="font-display font-black text-xl text-ink-900">Mobile Applications</h3>
@@ -418,7 +546,7 @@
         </div>
 
         <!-- 4. Enterprise -->
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">04</div>
             <h3 class="font-display font-black text-xl text-ink-900">Enterprise (ERP, CRM, HR)</h3>
@@ -443,7 +571,7 @@
         </div>
 
         <!-- 5. Digital Marketing -->
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">05</div>
             <h3 class="font-display font-black text-xl text-ink-900">Digital Marketing &amp; SEO</h3>
@@ -462,7 +590,7 @@
         </div>
 
         <!-- 6. Design -->
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">06</div>
             <h3 class="font-display font-black text-xl text-ink-900">Design (UI / UX / Brand)</h3>
@@ -479,7 +607,7 @@
         </div>
 
         <!-- 7. IT Solutions -->
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">07</div>
             <h3 class="font-display font-black text-xl text-ink-900">IT Solutions &amp; Consulting</h3>
@@ -496,7 +624,7 @@
         </div>
 
         <!-- 8. AI / Emerging -->
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">08</div>
             <h3 class="font-display font-black text-xl text-ink-900">AI &amp; Emerging Tech</h3>
@@ -528,7 +656,7 @@
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-700 uppercase mb-4">
         Why us
       </div>
-      <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
+      <h2 data-fade-up class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
         We&rsquo;re builder-operators, <span class="grad-text">not consultants.</span>
       </h2>
       <p class="mt-4 text-ink-700 text-base leading-relaxed max-w-2xl">
@@ -537,8 +665,8 @@
         no handoff to a different shop after go-live.
       </p>
 
-      <div class="mt-12 grid sm:grid-cols-2 gap-5">
-        <div class="bg-ink-50 rounded-2xl p-6">
+      <div data-fade-up class="mt-12 grid sm:grid-cols-2 gap-5">
+        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
           <div class="font-display font-black text-2xl text-ink-900 mb-2">No sub-contracting.</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Every line of code, every Figma frame, every campaign is written in-house. When we
@@ -546,14 +674,14 @@
             your CRM, the engineer has met the user.
           </p>
         </div>
-        <div class="bg-ink-50 rounded-2xl p-6">
+        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
           <div class="font-display font-black text-2xl text-ink-900 mb-2">Same team after launch.</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             No handoff to a different support shop with a different SLA. The people who designed
             your product are the people who maintain it on day 500.
           </p>
         </div>
-        <div class="bg-ink-50 rounded-2xl p-6">
+        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
           <div class="font-display font-black text-2xl text-ink-900 mb-2">Production-grade by default.</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Sentry error tracking, uptime monitoring, type-checked CI gates, automated backups &mdash;
@@ -561,7 +689,7 @@
             default, not an upsell.
           </p>
         </div>
-        <div class="bg-ink-50 rounded-2xl p-6">
+        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
           <div class="font-display font-black text-2xl text-ink-900 mb-2">Fixed scope, fixed price.</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Discovery workshop, written scope, milestone billing. Pivots happen mid-project &mdash;
@@ -583,7 +711,7 @@
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-700 uppercase mb-4">
         Recently built for
       </div>
-      <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
+      <h2 data-fade-up class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
         Five clients. <span class="grad-text">Five live wins.</span>
       </h2>
       <p class="mt-4 text-ink-700 text-base leading-relaxed max-w-2xl">
@@ -696,7 +824,7 @@
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-700 uppercase mb-4">
         Case study
       </div>
-      <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
+      <h2 data-fade-up class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
         We don&rsquo;t just consult — <span class="grad-text">we ship.</span>
       </h2>
       <p class="mt-4 text-ink-700 text-base leading-relaxed max-w-2xl">
@@ -705,7 +833,7 @@
         GTM &mdash; the way we run every engagement.
       </p>
 
-      <div class="mt-10 grid md:grid-cols-2 gap-6 items-center">
+      <div data-fade-up class="mt-10 grid md:grid-cols-2 gap-6 items-center">
         <div class="bg-ink-900 text-white rounded-2xl p-8">
           <div class="text-azure-500 text-xs font-semibold uppercase tracking-widest mb-3">Case study</div>
           <h3 class="font-display text-3xl font-black mb-4">TraxnCargo</h3>
@@ -760,27 +888,27 @@
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-700 uppercase mb-4">
         How we work
       </div>
-      <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
+      <h2 data-fade-up class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
         Discover &middot; Design &middot; <span class="grad-text">Ship &middot; Support.</span>
       </h2>
 
-      <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+      <div data-fade-up class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="font-display font-black text-azure-700 text-sm mb-2">01 — Discover</div>
           <div class="font-semibold text-ink-900 mb-2">Understand the actual problem</div>
           <p class="text-sm text-ink-700 leading-relaxed">A short workshop. We see how you work today, where the bottleneck is, what data lives where.</p>
         </div>
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="font-display font-black text-azure-700 text-sm mb-2">02 — Design</div>
           <div class="font-semibold text-ink-900 mb-2">Prototype before code</div>
           <p class="text-sm text-ink-700 leading-relaxed">Click-through prototypes you approve before a single API endpoint is written.</p>
         </div>
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="font-display font-black text-azure-700 text-sm mb-2">03 — Ship</div>
           <div class="font-semibold text-ink-900 mb-2">2-week iterations</div>
           <p class="text-sm text-ink-700 leading-relaxed">Every two weeks you see something usable. Mid-project pivots are normal here — not chargeable surprises.</p>
         </div>
-        <div class="bg-white rounded-2xl p-6 ring-soft">
+        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
           <div class="font-display font-black text-azure-700 text-sm mb-2">04 — Support</div>
           <div class="font-semibold text-ink-900 mb-2">Same team, after launch</div>
           <p class="text-sm text-ink-700 leading-relaxed">No handoff to a different support shop. The people who built it are the people who maintain it.</p>
@@ -803,7 +931,7 @@
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-700 uppercase mb-4">
         Pricing
       </div>
-      <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
+      <h2 data-fade-up class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
         What we build. <span class="grad-text">How we engage.</span>
       </h2>
       <p class="mt-4 text-ink-700 text-base leading-relaxed max-w-2xl">
@@ -812,13 +940,13 @@
         not invoiced. We&rsquo;ll talk through the right engagement model on the call.
       </p>
 
-      <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div data-fade-up class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
         <!-- Each card now leads with the engagement name (no public rate).
              Rates are intentionally discussed on the discovery call, not
              published — keeps commercial flexibility per engagement and
              avoids anchoring a prospect on a number before scope is real. -->
-        <div class="bg-ink-50 rounded-2xl p-6">
+        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
           <div class="font-display font-black text-xl sm:text-2xl text-ink-900 mb-3">Marketing site</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Landing page, multi-page site, or content-driven site. SEO baseline, analytics,
@@ -826,7 +954,7 @@
           </p>
         </div>
 
-        <div class="bg-ink-50 rounded-2xl p-6">
+        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
           <div class="font-display font-black text-xl sm:text-2xl text-ink-900 mb-3">Mobile app</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             iOS + Android (React Native or Flutter), auth, payments, push, store submission.
@@ -834,7 +962,7 @@
           </p>
         </div>
 
-        <div class="bg-ink-50 rounded-2xl p-6">
+        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
           <div class="font-display font-black text-xl sm:text-2xl text-ink-900 mb-3">Custom SaaS / ERP</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Multi-user, role-based, production-grade. Includes the full observability stack &mdash;
@@ -842,7 +970,7 @@
           </p>
         </div>
 
-        <div class="bg-ink-50 rounded-2xl p-6">
+        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
           <div class="font-display font-black text-xl sm:text-2xl text-ink-900 mb-3">AI / OCR pipeline</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Document OCR, classification, LLM-backed extraction, chat agents. Production-ready,
@@ -850,7 +978,7 @@
           </p>
         </div>
 
-        <div class="bg-ink-50 rounded-2xl p-6">
+        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
           <div class="font-display font-black text-xl sm:text-2xl text-ink-900 mb-3">Post-launch retainer</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Optional after go-live. Same team that built it, on call. Cancel any
@@ -882,7 +1010,7 @@
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-500 uppercase mb-4">
         Straight talk
       </div>
-      <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight">
+      <h2 data-fade-up class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight">
         When you should <span class="grad-text">not</span> hire us.
       </h2>
       <p class="mt-4 text-white/70 text-base leading-relaxed max-w-2xl">
@@ -890,9 +1018,9 @@
         but you can save the call by reading this now.
       </p>
 
-      <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div data-fade-up class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-        <div class="rounded-2xl p-6 border border-white/10">
+        <div class="rounded-2xl p-6 border border-white/10 lift-card">
           <div class="text-azure-500 text-xs font-bold mb-2">01</div>
           <div class="font-display font-black text-lg text-white mb-2">You need a SOC2 / PCI / HIPAA audit firm.</div>
           <p class="text-sm text-white/65 leading-relaxed">
@@ -901,7 +1029,7 @@
           </p>
         </div>
 
-        <div class="rounded-2xl p-6 border border-white/10">
+        <div class="rounded-2xl p-6 border border-white/10 lift-card">
           <div class="text-azure-500 text-xs font-bold mb-2">02</div>
           <div class="font-display font-black text-lg text-white mb-2">You want the cheapest possible quote.</div>
           <p class="text-sm text-white/65 leading-relaxed">
@@ -910,7 +1038,7 @@
           </p>
         </div>
 
-        <div class="rounded-2xl p-6 border border-white/10">
+        <div class="rounded-2xl p-6 border border-white/10 lift-card">
           <div class="text-azure-500 text-xs font-bold mb-2">03</div>
           <div class="font-display font-black text-lg text-white mb-2">You want hourly billing with open scope.</div>
           <p class="text-sm text-white/65 leading-relaxed">
@@ -919,7 +1047,7 @@
           </p>
         </div>
 
-        <div class="rounded-2xl p-6 border border-white/10">
+        <div class="rounded-2xl p-6 border border-white/10 lift-card">
           <div class="text-azure-500 text-xs font-bold mb-2">04</div>
           <div class="font-display font-black text-lg text-white mb-2">You need embedded firmware or chip-level work.</div>
           <p class="text-sm text-white/65 leading-relaxed">
@@ -928,7 +1056,7 @@
           </p>
         </div>
 
-        <div class="rounded-2xl p-6 border border-white/10">
+        <div class="rounded-2xl p-6 border border-white/10 lift-card">
           <div class="text-azure-500 text-xs font-bold mb-2">05</div>
           <div class="font-display font-black text-lg text-white mb-2">You want us to be a body-shop.</div>
           <p class="text-sm text-white/65 leading-relaxed">
@@ -937,7 +1065,7 @@
           </p>
         </div>
 
-        <div class="rounded-2xl p-6 border border-white/10 bg-white/[0.03]">
+        <div class="rounded-2xl p-6 border border-white/10 lift-card bg-white/[0.03]">
           <div class="text-azure-500 text-xs font-bold mb-2">→</div>
           <div class="font-display font-black text-lg text-white mb-2">Still here? Good.</div>
           <p class="text-sm text-white/65 leading-relaxed mb-3">
@@ -961,7 +1089,7 @@
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-500 uppercase mb-4 text-center">
         Let&rsquo;s build something
       </div>
-      <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-center">
+      <h2 data-fade-up class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-center">
         Tell us what you need <span class="grad-text">— we&rsquo;ll respond in 24 hours.</span>
       </h2>
       <p class="mt-4 text-white/65 text-base leading-relaxed text-center max-w-xl mx-auto">
@@ -1077,6 +1205,41 @@
           });
         }, 600);
       });
+    })();
+
+    // ─── Scroll-reveal animations ─────────────────────────────────
+    //
+    // Every element marked [data-fade-up] starts hidden (opacity 0,
+    // 16px below its resting position via the .fade-up CSS class) and
+    // animates into place the first time it crosses into the viewport.
+    // We unobserve after the first reveal so scrolling back doesn't
+    // replay the animation — once an element is "in," it stays in.
+    //
+    // threshold:0.1 + rootMargin -50px means the animation fires when
+    // ~10% of the element is visible AND it has crossed 50px past the
+    // bottom edge of the viewport — feels natural rather than racing
+    // ahead of the user's scroll.
+    //
+    // If IntersectionObserver isn't supported (very old Safari/IE), we
+    // just mark every element visible immediately so content still
+    // renders — never hidden permanently behind a missing feature.
+    (function () {
+      var targets = document.querySelectorAll('[data-fade-up]');
+      if (!targets.length) return;
+      if (typeof IntersectionObserver === 'undefined') {
+        targets.forEach(function (el) { el.classList.add('fade-up', 'is-visible'); });
+        return;
+      }
+      targets.forEach(function (el) { el.classList.add('fade-up'); });
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      targets.forEach(function (el) { io.observe(el); });
     })();
 
     document.getElementById('yr').textContent = new Date().getFullYear();
