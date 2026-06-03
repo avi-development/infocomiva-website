@@ -17,6 +17,7 @@ project — domain is plug-and-play, change the canonical / OG URLs in
 | `sitemap.xml` | One URL (`/`) + image entries. |
 | `assets/logo.png` | **YOU MUST ADD THIS** — the Infocomiva eagle logo. See below. |
 | `assets/og-image.jpg` | **YOU MUST ADD THIS** — 1200×630 social-share image. See below. |
+| `assets/clients/*.png` | **YOU MUST ADD THESE** — five client logos for the "Recently built for" section. See below. |
 
 ## Lead flow
 
@@ -61,6 +62,26 @@ Quick recipe in Canva (free):
 - Export as JPG → save to `assets/og-image.jpg`
 
 Without it, link previews fall back to the small favicon — works but looks weak.
+
+### 2b. Save the five client logos in `assets/clients/`
+
+The "Recently built for" section displays five client logos. Each one needs to
+exist at the exact filename below or it'll render as a broken-image icon:
+
+```
+assets/clients/amirah-technologies.png
+assets/clients/nextzen-fitech.png
+assets/clients/bidisha-niketan.png
+assets/clients/hotel-deep.png
+assets/clients/care-of-future-foundation.png
+```
+
+PNGs with transparent backgrounds look best (the logo cards have a white
+background). Roughly square aspect ratios fit cleanly; rectangular ones get
+fit-into-box by CSS (`object-contain`).
+
+To add or remove clients later, edit the corresponding `<div class="group ...">`
+block in `index.html` — each client is one block, ~10 lines, easy to copy.
 
 ### 3. Push to a new GitHub repo
 
