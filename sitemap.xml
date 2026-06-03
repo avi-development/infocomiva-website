@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Infocomiva Technologies sitemap — https://infocomiva.com/sitemap.xml
+  Bump <lastmod> when the home-page copy / services / pricing change.
+
+  Intentionally excluded:
+    /thank-you/ — noindex; sitemap is for indexable URLs only.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <url>
+    <loc>https://infocomiva.com/</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+
+    <image:image>
+      <image:loc>https://infocomiva.com/assets/logo.png</image:loc>
+      <image:title>Infocomiva Technologies — eagle logo mark</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://infocomiva.com/assets/og-image.jpg</image:loc>
+      <image:title>Infocomiva Technologies — software, web, mobile, AI &amp; digital for India</image:title>
+    </image:image>
+  </url>
+
+</urlset>
