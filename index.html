@@ -174,6 +174,38 @@
 </head>
 <body class="bg-white text-ink-900 selection:bg-azure-500/20 selection:text-ink-900">
 
+  <!-- ============================================================
+       Brand-asset coordination handshake.
+
+       Two scripts care about the static <img data-asset-key="..."> tags:
+         1) the Firebase brand-asset loader, which fetches Cloudinary
+            URLs from appSettings/infocomiva and swaps img.src
+         2) the text fallback, which replaces an <img> with a styled
+            text span when the image can't be displayed
+
+       Before this promise existed, the fallback ran synchronously on
+       page load and saw the 404 from the static src (logo.png and the
+       client PNGs aren't on disk — they live entirely in Firestore now),
+       so it REPLACED the <img> with a <span> immediately. Then the
+       Firebase loader's `img.src = url` hit a node that was no longer
+       in the DOM, so uploaded logos appeared not to take effect.
+
+       Now both scripts coordinate: the loader resolves this promise
+       in its finally branch (success OR failure), and the fallback
+       awaits it before deciding which imgs are still broken.
+       ============================================================ -->
+  <script>
+    window.__brandAssetsReady = new Promise(function (resolve) {
+      window.__resolveBrandAssets = resolve;
+    });
+    // Safety net: if the Firebase module never loads (CDN blocked,
+    // strict CSP, etc.) the fallback would wait forever. Resolve
+    // after 4s so text fallbacks still appear on a broken page.
+    setTimeout(function () {
+      if (window.__resolveBrandAssets) window.__resolveBrandAssets();
+    }, 4000);
+  </script>
+
   <!-- =================================================================== -->
   <!-- NAV                                                                  -->
   <!-- =================================================================== -->
@@ -821,28 +853,44 @@
   <!-- ============================================================
        Image fallback — any <img data-logo-fallback="NAME"> that
        fails to load gets replaced with a styled text span showing
-       the NAME. Keeps the layout intact even before the actual
-       logo files are saved into /assets/. The replacement keeps
-       the image's original classes (h-16, etc.) so sizing matches.
+       the NAME. Keeps the layout intact when a logo is missing.
+
+       Coordinates with the Firebase brand-asset loader (below) via
+       window.__brandAssetsReady. We wait for that promise to settle
+       before deciding which imgs are broken — otherwise we'd race
+       the loader and replace nodes it's about to populate with the
+       Cloudinary URL uploaded in Super Admin.
+
+       After the loader signals "done", we give the browser one frame
+       to actually paint any freshly-swapped src, then for each img:
+         - if the loader marked it ready (data-asset-ready="1") → keep
+         - else if it has rendered pixels (naturalWidth > 0)        → keep
+         - else                                                      → swap to text
        ============================================================ -->
   <script>
     (function () {
       var imgs = document.querySelectorAll('img[data-logo-fallback]');
-      imgs.forEach(function (img) {
-        function swapToText() {
-          var name = img.getAttribute('data-logo-fallback') || img.getAttribute('alt') || '';
-          var extra = img.getAttribute('data-logo-fallback-class') || '';
-          var span = document.createElement('span');
-          span.className = ('logo-text-fallback ' + extra + ' ' + (img.className || '')).trim();
-          span.textContent = name.replace(/&#10;|\\n/g, '\n');
-          if (img.parentNode) img.parentNode.replaceChild(span, img);
-        }
-        // If already broken (cached 404), naturalWidth/Height === 0.
-        if (img.complete && img.naturalWidth === 0) {
-          swapToText();
-        } else {
-          img.addEventListener('error', swapToText, { once: true });
-        }
+      function swapToText(img) {
+        var name = img.getAttribute('data-logo-fallback') || img.getAttribute('alt') || '';
+        var extra = img.getAttribute('data-logo-fallback-class') || '';
+        var span = document.createElement('span');
+        span.className = ('logo-text-fallback ' + extra + ' ' + (img.className || '')).trim();
+        span.textContent = name.replace(/&#10;|\\n/g, '\n');
+        if (img.parentNode) img.parentNode.replaceChild(span, img);
+      }
+      var ready = window.__brandAssetsReady || Promise.resolve();
+      ready.then(function () {
+        // 600ms grace lets probe.onload → img.src swap → decode finish
+        // before we judge "broken". Without it we'd race the decode of
+        // the freshly-set Cloudinary URL and false-positive swap to text.
+        setTimeout(function () {
+          imgs.forEach(function (img) {
+            if (!img.isConnected) return;
+            if (img.dataset.assetReady === '1') return;
+            if (img.complete && img.naturalWidth > 0) return;
+            swapToText(img);
+          });
+        }, 600);
       });
     })();
 
@@ -901,30 +949,75 @@
     // Diagnostic console output is intentional — if a prospect /
     // dev opens the console and the eagle didn't load, they can see
     // exactly which step failed (read denied? wrong URL? probe 404?).
+    // Helper: signal the fallback IIFE that the loader has settled
+    // (success OR failure) so it can decide which imgs to text-replace.
+    // Calling it more than once is fine — the resolver is idempotent.
+    const signalReady = () => {
+      if (window.__resolveBrandAssets) {
+        window.__resolveBrandAssets();
+        window.__resolveBrandAssets = null;
+      }
+    };
+
     console.info('[infocomiva] fetching appSettings/infocomiva…');
     getDoc(doc(db, 'appSettings', 'infocomiva'))
       .then((snap) => {
         if (!snap.exists()) {
           console.warn('[infocomiva] appSettings/infocomiva does NOT exist yet — upload logos in Super Admin to populate it');
+          signalReady();
           return;
         }
         const data = snap.data() || {};
         console.info('[infocomiva] doc loaded — keys:', Object.keys(data));
 
-        // 1) Static-img replacement (eagle + 5 featured)
-        document.querySelectorAll('img[data-asset-key]').forEach((img) => {
+        // 1) Static-img replacement (eagle + 5 featured).
+        //
+        // Each successful swap marks the img with data-asset-ready="1"
+        // so the fallback IIFE knows to leave it alone. We have to wait
+        // for the swapped src to actually DECODE before we can tell the
+        // fallback "we're done" — otherwise the fallback wakes up, sees
+        // naturalWidth===0 on the in-flight image, and clobbers it with
+        // text. So we count outstanding probes and call signalReady()
+        // only once all of them resolve (or 3.5s elapse — whichever).
+        const imgs = document.querySelectorAll('img[data-asset-key]');
+        const probes = [];
+        imgs.forEach((img) => {
           const key = img.dataset.assetKey;
           const url = key && data[key];
           if (!url || typeof url !== 'string') {
             console.info('[infocomiva] no URL for key', key, '— leaving static src');
             return;
           }
-          // Pre-load to avoid the broken-icon flash if the URL is bad.
-          const probe = new Image();
-          probe.onload  = () => { img.src = url; console.info('[infocomiva] swapped', key, '→', url.slice(-30)); };
-          probe.onerror = () => { console.warn('[infocomiva] failed to load', key, 'URL:', url); };
-          probe.src = url;
+          probes.push(new Promise((resolve) => {
+            // Set src directly on the img and listen for its own load.
+            // Pre-probing with `new Image()` then assigning to img.src
+            // means the browser decodes the same URL twice and adds
+            // visible flicker — direct assignment + a single onload
+            // is simpler and lets the fallback see naturalWidth>0.
+            const onLoad = () => {
+              img.dataset.assetReady = '1';
+              img.removeEventListener('load', onLoad);
+              img.removeEventListener('error', onError);
+              console.info('[infocomiva] swapped', key, '→', url.slice(-30));
+              resolve();
+            };
+            const onError = () => {
+              img.removeEventListener('load', onLoad);
+              img.removeEventListener('error', onError);
+              console.warn('[infocomiva] failed to load', key, 'URL:', url);
+              resolve();
+            };
+            img.addEventListener('load', onLoad);
+            img.addEventListener('error', onError);
+            img.src = url;
+          }));
         });
+        // Resolve when all swaps finish, or after a 3.5s ceiling so
+        // a single hung Cloudinary URL can't pin the fallback forever.
+        Promise.race([
+          Promise.all(probes),
+          new Promise((r) => setTimeout(r, 3500)),
+        ]).then(signalReady);
 
         // 2) Dynamic carousel
         const track = document.getElementById('carousel-track');
@@ -954,6 +1047,7 @@
       })
       .catch((err) => {
         console.error('[infocomiva] failed to fetch appSettings/infocomiva — Firestore read denied or offline:', err);
+        signalReady();
       });
 
     const form = document.getElementById('lead-form');
