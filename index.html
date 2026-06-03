@@ -225,6 +225,38 @@
       .lift-card { transition: none; }
       .lift-card:hover { transform: none; box-shadow: none; }
     }
+
+    /* ─── Case-study carousel ────────────────────────────────────────
+       Horizontal scroll-snap track. Each card is a fixed width so cards
+       stop at predictable points; scrollbar hidden because we expose
+       prev/next buttons + native swipe instead. Min-height keeps every
+       card the same vertical size so the row doesn't jitter as you
+       scroll past cards with different paragraph lengths. */
+    .case-track {
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;          /* Firefox */
+      -ms-overflow-style: none;       /* legacy Edge */
+      -webkit-overflow-scrolling: touch;
+    }
+    .case-track::-webkit-scrollbar { display: none; }   /* WebKit */
+    .case-card {
+      flex: 0 0 280px;
+      scroll-snap-align: start;
+      min-height: 320px;
+      transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+    }
+    .case-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px -12px rgba(15, 31, 94, 0.18);
+    }
+    @media (min-width: 640px) {
+      .case-card { flex: 0 0 340px; min-height: 340px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .case-card { transition: none; }
+      .case-card:hover { transform: none; box-shadow: none; }
+      .case-track { scroll-behavior: auto; }
+    }
   </style>
 
   <!-- GA4 + Clarity placeholders — paste your IDs when ready -->
@@ -832,67 +864,172 @@
   </section>
 
   <!-- =================================================================== -->
-  <!-- CASE STUDY — TraxnCargo as a deep-dive of a real shipped product.    -->
-  <!-- Reframed from "our flagship" to "a multi-tenant SaaS we delivered"   -->
-  <!-- so the page reads as a services agency with case studies, not as a  -->
-  <!-- product company that also does consulting on the side.               -->
+  <!-- CASE STUDIES — horizontal-scrollable carousel.                       -->
+  <!-- Mix of real client case studies and capability spotlights (clearly  -->
+  <!-- distinguished by eyebrow tag: industry name vs. "Capability"). The  -->
+  <!-- carousel uses native CSS scroll-snap, no JS for the scrolling —     -->
+  <!-- flicks naturally with touch / trackpad. The Prev/Next buttons add   -->
+  <!-- keyboard + click control by scrolling the track in card-sized       -->
+  <!-- increments. To add more cards: copy any <article class="case-card"> -->
+  <!-- block and update the content. No JS or build step needed.           -->
   <!-- =================================================================== -->
   <section id="work" class="py-16 sm:py-24 border-t border-ink-100">
     <div class="max-w-6xl mx-auto px-5">
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-700 uppercase mb-4">
-        Case study
+        Case studies
       </div>
-      <h2 data-fade-up class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
-        We don&rsquo;t just consult — <span class="grad-text">we ship.</span>
-      </h2>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <h2 data-fade-up class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
+          We don&rsquo;t just consult &mdash; <span class="grad-text">we ship.</span>
+        </h2>
+        <div class="flex items-center gap-2 no-print">
+          <button type="button" id="case-prev" aria-label="Previous case study"
+                  class="w-10 h-10 rounded-full border border-ink-200 hover:border-azure-500 hover:text-azure-600 transition flex items-center justify-center text-ink-700">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button type="button" id="case-next" aria-label="Next case study"
+                  class="w-10 h-10 rounded-full border border-ink-200 hover:border-azure-500 hover:text-azure-600 transition flex items-center justify-center text-ink-700">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
       <p class="mt-4 text-ink-700 text-base leading-relaxed max-w-2xl">
-        TraxnCargo is a multi-tenant SaaS that runs day-to-day operations for Indian
-        road-transport companies. End-to-end delivery &mdash; design, engineering, infrastructure,
-        GTM &mdash; the way we run every engagement.
+        Real client work and recurring capability patterns we&rsquo;ve shipped end-to-end. Swipe
+        through, or use the arrows. The eyebrow tag tells you whether the card is a specific
+        client (industry name) or a capability we&rsquo;ve productised across multiple builds
+        (&ldquo;Capability&rdquo;).
       </p>
 
-      <div data-fade-up class="mt-10 grid md:grid-cols-2 gap-6 items-center">
-        <div class="bg-ink-900 text-white rounded-2xl p-8">
-          <div class="text-azure-500 text-xs font-semibold uppercase tracking-widest mb-3">Case study</div>
-          <h3 class="font-display text-3xl font-black mb-4">TraxnCargo</h3>
-          <p class="text-white/75 text-sm leading-relaxed mb-6">
-            Bilty generation, trip register, GST invoices, annexures, vendor reconciliation, driver
-            mobile upload, OCR auto-fill — one live screen, every user, real time. Built on Next.js,
-            Supabase, Firestore and Cloudinary. Live across multiple transport companies.
-          </p>
-          <a href="https://traxn.in/cargo" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-5 py-2.5 rounded-lg text-sm font-semibold">
-            Visit TraxnCargo →
-          </a>
-        </div>
-        <div class="space-y-4">
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 rounded-full grad-blue flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">✓</div>
-            <div>
-              <div class="font-semibold text-ink-900">Multi-tenant from day one</div>
-              <div class="text-sm text-ink-700">Each transport company is fully isolated — data, branding, billing layout.</div>
+      <!-- Carousel track. Negative margin on mobile lets the cards bleed
+           to the screen edge for full-width swipe feel; sm+ snaps back
+           to the container width. -->
+      <div data-fade-up class="mt-10 -mx-5 sm:mx-0">
+        <div id="case-track" class="case-track flex gap-4 sm:gap-5 overflow-x-auto scroll-smooth px-5 sm:px-0 pb-4">
+
+          <!-- 1. TraxnCargo — flagship logistics SaaS deep-dive -->
+          <article class="case-card group bg-ink-900 text-white rounded-2xl p-6 flex flex-col">
+            <div class="text-azure-500 text-[11px] uppercase tracking-widest font-semibold mb-3">Logistics SaaS</div>
+            <h3 class="font-display text-2xl font-black mb-2">TraxnCargo</h3>
+            <p class="text-white/70 text-sm leading-relaxed flex-1 mb-5">
+              Multi-tenant SaaS for Indian road-transport companies &mdash; bilty generation, trip
+              register, GST invoices, annexures, vendor reconciliation, driver mobile + OCR.
+              Live across multiple transport companies.
+            </p>
+            <div class="flex flex-wrap gap-1.5 mb-5">
+              <span class="text-[10px] uppercase bg-white/10 text-white/80 px-2 py-0.5 rounded">Next.js</span>
+              <span class="text-[10px] uppercase bg-white/10 text-white/80 px-2 py-0.5 rounded">Supabase</span>
+              <span class="text-[10px] uppercase bg-white/10 text-white/80 px-2 py-0.5 rounded">Firestore</span>
+              <span class="text-[10px] uppercase bg-white/10 text-white/80 px-2 py-0.5 rounded">Cloudinary</span>
             </div>
-          </div>
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 rounded-full grad-blue flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">✓</div>
-            <div>
-              <div class="font-semibold text-ink-900">Driver mobile + OCR</div>
-              <div class="text-sm text-ink-700">Drivers click a photo, we auto-parse the invoice into the back-office.</div>
-            </div>
-          </div>
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 rounded-full grad-blue flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">✓</div>
-            <div>
-              <div class="font-semibold text-ink-900">Production-grade observability</div>
-              <div class="text-sm text-ink-700">Sentry, uptime monitoring, type-checked CI gate — runs like infrastructure.</div>
-            </div>
-          </div>
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 rounded-full grad-blue flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">✓</div>
-            <div>
-              <div class="font-semibold text-ink-900">Same team, before and after launch</div>
-              <div class="text-sm text-ink-700">The people who design your project are the people who maintain it.</div>
-            </div>
-          </div>
+            <a href="https://traxn.in/cargo" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-azure-400 hover:text-azure-300 text-sm font-semibold mt-auto">
+              Visit TraxnCargo
+              <span class="group-hover:translate-x-0.5 transition">→</span>
+            </a>
+          </article>
+
+          <!-- 2. Amirah Technologies -->
+          <article class="case-card bg-white border border-ink-100 rounded-2xl p-6 flex flex-col">
+            <div class="text-azure-700 text-[11px] uppercase tracking-widest font-semibold mb-3">AI / Software</div>
+            <h3 class="font-display text-2xl font-black text-ink-900 mb-2">Amirah Technologies</h3>
+            <p class="text-ink-700 text-sm leading-relaxed flex-1 mb-5">
+              AI-assisted productivity platform &mdash; automating routine workflows and surfacing
+              insights from the team&rsquo;s existing data sources.
+            </p>
+            <div class="text-xs text-ink-500 font-semibold mt-auto">Built end-to-end &middot; In production</div>
+          </article>
+
+          <!-- 3. NextZen Fi-Tech -->
+          <article class="case-card bg-white border border-ink-100 rounded-2xl p-6 flex flex-col">
+            <div class="text-azure-700 text-[11px] uppercase tracking-widest font-semibold mb-3">Fintech</div>
+            <h3 class="font-display text-2xl font-black text-ink-900 mb-2">NextZen Fi-Tech</h3>
+            <p class="text-ink-700 text-sm leading-relaxed flex-1 mb-5">
+              Financial-services platform with onboarding, KYC and an operations dashboard built
+              for partner-bank integrations.
+            </p>
+            <div class="text-xs text-ink-500 font-semibold mt-auto">Built end-to-end &middot; Compliance-ready</div>
+          </article>
+
+          <!-- 4. Bidisha Niketan -->
+          <article class="case-card bg-white border border-ink-100 rounded-2xl p-6 flex flex-col">
+            <div class="text-azure-700 text-[11px] uppercase tracking-widest font-semibold mb-3">Education</div>
+            <h3 class="font-display text-2xl font-black text-ink-900 mb-2">Bidisha Niketan</h3>
+            <p class="text-ink-700 text-sm leading-relaxed flex-1 mb-5">
+              Institutional management system covering student records, staff workflows and a
+              parent-facing communications layer.
+            </p>
+            <div class="text-xs text-ink-500 font-semibold mt-auto">Built end-to-end &middot; Multi-role access</div>
+          </article>
+
+          <!-- 5. Hotel Deep -->
+          <article class="case-card bg-white border border-ink-100 rounded-2xl p-6 flex flex-col">
+            <div class="text-azure-700 text-[11px] uppercase tracking-widest font-semibold mb-3">Hospitality</div>
+            <h3 class="font-display text-2xl font-black text-ink-900 mb-2">Hotel Deep</h3>
+            <p class="text-ink-700 text-sm leading-relaxed flex-1 mb-5">
+              Hospitality stack &mdash; direct bookings, room-availability calendar and a dashboard
+              for the front-desk team.
+            </p>
+            <div class="text-xs text-ink-500 font-semibold mt-auto">Built end-to-end &middot; Payment-gateway integrated</div>
+          </article>
+
+          <!-- 6. Care of Future Foundation -->
+          <article class="case-card bg-white border border-ink-100 rounded-2xl p-6 flex flex-col">
+            <div class="text-azure-700 text-[11px] uppercase tracking-widest font-semibold mb-3">Non-profit</div>
+            <h3 class="font-display text-2xl font-black text-ink-900 mb-2">Care of Future Foundation</h3>
+            <p class="text-ink-700 text-sm leading-relaxed flex-1 mb-5">
+              Donor onboarding, programme tracking and a quarterly impact-reporting layer for
+              grantors.
+            </p>
+            <div class="text-xs text-ink-500 font-semibold mt-auto">Built end-to-end &middot; Donor-friendly UX</div>
+          </article>
+
+          <!-- 7. Multi-tenant SaaS architecture — capability spotlight -->
+          <article class="case-card bg-azure-50 border border-azure-100 rounded-2xl p-6 flex flex-col">
+            <div class="text-azure-700 text-[11px] uppercase tracking-widest font-semibold mb-3">Capability</div>
+            <h3 class="font-display text-2xl font-black text-ink-900 mb-2">Multi-tenant SaaS architecture</h3>
+            <p class="text-ink-700 text-sm leading-relaxed flex-1 mb-5">
+              Per-tenant isolation, role-based access, branded billing artifacts, custom domains.
+              The pattern that lets one codebase serve dozens of companies safely.
+            </p>
+            <div class="text-xs text-ink-500 font-semibold mt-auto">Shipped pattern &middot; Battle-tested in production</div>
+          </article>
+
+          <!-- 8. Document OCR + auto-fill — capability spotlight -->
+          <article class="case-card bg-azure-50 border border-azure-100 rounded-2xl p-6 flex flex-col">
+            <div class="text-azure-700 text-[11px] uppercase tracking-widest font-semibold mb-3">Capability</div>
+            <h3 class="font-display text-2xl font-black text-ink-900 mb-2">Document OCR + auto-fill</h3>
+            <p class="text-ink-700 text-sm leading-relaxed flex-1 mb-5">
+              Phone photo of an invoice or document &rarr; structured fields in the back-office.
+              Tesseract + LLM cleanup, high accuracy on Indian GST formats.
+            </p>
+            <div class="text-xs text-ink-500 font-semibold mt-auto">Shipped pattern &middot; LLM-augmented OCR</div>
+          </article>
+
+          <!-- 9. Field-staff mobile apps — capability spotlight -->
+          <article class="case-card bg-azure-50 border border-azure-100 rounded-2xl p-6 flex flex-col">
+            <div class="text-azure-700 text-[11px] uppercase tracking-widest font-semibold mb-3">Capability</div>
+            <h3 class="font-display text-2xl font-black text-ink-900 mb-2">Field-staff mobile apps</h3>
+            <p class="text-ink-700 text-sm leading-relaxed flex-1 mb-5">
+              Offline-first iOS + Android apps for drivers, agents and field workers. Background
+              sync, photo upload, geo-stamping, push notifications.
+            </p>
+            <div class="text-xs text-ink-500 font-semibold mt-auto">Shipped pattern &middot; Offline-first</div>
+          </article>
+
+          <!-- 10. Marketing site + lead capture — capability spotlight -->
+          <article class="case-card bg-azure-50 border border-azure-100 rounded-2xl p-6 flex flex-col">
+            <div class="text-azure-700 text-[11px] uppercase tracking-widest font-semibold mb-3">Capability</div>
+            <h3 class="font-display text-2xl font-black text-ink-900 mb-2">Marketing site + lead capture</h3>
+            <p class="text-ink-700 text-sm leading-relaxed flex-1 mb-5">
+              High-conversion landing page, lead form &rarr; CRM, GA4 + Clarity wired, SEO baseline,
+              fast edge-hosted. Ships in 24&ndash;72 hours.
+            </p>
+            <div class="text-xs text-ink-500 font-semibold mt-auto">Shipped pattern &middot; 24&ndash;72h delivery</div>
+          </article>
+
+          <!-- Trailing spacer so the last card doesn't sit flush against
+               the right edge of the viewport on mobile. -->
+          <div class="shrink-0 w-1 sm:w-2" aria-hidden="true"></div>
+
         </div>
       </div>
     </div>
@@ -1258,6 +1395,32 @@
         });
       }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
       targets.forEach(function (el) { io.observe(el); });
+    })();
+
+    // ─── Case-study carousel: prev/next button wiring ────────────────
+    //
+    // Native swipe / trackpad scroll handles 90% of the interaction —
+    // these buttons are the keyboard + click affordance. Scroll by one
+    // card width (first card's offsetWidth + the flex gap) per click,
+    // so we land exactly on the next snap point instead of drifting.
+    //
+    // The buttons are decorative when there's no carousel on the page;
+    // we bail early if either element is missing so this script never
+    // throws on a page variant that drops the carousel.
+    (function () {
+      var track = document.getElementById('case-track');
+      var prev  = document.getElementById('case-prev');
+      var next  = document.getElementById('case-next');
+      if (!track || !prev || !next) return;
+      function step() {
+        var card = track.querySelector('.case-card');
+        if (!card) return track.clientWidth;     // fallback: one viewport
+        // Read the actual gap so we stay accurate if Tailwind classes change.
+        var gap = parseFloat(getComputedStyle(track).columnGap || '20') || 20;
+        return card.getBoundingClientRect().width + gap;
+      }
+      prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+      next.addEventListener('click', function () { track.scrollBy({ left:  step(), behavior: 'smooth' }); });
     })();
 
     document.getElementById('yr').textContent = new Date().getFullYear();
