@@ -240,6 +240,65 @@
   </section>
 
   <!-- =================================================================== -->
+  <!-- CAROUSEL — auto-scrolling marquee of client logos                    -->
+  <!-- Populated dynamically from appSettings/infocomiva.carouselClients    -->
+  <!-- by the Firebase loader at the bottom of the page. Hidden by CSS      -->
+  <!-- (display:none) until at least one logo has been injected — so an     -->
+  <!-- empty array doesn't leave an awkward empty section on the page.     -->
+  <!-- =================================================================== -->
+  <section id="carousel" class="bg-white py-10 sm:py-12" style="display:none">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="text-xs sm:text-sm font-semibold tracking-widest text-ink-500 uppercase text-center mb-6">
+        Trusted by teams across India
+      </div>
+    </div>
+    <div class="marquee-mask overflow-hidden">
+      <div class="marquee-track flex items-center gap-12 sm:gap-16" id="carousel-track">
+        <!-- Logos injected by the loader. Items are duplicated once
+             so the marquee animation loops seamlessly. -->
+      </div>
+    </div>
+  </section>
+
+  <style>
+    /* Marquee animation — same pattern as the trust strip on
+       traxn.in/cargo. Pauses on hover. The track is duplicated
+       in JS so the loop seams stay invisible. */
+    @keyframes infocomiva-marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    #carousel-track { width: max-content; animation: infocomiva-marquee 40s linear infinite; }
+    #carousel-track:hover { animation-play-state: paused; }
+    .marquee-mask {
+      -webkit-mask-image: linear-gradient(to right, transparent 0, black 6%, black 94%, transparent 100%);
+              mask-image: linear-gradient(to right, transparent 0, black 6%, black 94%, transparent 100%);
+    }
+    .carousel-item {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .carousel-item img {
+      max-height: 56px;
+      width: auto;
+      object-fit: contain;
+      filter: grayscale(0.4);
+      transition: filter .2s ease;
+    }
+    .carousel-item:hover img { filter: grayscale(0); }
+    .carousel-item .caption {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #5b5b63;
+      font-weight: 600;
+    }
+  </style>
+
+  <!-- =================================================================== -->
   <!-- SERVICES — eight category cards, each lists its services as chips    -->
   <!-- =================================================================== -->
   <section id="services" class="bg-ink-50 py-16 sm:py-24">
@@ -833,28 +892,69 @@
     const db = getFirestore(app);
 
     // ─── Brand asset loader ─────────────────────────────────────
-    // Pulls appSettings/infocomiva on page load. For every key on
-    // that doc, finds the matching <img data-asset-key="key"> and
-    // sets its src to the Cloudinary URL. Failures (doc missing,
-    // network blip, CORS) are swallowed — the static <img src> +
-    // text fallback stays in place, so the page never looks broken.
+    // Pulls appSettings/infocomiva on page load and updates:
+    //   1) every <img data-asset-key="..."> with the URL from the
+    //      matching field on the doc (eagle, amirah, nextzen, ...)
+    //   2) the marquee carousel — for every entry in carouselClients
+    //      injects a <div class="carousel-item"> with logo + name
+    //      and reveals the section.
+    // Diagnostic console output is intentional — if a prospect /
+    // dev opens the console and the eagle didn't load, they can see
+    // exactly which step failed (read denied? wrong URL? probe 404?).
+    console.info('[infocomiva] fetching appSettings/infocomiva…');
     getDoc(doc(db, 'appSettings', 'infocomiva'))
       .then((snap) => {
-        if (!snap.exists()) return;
+        if (!snap.exists()) {
+          console.warn('[infocomiva] appSettings/infocomiva does NOT exist yet — upload logos in Super Admin to populate it');
+          return;
+        }
         const data = snap.data() || {};
+        console.info('[infocomiva] doc loaded — keys:', Object.keys(data));
+
+        // 1) Static-img replacement (eagle + 5 featured)
         document.querySelectorAll('img[data-asset-key]').forEach((img) => {
           const key = img.dataset.assetKey;
           const url = key && data[key];
-          if (url && typeof url === 'string') {
-            // Pre-load to avoid the broken-icon flash if the URL is
-            // somehow invalid — only swap when the new image is ready.
-            const probe = new Image();
-            probe.onload = () => { img.src = url; };
-            probe.src = url;
+          if (!url || typeof url !== 'string') {
+            console.info('[infocomiva] no URL for key', key, '— leaving static src');
+            return;
           }
+          // Pre-load to avoid the broken-icon flash if the URL is bad.
+          const probe = new Image();
+          probe.onload  = () => { img.src = url; console.info('[infocomiva] swapped', key, '→', url.slice(-30)); };
+          probe.onerror = () => { console.warn('[infocomiva] failed to load', key, 'URL:', url); };
+          probe.src = url;
         });
+
+        // 2) Dynamic carousel
+        const track = document.getElementById('carousel-track');
+        const carousel = document.getElementById('carousel');
+        const list = Array.isArray(data.carouselClients) ? data.carouselClients : [];
+        const valid = list.filter((c) => c && c.logoUrl);
+        if (!track || !carousel || valid.length === 0) {
+          console.info('[infocomiva] no carousel clients to render');
+          return;
+        }
+        // Duplicate the list once so the keyframe -50% translate
+        // loops seamlessly without a visible jump.
+        const doubled = valid.concat(valid);
+        track.innerHTML = doubled.map((c) => {
+          const safeName = (c.name || '').replace(/[<>&"]/g, (ch) => ({
+            '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;',
+          }[ch] || ch));
+          return `
+            <div class="carousel-item">
+              <img src="${c.logoUrl}" alt="${safeName}" loading="lazy">
+              ${safeName ? `<span class="caption">${safeName}</span>` : ''}
+            </div>
+          `;
+        }).join('');
+        carousel.style.display = '';
+        console.info('[infocomiva] rendered', valid.length, 'carousel clients');
       })
-      .catch(() => { /* offline / rules deny / Firestore down — leave the static src as-is */ });
+      .catch((err) => {
+        console.error('[infocomiva] failed to fetch appSettings/infocomiva — Firestore read denied or offline:', err);
+      });
 
     const form = document.getElementById('lead-form');
     const submitBtn = document.getElementById('lead-submit');
