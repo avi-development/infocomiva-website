@@ -305,34 +305,59 @@
   </script>
 
   <!-- =================================================================== -->
-  <!-- NAV                                                                  -->
+  <!-- TOP BAR + NAV                                                        -->
   <!-- =================================================================== -->
-  <!-- Sticky white header.
-       backdrop-blur + bg-white/90 lets the dark hero peek through subtly
-       while scrolling, so the header feels lighter than a solid bar.
-       border-b draws the boundary between header and content when the
-       page scrolls under it (otherwise white-on-white sections vanish
-       into the header). -->
-  <header class="bg-white/90 backdrop-blur text-ink-900 sticky top-0 z-50 border-b border-ink-100">
-    <div class="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3">
-        <img src="/assets/logo.png" alt="Infocomiva Technologies" data-asset-key="eagle" data-logo-fallback="IT" class="h-10 w-10 object-contain" width="40" height="40">
-        <span class="font-display font-black text-base sm:text-lg tracking-tight">Infocomiva <span class="text-azure-600">Technologies</span></span>
-      </a>
-      <nav class="hidden md:flex items-center gap-5 text-sm">
-        <a href="#why" class="text-ink-700 hover:text-ink-900 transition">Why us</a>
-        <a href="#services" class="text-ink-700 hover:text-ink-900 transition">Services</a>
-        <a href="#clients" class="text-ink-700 hover:text-ink-900 transition">Clients</a>
-        <a href="#work" class="text-ink-700 hover:text-ink-900 transition">Work</a>
-        <a href="#pricing" class="text-ink-700 hover:text-ink-900 transition">Pricing</a>
-        <a href="#anti" class="text-ink-700 hover:text-ink-900 transition">Not for you?</a>
-        <a href="#contact" class="text-ink-700 hover:text-ink-900 transition">Contact</a>
-      </nav>
-      <a href="#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-4 py-2 rounded-lg text-sm font-semibold text-white">
-        Book a call
-      </a>
-    </div>
-  </header>
+  <!-- Two-row sticky header:
+         row 1) thin dark "USP announcement bar" carrying the core
+                differentiator ("Custom prototype in 24 hours") — visible
+                on every section as the user scrolls, so the hook is
+                never more than a glance away.
+         row 2) the existing white nav bar.
+       Both rows ride a single sticky wrapper at top:0/z-50 so they stay
+       glued together and we don't have to compute one's height to pad
+       the other. The earlier hero-area chip is removed downstream
+       because this bar now does its job persistently. -->
+  <div class="sticky top-0 z-50">
+
+    <!-- USP announcement bar. Clickable in full — clicking anywhere
+         on the bar scrolls to the contact form via data-lead. Pulsing
+         dot uses Tailwind's animate-ping for the attention-pull. -->
+    <a href="#contact" data-lead class="bg-ink-900 text-white block group">
+      <div class="max-w-6xl mx-auto px-5 py-2 flex items-center justify-center gap-2.5 text-xs sm:text-sm font-semibold">
+        <span class="relative flex w-2 h-2 shrink-0">
+          <span class="absolute inline-flex w-full h-full rounded-full bg-azure-400 opacity-75 animate-ping"></span>
+          <span class="relative inline-flex w-2 h-2 rounded-full bg-azure-400"></span>
+        </span>
+        <span>Custom prototype in <span class="text-azure-300">24 hours</span></span>
+        <span class="text-azure-300 group-hover:translate-x-0.5 transition">→</span>
+      </div>
+    </a>
+
+    <!-- Main nav. backdrop-blur + bg-white/90 lets the dark hero peek
+         through subtly while scrolling, so the header feels lighter
+         than a solid bar. border-b draws the boundary between header
+         and content when the page scrolls under it. -->
+    <header class="bg-white/90 backdrop-blur text-ink-900 border-b border-ink-100">
+      <div class="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3">
+          <img src="/assets/logo.png" alt="Infocomiva Technologies" data-asset-key="eagle" data-logo-fallback="IT" class="h-10 w-10 object-contain" width="40" height="40">
+          <span class="font-display font-black text-base sm:text-lg tracking-tight">Infocomiva <span class="text-azure-600">Technologies</span></span>
+        </a>
+        <nav class="hidden md:flex items-center gap-5 text-sm">
+          <a href="#why" class="text-ink-700 hover:text-ink-900 transition">Why us</a>
+          <a href="#services" class="text-ink-700 hover:text-ink-900 transition">Services</a>
+          <a href="#clients" class="text-ink-700 hover:text-ink-900 transition">Clients</a>
+          <a href="#work" class="text-ink-700 hover:text-ink-900 transition">Work</a>
+          <a href="#pricing" class="text-ink-700 hover:text-ink-900 transition">Pricing</a>
+          <a href="#anti" class="text-ink-700 hover:text-ink-900 transition">Not for you?</a>
+          <a href="#contact" class="text-ink-700 hover:text-ink-900 transition">Contact</a>
+        </nav>
+        <a href="#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-4 py-2 rounded-lg text-sm font-semibold text-white">
+          Book a call
+        </a>
+      </div>
+    </header>
+  </div>
 
   <!-- =================================================================== -->
   <!-- HERO                                                                 -->
@@ -353,27 +378,10 @@
     <div class="max-w-6xl mx-auto px-5 pt-12 pb-20 sm:pt-20 sm:pb-28 relative">
       <div class="grid lg:grid-cols-[1fr_auto] gap-10 items-center">
         <div>
-          <!-- USP chip: the core differentiator. Pulsing dot draws the
-               eye, "24 hours" highlighted in azure for scan-readability.
-               Sits above the H1 so it's the first thing a prospect
-               reads, before they even get to "what does this agency
-               do?" — because the 24-hour prototype IS the answer.
-               Wrapper div is text-center so the chip is horizontally
-               centered above the (left-aligned) H1. The chip itself is
-               inline-flex so it only spans its content width; the
-               text-center on the parent does the centering. -->
-          <div data-fade-up class="text-center mb-6">
-            <a href="#contact" data-lead class="inline-flex items-center gap-2.5 bg-azure-500/15 hover:bg-azure-500/25 border border-azure-500/30 px-4 py-2 rounded-full transition group">
-              <span class="relative flex w-2.5 h-2.5">
-                <span class="absolute inline-flex w-full h-full rounded-full bg-azure-400 opacity-75 animate-ping"></span>
-                <span class="relative inline-flex w-2.5 h-2.5 rounded-full bg-azure-400"></span>
-              </span>
-              <span class="text-sm sm:text-base font-semibold text-white">
-                Custom prototype in <span class="text-azure-300">24 hours</span>
-              </span>
-              <span class="text-azure-300 text-sm group-hover:translate-x-0.5 transition">→</span>
-            </a>
-          </div>
+          <!-- Hero USP chip removed: the persistent sticky announcement
+               bar above the nav now carries "Custom prototype in 24 hours"
+               on every section of the page, so the in-hero chip became
+               redundant noise. H1 leads instead. -->
           <h1 data-fade-up class="font-display text-4xl sm:text-6xl md:text-7xl font-black leading-[1.05] tracking-tight max-w-4xl">
             We build what you <span class="grad-text">envision</span> &mdash;
             from a clean idea to a live product.
