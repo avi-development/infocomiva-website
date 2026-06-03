@@ -577,13 +577,16 @@
         write-up — coming soon.
       </p>
 
-      <!-- Richer client cards: logo + name + what-we-built + one metric -->
-      <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- Richer client cards: logo + name + what-we-built + one metric.
+           Mobile defaults to 2-up so 6 cards display as a tight 2:2:2 stack
+           instead of a tall single column. Padding / logo height / type
+           scale dial down on mobile so 2 cards fit comfortably side by side. -->
+      <div class="mt-8 sm:mt-12 grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
 
         <!-- Amirah Technologies -->
-        <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
-          <div class="h-24 flex items-center mb-4">
-            <img src="/assets/clients/amirah-technologies.png" alt="Amirah Technologies" data-asset-key="amirah" data-logo-fallback="AMIRAH&#10;TECHNOLOGIES" class="max-h-24 w-auto object-contain" loading="lazy">
+        <div class="bg-white border border-ink-100 rounded-2xl p-4 sm:p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+          <div class="h-16 sm:h-24 flex items-center mb-3 sm:mb-4">
+            <img src="/assets/clients/amirah-technologies.png" alt="Amirah Technologies" data-asset-key="amirah" data-logo-fallback="AMIRAH&#10;TECHNOLOGIES" class="max-h-16 sm:max-h-24 w-auto object-contain" loading="lazy">
           </div>
           <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">AI / Software</div>
           <div class="font-display font-black text-lg text-ink-900 mb-1">Amirah Technologies</div>
@@ -595,9 +598,9 @@
         </div>
 
         <!-- NextZen Fi-Tech -->
-        <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
-          <div class="h-24 flex items-center mb-4">
-            <img src="/assets/clients/nextzen-fitech.png" alt="NextZen Fi-Tech" data-asset-key="nextzen" data-logo-fallback="NEXTZEN&#10;Fi-Tech" class="max-h-24 w-auto object-contain" loading="lazy">
+        <div class="bg-white border border-ink-100 rounded-2xl p-4 sm:p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+          <div class="h-16 sm:h-24 flex items-center mb-3 sm:mb-4">
+            <img src="/assets/clients/nextzen-fitech.png" alt="NextZen Fi-Tech" data-asset-key="nextzen" data-logo-fallback="NEXTZEN&#10;Fi-Tech" class="max-h-16 sm:max-h-24 w-auto object-contain" loading="lazy">
           </div>
           <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Fintech</div>
           <div class="font-display font-black text-lg text-ink-900 mb-1">NextZen Fi-Tech</div>
@@ -609,9 +612,9 @@
         </div>
 
         <!-- Bidisha Niketan -->
-        <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
-          <div class="h-24 flex items-center mb-4">
-            <img src="/assets/clients/bidisha-niketan.png" alt="Bidisha Niketan" data-asset-key="bidisha" data-logo-fallback="BIDISHA&#10;NIKETAN" class="max-h-24 w-auto object-contain" loading="lazy">
+        <div class="bg-white border border-ink-100 rounded-2xl p-4 sm:p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+          <div class="h-16 sm:h-24 flex items-center mb-3 sm:mb-4">
+            <img src="/assets/clients/bidisha-niketan.png" alt="Bidisha Niketan" data-asset-key="bidisha" data-logo-fallback="BIDISHA&#10;NIKETAN" class="max-h-16 sm:max-h-24 w-auto object-contain" loading="lazy">
           </div>
           <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Education / Institution</div>
           <div class="font-display font-black text-lg text-ink-900 mb-1">Bidisha Niketan</div>
@@ -623,9 +626,9 @@
         </div>
 
         <!-- Hotel Deep -->
-        <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
-          <div class="h-24 flex items-center mb-4">
-            <img src="/assets/clients/hotel-deep.png" alt="Hotel Deep" data-asset-key="hotelDeep" data-logo-fallback="HOTEL&#10;DEEP" class="max-h-24 w-auto object-contain" loading="lazy">
+        <div class="bg-white border border-ink-100 rounded-2xl p-4 sm:p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+          <div class="h-16 sm:h-24 flex items-center mb-3 sm:mb-4">
+            <img src="/assets/clients/hotel-deep.png" alt="Hotel Deep" data-asset-key="hotelDeep" data-logo-fallback="HOTEL&#10;DEEP" class="max-h-16 sm:max-h-24 w-auto object-contain" loading="lazy">
           </div>
           <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Hospitality</div>
           <div class="font-display font-black text-lg text-ink-900 mb-1">Hotel Deep</div>
@@ -637,9 +640,9 @@
         </div>
 
         <!-- Care of Future Foundation -->
-        <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
-          <div class="h-24 flex items-center mb-4">
-            <img src="/assets/clients/care-of-future-foundation.png" alt="Care of Future Foundation" data-asset-key="careOfFuture" data-logo-fallback="CARE OF FUTURE&#10;FOUNDATION" class="max-h-24 w-auto object-contain" loading="lazy">
+        <div class="bg-white border border-ink-100 rounded-2xl p-4 sm:p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+          <div class="h-16 sm:h-24 flex items-center mb-3 sm:mb-4">
+            <img src="/assets/clients/care-of-future-foundation.png" alt="Care of Future Foundation" data-asset-key="careOfFuture" data-logo-fallback="CARE OF FUTURE&#10;FOUNDATION" class="max-h-16 sm:max-h-24 w-auto object-contain" loading="lazy">
           </div>
           <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Non-profit</div>
           <div class="font-display font-black text-lg text-ink-900 mb-1">Care of Future Foundation</div>
@@ -651,7 +654,7 @@
         </div>
 
         <!-- TraxnCargo card — anchors the strip and bridges into the deep-dive -->
-        <a href="#work" class="bg-ink-900 text-white rounded-2xl p-6 transition hover:bg-ink-700 flex flex-col">
+        <a href="#work" class="bg-ink-900 text-white rounded-2xl p-4 sm:p-6 transition hover:bg-ink-700 flex flex-col">
           <div class="text-[11px] uppercase tracking-wider text-azure-500 font-semibold mb-2">Our own product</div>
           <div class="font-display font-black text-lg text-white mb-2">TraxnCargo</div>
           <p class="text-sm text-white/70 leading-relaxed mb-3 flex-1">
