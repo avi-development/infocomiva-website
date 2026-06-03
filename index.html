@@ -1581,10 +1581,33 @@
           console.info('[infocomiva] no carousel clients to render');
           return;
         }
-        // Duplicate the list once so the keyframe -50% translate
-        // loops seamlessly without a visible jump.
-        const doubled = valid.concat(valid);
-        track.innerHTML = doubled.map((c) => {
+
+        // ─── Adaptive marquee duplication ──────────────────────────
+        //
+        // The CSS keyframe translates the track from 0 → -50%, so the
+        // animation loops seamlessly ONLY when the first half of the
+        // track is an exact mirror of the second half. The classic
+        // recipe "duplicate the array once" gives a 2× track which
+        // visually fails when the source list is small — e.g. 4 logos
+        // × ~160px per item ≈ 640px first half on a 1900px viewport,
+        // leaving ~1200px of blank strip exposed at every loop point.
+        //
+        // Fix: aim for the first half to be at least ~1.4× viewport
+        // wide. Estimate per-item width at 160px (logo ~96px max +
+        // caption + gap-16), compute how many repeats of the unique
+        // list it takes to clear that, then render firstHalf TWICE so
+        // the -50% loop still works. Capped at 12 repeats so a fluke
+        // measurement can't blow up the DOM.
+        const viewportW = (window.innerWidth || document.documentElement.clientWidth || 1200);
+        const itemEstPx = 160;
+        const targetHalfW = viewportW * 1.4;
+        const minItems = Math.max(valid.length, Math.ceil(targetHalfW / itemEstPx));
+        const repeats = Math.min(12, Math.max(2, Math.ceil(minItems / valid.length)));
+        const firstHalf = [];
+        for (let i = 0; i < repeats; i++) firstHalf.push(...valid);
+        const trackItems = firstHalf.concat(firstHalf); // mirror for seamless loop
+
+        track.innerHTML = trackItems.map((c) => {
           const safeName = (c.name || '').replace(/[<>&"]/g, (ch) => ({
             '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;',
           }[ch] || ch));
@@ -1596,7 +1619,7 @@
           `;
         }).join('');
         carousel.style.display = '';
-        console.info('[infocomiva] rendered', valid.length, 'carousel clients');
+        console.info('[infocomiva] rendered', valid.length, 'source logos →', trackItems.length, 'track items (', repeats, 'repeats per half )');
       })
       .catch((err) => {
         console.error('[infocomiva] failed to fetch appSettings/infocomiva — Firestore read denied or offline:', err);
