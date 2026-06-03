@@ -125,6 +125,40 @@
       .ring-soft { box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 0 0 1px rgba(10,10,10,0.06); }
     }
     html, body { overflow-x: hidden; max-width: 100vw; }
+
+    /* When an <img data-logo-fallback="..."> can't load (404 / decode
+       error), JS at the bottom of the page replaces it with a span
+       carrying this class. Styled to look like an intentional text
+       badge so the site doesn't show broken-image icons while the
+       client logo files are still being added. */
+    .logo-text-fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: 'Plus Jakarta Sans', Inter, ui-sans-serif, system-ui, sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+      color: #1e3a8a;        /* azure-700 */
+      background: #eef2ff;    /* azure-50 */
+      border: 1px solid #dbe4ff;
+      border-radius: 12px;
+      padding: 12px 16px;
+      max-width: 100%;
+      max-height: 100%;
+      white-space: pre-line;
+    }
+    /* Smaller variant used in the dark header / footer (white text on navy). */
+    .logo-text-fallback--dark {
+      color: #ffffff;
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.18);
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+    }
   </style>
 
   <!-- GA4 + Clarity placeholders — paste your IDs when ready -->
@@ -146,7 +180,7 @@
   <header class="bg-ink-900 text-white">
     <div class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
       <a href="/" class="flex items-center gap-3">
-        <img src="/assets/logo.png" alt="Infocomiva Technologies" class="h-10 w-10 object-contain" width="40" height="40">
+        <img src="/assets/logo.png" alt="Infocomiva Technologies" data-logo-fallback="IT" data-logo-fallback-class="logo-text-fallback--dark" class="h-10 w-10 object-contain" width="40" height="40">
         <span class="font-display font-black text-base sm:text-lg tracking-tight">Infocomiva <span class="text-azure-500">Technologies</span></span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm">
@@ -458,7 +492,7 @@
         <!-- Amirah Technologies -->
         <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
           <div class="h-16 flex items-center mb-4">
-            <img src="/assets/clients/amirah-technologies.png" alt="Amirah Technologies" class="max-h-16 w-auto object-contain" loading="lazy">
+            <img src="/assets/clients/amirah-technologies.png" alt="Amirah Technologies" data-logo-fallback="AMIRAH&#10;TECHNOLOGIES" class="max-h-16 w-auto object-contain" loading="lazy">
           </div>
           <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">AI / Software</div>
           <div class="font-display font-black text-lg text-ink-900 mb-1">Amirah Technologies</div>
@@ -472,7 +506,7 @@
         <!-- NextZen Fi-Tech -->
         <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
           <div class="h-16 flex items-center mb-4">
-            <img src="/assets/clients/nextzen-fitech.png" alt="NextZen Fi-Tech" class="max-h-16 w-auto object-contain" loading="lazy">
+            <img src="/assets/clients/nextzen-fitech.png" alt="NextZen Fi-Tech" data-logo-fallback="NEXTZEN&#10;Fi-Tech" class="max-h-16 w-auto object-contain" loading="lazy">
           </div>
           <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Fintech</div>
           <div class="font-display font-black text-lg text-ink-900 mb-1">NextZen Fi-Tech</div>
@@ -486,7 +520,7 @@
         <!-- Bidisha Niketan -->
         <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
           <div class="h-16 flex items-center mb-4">
-            <img src="/assets/clients/bidisha-niketan.png" alt="Bidisha Niketan" class="max-h-16 w-auto object-contain" loading="lazy">
+            <img src="/assets/clients/bidisha-niketan.png" alt="Bidisha Niketan" data-logo-fallback="BIDISHA&#10;NIKETAN" class="max-h-16 w-auto object-contain" loading="lazy">
           </div>
           <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Education / Institution</div>
           <div class="font-display font-black text-lg text-ink-900 mb-1">Bidisha Niketan</div>
@@ -500,7 +534,7 @@
         <!-- Hotel Deep -->
         <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
           <div class="h-16 flex items-center mb-4">
-            <img src="/assets/clients/hotel-deep.png" alt="Hotel Deep" class="max-h-16 w-auto object-contain" loading="lazy">
+            <img src="/assets/clients/hotel-deep.png" alt="Hotel Deep" data-logo-fallback="HOTEL&#10;DEEP" class="max-h-16 w-auto object-contain" loading="lazy">
           </div>
           <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Hospitality</div>
           <div class="font-display font-black text-lg text-ink-900 mb-1">Hotel Deep</div>
@@ -514,7 +548,7 @@
         <!-- Care of Future Foundation -->
         <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
           <div class="h-16 flex items-center mb-4">
-            <img src="/assets/clients/care-of-future-foundation.png" alt="Care of Future Foundation" class="max-h-16 w-auto object-contain" loading="lazy">
+            <img src="/assets/clients/care-of-future-foundation.png" alt="Care of Future Foundation" data-logo-fallback="CARE OF FUTURE&#10;FOUNDATION" class="max-h-16 w-auto object-contain" loading="lazy">
           </div>
           <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Non-profit</div>
           <div class="font-display font-black text-lg text-ink-900 mb-1">Care of Future Foundation</div>
@@ -715,7 +749,7 @@
   <footer class="bg-ink-900 text-white/50 border-t border-white/10">
     <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
       <div class="flex items-center gap-3">
-        <img src="/assets/logo.png" alt="Infocomiva" class="h-8 w-8 object-contain" width="32" height="32">
+        <img src="/assets/logo.png" alt="Infocomiva" data-logo-fallback="IT" data-logo-fallback-class="logo-text-fallback--dark" class="h-8 w-8 object-contain" width="32" height="32">
         <span>&copy; <span id="yr"></span> Infocomiva Technologies</span>
       </div>
       <div class="flex items-center gap-5">
@@ -725,7 +759,34 @@
     </div>
   </footer>
 
+  <!-- ============================================================
+       Image fallback — any <img data-logo-fallback="NAME"> that
+       fails to load gets replaced with a styled text span showing
+       the NAME. Keeps the layout intact even before the actual
+       logo files are saved into /assets/. The replacement keeps
+       the image's original classes (h-16, etc.) so sizing matches.
+       ============================================================ -->
   <script>
+    (function () {
+      var imgs = document.querySelectorAll('img[data-logo-fallback]');
+      imgs.forEach(function (img) {
+        function swapToText() {
+          var name = img.getAttribute('data-logo-fallback') || img.getAttribute('alt') || '';
+          var extra = img.getAttribute('data-logo-fallback-class') || '';
+          var span = document.createElement('span');
+          span.className = ('logo-text-fallback ' + extra + ' ' + (img.className || '')).trim();
+          span.textContent = name.replace(/&#10;|\\n/g, '\n');
+          if (img.parentNode) img.parentNode.replaceChild(span, img);
+        }
+        // If already broken (cached 404), naturalWidth/Height === 0.
+        if (img.complete && img.naturalWidth === 0) {
+          swapToText();
+        } else {
+          img.addEventListener('error', swapToText, { once: true });
+        }
+      });
+    })();
+
     document.getElementById('yr').textContent = new Date().getFullYear();
     // Smooth scroll for nav anchors + Book-a-call buttons
     document.querySelectorAll('a[href^="#"]').forEach(function (a) {
