@@ -209,21 +209,27 @@
   <!-- =================================================================== -->
   <!-- NAV                                                                  -->
   <!-- =================================================================== -->
-  <header class="bg-ink-900 text-white">
-    <div class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
+  <!-- Sticky white header.
+       backdrop-blur + bg-white/90 lets the dark hero peek through subtly
+       while scrolling, so the header feels lighter than a solid bar.
+       border-b draws the boundary between header and content when the
+       page scrolls under it (otherwise white-on-white sections vanish
+       into the header). -->
+  <header class="bg-white/90 backdrop-blur text-ink-900 sticky top-0 z-50 border-b border-ink-100">
+    <div class="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between">
       <a href="/" class="flex items-center gap-3">
-        <img src="/assets/logo.png" alt="Infocomiva Technologies" data-asset-key="eagle" data-logo-fallback="IT" data-logo-fallback-class="logo-text-fallback--dark" class="h-10 w-10 object-contain" width="40" height="40">
-        <span class="font-display font-black text-base sm:text-lg tracking-tight">Infocomiva <span class="text-azure-500">Technologies</span></span>
+        <img src="/assets/logo.png" alt="Infocomiva Technologies" data-asset-key="eagle" data-logo-fallback="IT" class="h-10 w-10 object-contain" width="40" height="40">
+        <span class="font-display font-black text-base sm:text-lg tracking-tight">Infocomiva <span class="text-azure-600">Technologies</span></span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm">
-        <a href="#services" class="text-white/80 hover:text-white transition">Services</a>
-        <a href="#why" class="text-white/80 hover:text-white transition">Why us</a>
-        <a href="#clients" class="text-white/80 hover:text-white transition">Clients</a>
-        <a href="#work" class="text-white/80 hover:text-white transition">Work</a>
-        <a href="#process" class="text-white/80 hover:text-white transition">Process</a>
-        <a href="#contact" class="text-white/80 hover:text-white transition">Contact</a>
+        <a href="#services" class="text-ink-700 hover:text-ink-900 transition">Services</a>
+        <a href="#why" class="text-ink-700 hover:text-ink-900 transition">Why us</a>
+        <a href="#clients" class="text-ink-700 hover:text-ink-900 transition">Clients</a>
+        <a href="#work" class="text-ink-700 hover:text-ink-900 transition">Work</a>
+        <a href="#process" class="text-ink-700 hover:text-ink-900 transition">Process</a>
+        <a href="#contact" class="text-ink-700 hover:text-ink-900 transition">Contact</a>
       </nav>
-      <a href="#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-4 py-2 rounded-lg text-sm font-semibold">
+      <a href="#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-4 py-2 rounded-lg text-sm font-semibold text-white">
         Book a call
       </a>
     </div>
