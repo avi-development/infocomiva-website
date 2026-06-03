@@ -151,6 +151,7 @@
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm">
         <a href="#services" class="text-white/80 hover:text-white transition">Services</a>
+        <a href="#why" class="text-white/80 hover:text-white transition">Why us</a>
         <a href="#clients" class="text-white/80 hover:text-white transition">Clients</a>
         <a href="#work" class="text-white/80 hover:text-white transition">Work</a>
         <a href="#process" class="text-white/80 hover:text-white transition">Process</a>
@@ -382,67 +383,160 @@
   </section>
 
   <!-- =================================================================== -->
-  <!-- CLIENTS — recently built for                                         -->
+  <!-- WHY US — directly addresses the "generic agency" objection           -->
   <!-- =================================================================== -->
-  <section id="clients" class="py-16 sm:py-24 bg-white">
+  <section id="why" class="py-16 sm:py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-700 uppercase mb-4">
+        Why us
+      </div>
+      <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
+        We&rsquo;re builder-operators, <span class="grad-text">not consultants.</span>
+      </h2>
+      <p class="mt-4 text-ink-700 text-base leading-relaxed max-w-2xl">
+        Most agencies ship and disappear. We built and still operate TraxnCargo — multi-tenant,
+        production-grade, live with paying customers. The same engineering muscle ships your project.
+      </p>
+
+      <div class="mt-12 grid sm:grid-cols-2 gap-5">
+        <div class="bg-ink-50 rounded-2xl p-6">
+          <div class="font-display font-black text-2xl text-ink-900 mb-2">No sub-contracting.</div>
+          <p class="text-sm text-ink-700 leading-relaxed">
+            Every line of code, every Figma frame, every campaign is written in-house. When we
+            do your marketing, the marketing lead can read the database schema. When we build
+            your CRM, the engineer has met the user.
+          </p>
+        </div>
+        <div class="bg-ink-50 rounded-2xl p-6">
+          <div class="font-display font-black text-2xl text-ink-900 mb-2">Same team after launch.</div>
+          <p class="text-sm text-ink-700 leading-relaxed">
+            No handoff to a different support shop with a different SLA. The people who designed
+            your product are the people who maintain it on day 500.
+          </p>
+        </div>
+        <div class="bg-ink-50 rounded-2xl p-6">
+          <div class="font-display font-black text-2xl text-ink-900 mb-2">Production-grade by default.</div>
+          <p class="text-sm text-ink-700 leading-relaxed">
+            Sentry error tracking, uptime monitoring, type-checked CI gates, automated backups —
+            wired before launch, not as a six-month-later afterthought. We ship our own products
+            on this stack.
+          </p>
+        </div>
+        <div class="bg-ink-50 rounded-2xl p-6">
+          <div class="font-display font-black text-2xl text-ink-900 mb-2">Fixed scope, fixed price.</div>
+          <p class="text-sm text-ink-700 leading-relaxed">
+            Discovery workshop, written scope, milestone billing. Pivots happen mid-project —
+            we absorb them. No surprise change-order invoices halfway through.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================================== -->
+  <!-- CLIENTS — recently built for                                         -->
+  <!-- Each card now has a logo + project description + one metric.         -->
+  <!-- The [FILL] placeholders are the user-provided specifics — replace    -->
+  <!-- them with real one-liners + numbers before the public launch.        -->
+  <!-- =================================================================== -->
+  <section id="clients" class="py-16 sm:py-24 bg-ink-50">
     <div class="max-w-6xl mx-auto px-5">
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-700 uppercase mb-4">
         Recently built for
       </div>
       <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-ink-900">
-        Five industries. <span class="grad-text">One delivery team.</span>
+        Five clients. <span class="grad-text">Five live wins.</span>
       </h2>
       <p class="mt-4 text-ink-700 text-base leading-relaxed max-w-2xl">
-        Tech, fintech, hospitality, education and non-profit — same engineering rigor across every
-        engagement.
+        Each engagement listed below is in production and being used. Click through for a longer
+        write-up — coming soon.
       </p>
 
-      <!-- Logo grid -->
-      <div class="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 items-center">
+      <!-- Richer client cards: logo + name + what-we-built + one metric -->
+      <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-        <div class="group bg-white border border-ink-100 rounded-2xl p-6 flex flex-col items-center justify-center transition hover:border-azure-500/40 hover:shadow-sm">
-          <div class="h-20 flex items-center justify-center mb-3">
-            <img src="/assets/clients/amirah-technologies.png" alt="Amirah Technologies" class="max-h-20 w-auto object-contain" loading="lazy">
+        <!-- Amirah Technologies -->
+        <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+          <div class="h-16 flex items-center mb-4">
+            <img src="/assets/clients/amirah-technologies.png" alt="Amirah Technologies" class="max-h-16 w-auto object-contain" loading="lazy">
           </div>
-          <div class="text-[11px] uppercase tracking-wider text-ink-500 font-semibold">AI / Software</div>
+          <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">AI / Software</div>
+          <div class="font-display font-black text-lg text-ink-900 mb-1">Amirah Technologies</div>
+          <p class="text-sm text-ink-700 leading-relaxed mb-3">
+            [FILL — one-line of what you built. e.g. "AI-powered customer-routing platform handling
+            multilingual queries across web + WhatsApp."]
+          </p>
+          <div class="text-xs text-ink-500 font-semibold">[FILL — one metric. e.g. "12K+ monthly conversations · 4 languages"]</div>
         </div>
 
-        <div class="group bg-white border border-ink-100 rounded-2xl p-6 flex flex-col items-center justify-center transition hover:border-azure-500/40 hover:shadow-sm">
-          <div class="h-20 flex items-center justify-center mb-3">
-            <img src="/assets/clients/nextzen-fitech.png" alt="NextZen Fi-Tech" class="max-h-20 w-auto object-contain" loading="lazy">
+        <!-- NextZen Fi-Tech -->
+        <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+          <div class="h-16 flex items-center mb-4">
+            <img src="/assets/clients/nextzen-fitech.png" alt="NextZen Fi-Tech" class="max-h-16 w-auto object-contain" loading="lazy">
           </div>
-          <div class="text-[11px] uppercase tracking-wider text-ink-500 font-semibold">Fintech</div>
+          <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Fintech</div>
+          <div class="font-display font-black text-lg text-ink-900 mb-1">NextZen Fi-Tech</div>
+          <p class="text-sm text-ink-700 leading-relaxed mb-3">
+            [FILL — e.g. "Loan-application platform with KYC, credit-scoring API integrations
+            and a partner-bank settlement layer."]
+          </p>
+          <div class="text-xs text-ink-500 font-semibold">[FILL — e.g. "₹X cr in applications processed · Live since Q3 2025"]</div>
         </div>
 
-        <div class="group bg-white border border-ink-100 rounded-2xl p-6 flex flex-col items-center justify-center transition hover:border-azure-500/40 hover:shadow-sm">
-          <div class="h-20 flex items-center justify-center mb-3">
-            <img src="/assets/clients/bidisha-niketan.png" alt="Bidisha Niketan" class="max-h-20 w-auto object-contain" loading="lazy">
+        <!-- Bidisha Niketan -->
+        <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+          <div class="h-16 flex items-center mb-4">
+            <img src="/assets/clients/bidisha-niketan.png" alt="Bidisha Niketan" class="max-h-16 w-auto object-contain" loading="lazy">
           </div>
-          <div class="text-[11px] uppercase tracking-wider text-ink-500 font-semibold">Education / Institution</div>
+          <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Education / Institution</div>
+          <div class="font-display font-black text-lg text-ink-900 mb-1">Bidisha Niketan</div>
+          <p class="text-sm text-ink-700 leading-relaxed mb-3">
+            [FILL — e.g. "Student-records platform with attendance, fee tracking and a parent
+            mobile app."]
+          </p>
+          <div class="text-xs text-ink-500 font-semibold">[FILL — e.g. "X+ students · Y staff · 3-tier role-based access"]</div>
         </div>
 
-        <div class="group bg-white border border-ink-100 rounded-2xl p-6 flex flex-col items-center justify-center transition hover:border-azure-500/40 hover:shadow-sm">
-          <div class="h-20 flex items-center justify-center mb-3">
-            <img src="/assets/clients/hotel-deep.png" alt="Hotel Deep" class="max-h-20 w-auto object-contain" loading="lazy">
+        <!-- Hotel Deep -->
+        <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+          <div class="h-16 flex items-center mb-4">
+            <img src="/assets/clients/hotel-deep.png" alt="Hotel Deep" class="max-h-16 w-auto object-contain" loading="lazy">
           </div>
-          <div class="text-[11px] uppercase tracking-wider text-ink-500 font-semibold">Hospitality</div>
+          <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Hospitality</div>
+          <div class="font-display font-black text-lg text-ink-900 mb-1">Hotel Deep</div>
+          <p class="text-sm text-ink-700 leading-relaxed mb-3">
+            [FILL — e.g. "Booking site with payment gateway, room-availability calendar and
+            front-desk dashboard."]
+          </p>
+          <div class="text-xs text-ink-500 font-semibold">[FILL — e.g. "X bookings/month · 40% direct vs OTA"]</div>
         </div>
 
-        <div class="group bg-white border border-ink-100 rounded-2xl p-6 flex flex-col items-center justify-center transition hover:border-azure-500/40 hover:shadow-sm">
-          <div class="h-20 flex items-center justify-center mb-3">
-            <img src="/assets/clients/care-of-future-foundation.png" alt="Care of Future Foundation" class="max-h-20 w-auto object-contain" loading="lazy">
+        <!-- Care of Future Foundation -->
+        <div class="bg-white border border-ink-100 rounded-2xl p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+          <div class="h-16 flex items-center mb-4">
+            <img src="/assets/clients/care-of-future-foundation.png" alt="Care of Future Foundation" class="max-h-16 w-auto object-contain" loading="lazy">
           </div>
-          <div class="text-[11px] uppercase tracking-wider text-ink-500 font-semibold">Non-profit</div>
+          <div class="text-[11px] uppercase tracking-wider text-azure-700 font-semibold mb-1">Non-profit</div>
+          <div class="font-display font-black text-lg text-ink-900 mb-1">Care of Future Foundation</div>
+          <p class="text-sm text-ink-700 leading-relaxed mb-3">
+            [FILL — e.g. "Donor portal, programme dashboards and an impact-reporting site for
+            quarterly grants."]
+          </p>
+          <div class="text-xs text-ink-500 font-semibold">[FILL — e.g. "₹X+ raised · Y programmes tracked"]</div>
         </div>
+
+        <!-- TraxnCargo card — anchors the strip and bridges into the deep-dive -->
+        <a href="#work" class="bg-ink-900 text-white rounded-2xl p-6 transition hover:bg-ink-700 flex flex-col">
+          <div class="text-[11px] uppercase tracking-wider text-azure-500 font-semibold mb-2">Our own product</div>
+          <div class="font-display font-black text-lg text-white mb-2">TraxnCargo</div>
+          <p class="text-sm text-white/70 leading-relaxed mb-3 flex-1">
+            Multi-tenant SaaS for Indian road-transport companies — bilty generation, trip register,
+            GST invoices, vendor reconciliation, driver mobile + OCR.
+          </p>
+          <div class="text-xs text-white/85 font-semibold">Live across multiple companies →</div>
+        </a>
 
       </div>
-
-      <!-- Pivot line into the flagship section -->
-      <p class="mt-12 text-sm text-ink-700/80 text-center max-w-2xl mx-auto">
-        And one product we built for ourselves —
-        <a href="#work" class="text-azure-700 font-semibold hover:underline">TraxnCargo</a>,
-        live across multiple Indian transport companies.
-      </p>
     </div>
   </section>
 
