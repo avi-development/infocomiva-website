@@ -126,6 +126,22 @@
     }
     html, body { overflow-x: hidden; max-width: 100vw; }
 
+    /* The two-row header is position:fixed — bar + nav are lifted out
+       of normal flow, so without this top padding the hero would
+       render underneath them and the first ~100px of content would be
+       hidden. Padding scales: phone (smaller text in the bar) needs
+       less, sm+ (slightly larger text) needs a touch more. Adjust if
+       you change the bar's py-* or the nav's h-10 logo size. */
+    body { padding-top: 88px; }
+    @media (min-width: 640px) { body { padding-top: 96px; } }
+
+    /* scroll-padding-top makes anchor links (#why, #services, …)
+       land BELOW the fixed header instead of behind it. Without it
+       the browser scrolls the target to viewport y=0, which is
+       hidden by our floating bar + nav. */
+    html { scroll-padding-top: 88px; }
+    @media (min-width: 640px) { html { scroll-padding-top: 96px; } }
+
     /* When an <img data-logo-fallback="..."> can't load (404 / decode
        error), JS at the bottom of the page replaces it with a span
        carrying this class. Styled to look like an intentional text
@@ -317,7 +333,7 @@
        glued together and we don't have to compute one's height to pad
        the other. The earlier hero-area chip is removed downstream
        because this bar now does its job persistently. -->
-  <div class="sticky top-0 z-50">
+  <div class="fixed top-0 left-0 right-0 z-50">
 
     <!-- USP announcement bar. Clickable in full — clicking anywhere
          on the bar scrolls to the contact form via data-lead. Pulsing
