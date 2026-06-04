@@ -62,6 +62,39 @@
     ]
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is multi-tenant SaaS architecture?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Multi-tenant SaaS is a software architecture where many customer organisations share a single logical deployment of an application. Each customer sees only their own data, branding and settings, but the underlying code, database and infrastructure are shared across tenants. Examples include Notion, Slack and Salesforce." }
+      },
+      {
+        "@type": "Question",
+        "name": "When should I build single-tenant instead of multi-tenant SaaS?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Single-tenant is the right choice when your customer count is under 20 and likely to stay there, when customers demand audit-able data residency (financial services, healthcare), when customisation is heavy per customer, or when you're still validating product-market fit. The infrastructure cost of single-tenant is trivial at low customer counts, and isolation becomes a sales feature." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the hybrid multi-tenant pattern?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The hybrid pattern uses a single shared application layer with isolated databases per tenant. This gives you the operating leverage of multi-tenancy — one codebase, one deploy, one bug fix — while keeping the per-customer data isolation enterprise buyers want. It's Infocomiva's default for most Indian SaaS builds." }
+      },
+      {
+        "@type": "Question",
+        "name": "What are the hidden costs of multi-tenant SaaS?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Hidden costs include: row-level security on every database query (one missed filter leaks data between customers), background jobs that need to respect tenancy, the noisy-neighbour problem where one customer can starve others' resources, per-tenant branding and billing artifacts, and schema migrations that affect every customer simultaneously instead of one at a time." }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does it take to build a multi-tenant SaaS in India?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A production-grade multi-tenant SaaS typically takes 3–6 months end-to-end with a small dedicated team, depending on scope. The architecture decision should be made on day one — retrofitting multi-tenancy into a single-tenant codebase is a multi-week rewrite. Infocomiva ships a custom prototype within 24 hours of the discovery call so the architecture choice is locked before code is written." }
+      }
+    ]
+  }
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,6 +125,18 @@
     .prose a:hover { color: #2563eb; }
     .prose blockquote { border-left: 3px solid #2563eb; padding-left: 1rem; color: #2d2d31; font-style: italic; margin: 1.5rem 0; }
     .prose code { background: #eef2ff; color: #1e3a8a; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    .tldr { background: #eef2ff; border: 1px solid #dbe4ff; border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1rem 0 2rem; }
+    .tldr-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 800; color: #1e3a8a; margin-bottom: 0.5rem; }
+    .tldr ul { padding-left: 1.25rem; margin: 0; font-size: 0.95rem; line-height: 1.6; }
+    .tldr li { margin-bottom: 0.4rem; list-style: disc; color: #0a0a0a; }
+    .tldr li::marker { color: #2563eb; }
+    .faq { background: #f7f7f8; border-top: 1px solid #ebebed; }
+    .faq details { border-bottom: 1px solid #ebebed; padding: 1rem 0; }
+    .faq details:last-of-type { border-bottom: 0; }
+    .faq summary { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.0625rem; color: #0a0a0a; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .faq summary::after { content: '+'; font-size: 1.5rem; color: #2563eb; font-weight: 300; transition: transform 0.2s; }
+    .faq details[open] summary::after { transform: rotate(45deg); }
+    .faq details p { color: #2d2d31; line-height: 1.7; margin-top: 0.75rem; }
   </style>
 </head>
 <body class="bg-white text-ink-900 selection:bg-azure-500/20 selection:text-ink-900">
@@ -157,8 +202,118 @@
     </div>
   </header>
 
+  <!-- HERO ILLUSTRATION
+       Architecture diagram contrasting the three patterns: single
+       tenant, full shared multi-tenant, and the hybrid (shared app /
+       isolated DB) that we default to. Inline SVG — no licensing,
+       scales infinitely, alt + role for screen readers. -->
+  <figure class="max-w-3xl mx-auto px-5 mt-10 mb-2" role="img" aria-label="Architecture diagram showing three SaaS tenancy patterns: single tenant (one app instance per customer, one database), full multi-tenant (one shared app, one shared database with tenant ID filtering), and hybrid (one shared app with isolated databases per tenant — the Infocomiva default).">
+    <svg viewBox="0 0 900 320" class="w-full h-auto rounded-2xl bg-ink-50 border border-ink-100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="appg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2563eb"/>
+          <stop offset="100%" stop-color="#1e3a8a"/>
+        </linearGradient>
+        <linearGradient id="appgL" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#60a5fa"/>
+          <stop offset="100%" stop-color="#2563eb"/>
+        </linearGradient>
+      </defs>
+
+      <!-- PANEL 1: Single-tenant -->
+      <g transform="translate(20,20)">
+        <text x="135" y="14" text-anchor="middle" fill="#0a0a0a" font-family="Plus Jakarta Sans" font-weight="800" font-size="13">Single-tenant</text>
+        <text x="135" y="30" text-anchor="middle" fill="#71717a" font-family="Inter" font-size="10">One app + one DB per customer</text>
+        <!-- 3 customers, each with own app + db -->
+        <g font-family="Inter" font-size="9" fill="#fff">
+          <rect x="10"  y="48" width="65" height="24" rx="4" fill="#0a0a0a"/><text x="42" y="64" text-anchor="middle">Co. A</text>
+          <rect x="100" y="48" width="65" height="24" rx="4" fill="#0a0a0a"/><text x="132" y="64" text-anchor="middle">Co. B</text>
+          <rect x="190" y="48" width="65" height="24" rx="4" fill="#0a0a0a"/><text x="222" y="64" text-anchor="middle">Co. C</text>
+        </g>
+        <!-- Arrows -->
+        <g stroke="#71717a" stroke-width="1.5" fill="none">
+          <path d="M42 76 v22"/><path d="M132 76 v22"/><path d="M222 76 v22"/>
+        </g>
+        <!-- 3 isolated app instances -->
+        <g font-family="Inter" font-size="9" fill="#fff">
+          <rect x="10"  y="102" width="65" height="50" rx="6" fill="url(#appg)"/><text x="42" y="125" text-anchor="middle">App</text><text x="42" y="138" text-anchor="middle">+ DB</text>
+          <rect x="100" y="102" width="65" height="50" rx="6" fill="url(#appg)"/><text x="132" y="125" text-anchor="middle">App</text><text x="132" y="138" text-anchor="middle">+ DB</text>
+          <rect x="190" y="102" width="65" height="50" rx="6" fill="url(#appg)"/><text x="222" y="125" text-anchor="middle">App</text><text x="222" y="138" text-anchor="middle">+ DB</text>
+        </g>
+        <text x="135" y="200" text-anchor="middle" fill="#2d2d31" font-family="Inter" font-size="10" font-style="italic">Best for &lt;20 customers</text>
+        <text x="135" y="216" text-anchor="middle" fill="#2d2d31" font-family="Inter" font-size="10" font-style="italic">+ data-residency demand</text>
+      </g>
+
+      <!-- PANEL 2: Multi-tenant (shared) -->
+      <g transform="translate(310,20)">
+        <text x="135" y="14" text-anchor="middle" fill="#0a0a0a" font-family="Plus Jakarta Sans" font-weight="800" font-size="13">Full multi-tenant</text>
+        <text x="135" y="30" text-anchor="middle" fill="#71717a" font-family="Inter" font-size="10">Shared app, shared DB, tenant ID filter</text>
+        <g font-family="Inter" font-size="9" fill="#fff">
+          <rect x="10"  y="48" width="65" height="24" rx="4" fill="#0a0a0a"/><text x="42" y="64" text-anchor="middle">Co. A</text>
+          <rect x="100" y="48" width="65" height="24" rx="4" fill="#0a0a0a"/><text x="132" y="64" text-anchor="middle">Co. B</text>
+          <rect x="190" y="48" width="65" height="24" rx="4" fill="#0a0a0a"/><text x="222" y="64" text-anchor="middle">Co. C</text>
+        </g>
+        <g stroke="#71717a" stroke-width="1.5" fill="none">
+          <path d="M42 76 q90 0 90 22"/><path d="M132 76 v22"/><path d="M222 76 q-90 0 -90 22"/>
+        </g>
+        <!-- One shared app -->
+        <rect x="10" y="102" width="245" height="30" rx="6" fill="url(#appg)"/>
+        <text x="132" y="122" text-anchor="middle" fill="#fff" font-family="Inter" font-size="11" font-weight="600">Shared App</text>
+        <!-- One shared db -->
+        <path d="M42 138 q90 0 90 12" stroke="#71717a" stroke-width="1.5" fill="none"/>
+        <path d="M132 138 v12" stroke="#71717a" stroke-width="1.5" fill="none"/>
+        <path d="M222 138 q-90 0 -90 12" stroke="#71717a" stroke-width="1.5" fill="none"/>
+        <rect x="60" y="156" width="145" height="30" rx="6" fill="#1e3a8a"/>
+        <text x="132" y="176" text-anchor="middle" fill="#fff" font-family="Inter" font-size="11" font-weight="600">Shared DB</text>
+        <text x="135" y="200" text-anchor="middle" fill="#2d2d31" font-family="Inter" font-size="10" font-style="italic">Lowest infra cost at scale</text>
+        <text x="135" y="216" text-anchor="middle" fill="#ef4444" font-family="Inter" font-size="10" font-style="italic">RLS risk if done badly</text>
+      </g>
+
+      <!-- PANEL 3: Hybrid (highlighted as default) -->
+      <g transform="translate(600,20)">
+        <rect x="-4" y="-2" width="284" height="270" rx="14" fill="#eef2ff" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <text x="135" y="14" text-anchor="middle" fill="#1e3a8a" font-family="Plus Jakarta Sans" font-weight="800" font-size="13">Hybrid (our default)</text>
+        <text x="135" y="30" text-anchor="middle" fill="#1e3a8a" font-family="Inter" font-size="10">Shared app, isolated DBs</text>
+        <g font-family="Inter" font-size="9" fill="#fff">
+          <rect x="10"  y="48" width="65" height="24" rx="4" fill="#0a0a0a"/><text x="42" y="64" text-anchor="middle">Co. A</text>
+          <rect x="100" y="48" width="65" height="24" rx="4" fill="#0a0a0a"/><text x="132" y="64" text-anchor="middle">Co. B</text>
+          <rect x="190" y="48" width="65" height="24" rx="4" fill="#0a0a0a"/><text x="222" y="64" text-anchor="middle">Co. C</text>
+        </g>
+        <g stroke="#1e3a8a" stroke-width="1.5" fill="none">
+          <path d="M42 76 q90 0 90 22"/><path d="M132 76 v22"/><path d="M222 76 q-90 0 -90 22"/>
+        </g>
+        <rect x="10" y="102" width="245" height="30" rx="6" fill="url(#appgL)"/>
+        <text x="132" y="122" text-anchor="middle" fill="#fff" font-family="Inter" font-size="11" font-weight="600">Shared App</text>
+        <!-- 3 isolated DBs -->
+        <g stroke="#1e3a8a" stroke-width="1.5" fill="none">
+          <path d="M40 132 v18"/><path d="M132 132 v18"/><path d="M224 132 v18"/>
+        </g>
+        <g font-family="Inter" font-size="9" fill="#fff">
+          <rect x="10"  y="156" width="65" height="30" rx="6" fill="#1e3a8a"/><text x="42" y="175" text-anchor="middle">DB A</text>
+          <rect x="100" y="156" width="65" height="30" rx="6" fill="#1e3a8a"/><text x="132" y="175" text-anchor="middle">DB B</text>
+          <rect x="190" y="156" width="65" height="30" rx="6" fill="#1e3a8a"/><text x="222" y="175" text-anchor="middle">DB C</text>
+        </g>
+        <text x="135" y="206" text-anchor="middle" fill="#1e3a8a" font-family="Inter" font-size="10" font-weight="700">Operating leverage + isolation</text>
+        <text x="135" y="222" text-anchor="middle" fill="#1e3a8a" font-family="Inter" font-size="10" font-style="italic">Best fit for most Indian SaaS</text>
+      </g>
+    </svg>
+    <figcaption class="text-center text-xs text-ink-500 mt-2">Three SaaS tenancy patterns. The hybrid &mdash; shared app, isolated databases &mdash; is what we default to for most builds.</figcaption>
+  </figure>
+
   <!-- BODY -->
   <article class="max-w-3xl mx-auto px-5 py-10 sm:py-14 prose">
+
+    <!-- TL;DR — direct-answer block for AEO + skimmers. -->
+    <aside class="tldr" aria-label="Key takeaways">
+      <div class="tldr-label">TL;DR</div>
+      <ul>
+        <li><strong>Multi-tenant SaaS</strong> means many customers share one logical deployment of your app, with logical data isolation by tenant ID.</li>
+        <li><strong>Ship multi-tenant</strong> when you expect 20+ customers in 18 months, no hard data-isolation demand, and broadly the same feature set per customer.</li>
+        <li><strong>Stick with single-tenant</strong> for small numbers of high-value customers, compliance-driven buyers, heavy per-customer customisation, or pre-PMF builds.</li>
+        <li><strong>The hybrid pattern</strong> &mdash; shared app, isolated databases per tenant &mdash; is our default. You get the operating leverage of multi-tenancy and the data isolation enterprise buyers want.</li>
+        <li><strong>Cost of doing multi-tenancy badly</strong>: row-level-security bugs leak data between customers, noisy-neighbour starves performance, retrofitting white-labelling later is a multi-week rewrite.</li>
+      </ul>
+    </aside>
 
     <p>
       Almost every founder we talk to assumes their SaaS needs to be multi-tenant
@@ -288,9 +443,42 @@
     </p>
 
     <p class="text-xs text-ink-500 mt-12 pt-6 border-t border-ink-100">
-      Published 4 Jun 2026 &middot; Read more on the <a href="/blog/" class="text-azure-700 underline">Infocomiva blog</a>.
+      Published 4 Jun 2026 by <strong class="text-ink-700">the Infocomiva engineering team</strong> &middot; Read more on the <a href="/blog/" class="text-azure-700 underline">Infocomiva blog</a>.
     </p>
   </article>
+
+  <!-- FAQ — mirrors the FAQPage JSON-LD in the <head>. -->
+  <section id="faq" class="faq py-12 sm:py-16">
+    <div class="max-w-3xl mx-auto px-5">
+      <h2 class="font-display text-2xl sm:text-3xl font-black text-ink-900 mb-6">Frequently asked questions</h2>
+
+      <details>
+        <summary>What is multi-tenant SaaS architecture?</summary>
+        <p>Multi-tenant SaaS is a software architecture where many customer organisations share a single logical deployment of an application. Each customer sees only their own data, branding and settings, but the underlying code, database and infrastructure are shared across tenants. Examples include Notion, Slack and Salesforce.</p>
+      </details>
+
+      <details>
+        <summary>When should I build single-tenant instead of multi-tenant SaaS?</summary>
+        <p>Single-tenant is the right choice when your customer count is under 20 and likely to stay there, when customers demand audit-able data residency (financial services, healthcare), when customisation is heavy per customer, or when you&rsquo;re still validating product-market fit. The infrastructure cost of single-tenant is trivial at low customer counts, and isolation becomes a sales feature.</p>
+      </details>
+
+      <details>
+        <summary>What is the hybrid multi-tenant pattern?</summary>
+        <p>The hybrid pattern uses a single shared application layer with isolated databases per tenant. This gives you the operating leverage of multi-tenancy &mdash; one codebase, one deploy, one bug fix &mdash; while keeping the per-customer data isolation enterprise buyers want. It&rsquo;s Infocomiva&rsquo;s default for most Indian SaaS builds.</p>
+      </details>
+
+      <details>
+        <summary>What are the hidden costs of multi-tenant SaaS?</summary>
+        <p>Hidden costs include: row-level security on every database query (one missed filter leaks data between customers), background jobs that need to respect tenancy, the noisy-neighbour problem where one customer can starve others&rsquo; resources, per-tenant branding and billing artifacts, and schema migrations that affect every customer simultaneously instead of one at a time.</p>
+      </details>
+
+      <details>
+        <summary>How long does it take to build a multi-tenant SaaS in India?</summary>
+        <p>A production-grade multi-tenant SaaS typically takes 3&ndash;6 months end-to-end with a small dedicated team, depending on scope. The architecture decision should be made on day one &mdash; retrofitting multi-tenancy into a single-tenant codebase is a multi-week rewrite. Infocomiva ships a custom prototype within 24 hours of the <a href="/#contact" class="text-azure-700 underline">discovery call</a> so the architecture choice is locked before code is written.</p>
+      </details>
+
+    </div>
+  </section>
 
   <section class="bg-ink-50 border-t border-ink-100 py-12 sm:py-16">
     <div class="max-w-4xl mx-auto px-5 text-center">

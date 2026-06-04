@@ -61,6 +61,49 @@
     ]
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Infocomiva Technologies?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Infocomiva Technologies is a builder-operator software agency headquartered in India. We design, build and operate production-grade software end-to-end — custom software, web and mobile apps, ERP and CRM platforms, AI products and digital marketing — for Indian businesses. Same team through discovery, launch and day-500 support, no sub-contracting, no handoff after go-live." }
+      },
+      {
+        "@type": "Question",
+        "name": "What does Infocomiva mean by 'builder-operator'?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A consultancy gives you a deck; a staff-aug shop gives you developers to manage; a builder-operator gives you a shipped product and stays on the call when something breaks on day 500. We use the same engineering stack we sell — observability, CI gates, type-checked code, automated backups — and stay accountable for the operating outcome, not just the build." }
+      },
+      {
+        "@type": "Question",
+        "name": "What services does Infocomiva offer?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Eight pillars under one accountable team: custom software, web and e-commerce, mobile apps, ERP/CRM platforms, AI and emerging tech, digital marketing, brand and creative, and cloud/DevOps. Each pillar has senior leads with shipped production work." }
+      },
+      {
+        "@type": "Question",
+        "name": "What does Infocomiva NOT do?",
+        "acceptedAnswer": { "@type": "Answer", "text": "We refer specialists for: SOC2/PCI/HIPAA audit certification, embedded firmware or chip-level work, hyper-specialised SEO data-science, and pure staff-augmentation / body-shop engagements. Honesty about limits is the trust signal generalist agencies can't fake." }
+      },
+      {
+        "@type": "Question",
+        "name": "What do clients own at the end of an Infocomiva engagement?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Everything. Code in the client's GitHub from commit #1, domain at the client's registrar, cloud bills in the client's name, architecture/runbook/env docs handed off at every milestone, and a one-week offboarding handover written into the MSA. No vendor lock-in." }
+      },
+      {
+        "@type": "Question",
+        "name": "Where is Infocomiva based?",
+        "acceptedAnswer": { "@type": "Answer", "text": "India. We work primarily with Indian businesses — SaaS founders, family-owned industrial operators, logistics companies, fintech challengers, education institutions, hospitality chains and non-profits — and we work in USD for clients abroad." }
+      },
+      {
+        "@type": "Question",
+        "name": "How does the 24-hour custom prototype work?",
+        "acceptedAnswer": { "@type": "Answer", "text": "After the discovery call, we ship a click-through prototype of the proposed product within 24 hours. The prospect can sanity-check direction, scope and fit before signing — much cheaper than catching a bad assumption in production code." }
+      }
+    ]
+  }
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -105,6 +148,13 @@
     .prose strong { color: #0a0a0a; font-weight: 700; }
     .prose a { color: #1e3a8a; text-decoration: underline; text-underline-offset: 3px; }
     .prose a:hover { color: #2563eb; }
+    .faq { background: #f7f7f8; border-top: 1px solid #ebebed; }
+    .faq details { border-bottom: 1px solid #ebebed; padding: 1rem 0; }
+    .faq details:last-of-type { border-bottom: 0; }
+    .faq summary { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.0625rem; color: #0a0a0a; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .faq summary::after { content: '+'; font-size: 1.5rem; color: #2563eb; font-weight: 300; transition: transform 0.2s; }
+    .faq details[open] summary::after { transform: rotate(45deg); }
+    .faq details p { color: #2d2d31; line-height: 1.7; margin-top: 0.75rem; }
   </style>
 </head>
 <body class="bg-white text-ink-900 selection:bg-azure-500/20 selection:text-ink-900">
@@ -267,6 +317,54 @@
       we consult. Start there if you want to read for ten minutes before booking a call.
     </p>
   </article>
+
+  <!-- ============================================================
+       FAQ — mirrors the FAQPage JSON-LD in the head. AEO crawlers
+       (Perplexity, Google AIO, ChatGPT search) extract these as
+       direct answers; human visitors get the same answers without
+       scrolling through the long-form body.
+       ============================================================ -->
+  <section id="faq" class="faq py-12 sm:py-16">
+    <div class="max-w-3xl mx-auto px-5">
+      <h2 class="font-display text-2xl sm:text-3xl font-black text-ink-900 mb-6">Frequently asked questions</h2>
+
+      <details>
+        <summary>What is Infocomiva Technologies?</summary>
+        <p>Infocomiva Technologies is a builder-operator software agency headquartered in India. We design, build and operate production-grade software end-to-end &mdash; custom software, web and mobile apps, ERP and CRM platforms, AI products and digital marketing &mdash; for Indian businesses. Same team through discovery, launch and day-500 support, no sub-contracting, no handoff after go-live.</p>
+      </details>
+
+      <details>
+        <summary>What does Infocomiva mean by &ldquo;builder-operator&rdquo;?</summary>
+        <p>A consultancy gives you a deck; a staff-aug shop gives you developers to manage; a builder-operator gives you a shipped product and stays on the call when something breaks on day 500. We use the same engineering stack we sell &mdash; observability, CI gates, type-checked code, automated backups &mdash; and stay accountable for the operating outcome, not just the build.</p>
+      </details>
+
+      <details>
+        <summary>What services does Infocomiva offer?</summary>
+        <p>Eight pillars under one accountable team: custom software, web and e-commerce, mobile apps, ERP/CRM platforms, AI and emerging tech, digital marketing, brand and creative, and cloud/DevOps. Each pillar has senior leads with shipped production work.</p>
+      </details>
+
+      <details>
+        <summary>What does Infocomiva <em>not</em> do?</summary>
+        <p>We refer specialists for: SOC2 / PCI / HIPAA audit certification, embedded firmware or chip-level work, hyper-specialised SEO data-science, and pure staff-augmentation / body-shop engagements. Honesty about limits is the trust signal generalist agencies can&rsquo;t fake.</p>
+      </details>
+
+      <details>
+        <summary>What do clients own at the end of an Infocomiva engagement?</summary>
+        <p>Everything. Code in the client&rsquo;s GitHub from commit #1, domain at the client&rsquo;s registrar, cloud bills in the client&rsquo;s name, architecture/runbook/env docs handed off at every milestone, and a one-week offboarding handover written into the MSA. No vendor lock-in.</p>
+      </details>
+
+      <details>
+        <summary>Where is Infocomiva based?</summary>
+        <p>India. We work primarily with Indian businesses &mdash; SaaS founders, family-owned industrial operators, logistics companies, fintech challengers, education institutions, hospitality chains and non-profits &mdash; and we work in USD for clients abroad.</p>
+      </details>
+
+      <details>
+        <summary>How does the 24-hour custom prototype work?</summary>
+        <p>After the discovery call, we ship a click-through prototype of the proposed product within 24 hours. The prospect can sanity-check direction, scope and fit before signing &mdash; much cheaper than catching a bad assumption in production code. <a href="/#contact" class="text-azure-700 underline">Book a call</a> to get yours.</p>
+      </details>
+
+    </div>
+  </section>
 
   <!-- ============================================================
        CTA STRIP

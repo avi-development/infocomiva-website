@@ -33,7 +33,12 @@
   <meta name="twitter:description" content="Six questions to ask before signing with any Indian software agency — scope, ownership, pricing, lock-in.">
   <meta name="twitter:image" content="https://infocomiva.live/assets/og-image.jpg">
 
-  <!-- JSON-LD: BlogPosting + BreadcrumbList -->
+  <!-- JSON-LD: BlogPosting + HowTo + FAQPage + BreadcrumbList.
+       Multiple schema blocks on one URL are fine and ranked separately.
+       HowTo here matches the 6-step structure of the post body; AI
+       answer engines (Google AIO, Perplexity, ChatGPT search) will
+       extract individual steps as direct answers to "how to choose..."
+       queries. FAQPage gives them the rapid-fire Q&A surface. -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -61,6 +66,56 @@
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://infocomiva.live/" },
       { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://infocomiva.live/blog/" },
       { "@type": "ListItem", "position": 3, "name": "How to choose a software development partner in India", "item": "https://infocomiva.live/blog/how-to-choose-software-partner-india/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to choose a software development partner in India",
+    "description": "A six-question checklist to evaluate any software development agency in India before signing.",
+    "totalTime": "PT15M",
+    "step": [
+      { "@type": "HowToStep", "position": 1, "name": "Ask who actually writes the code", "text": "Get the names and LinkedIn profiles of the engineers who will touch your codebase. Insist they sit on the discovery call before you sign anything. Red flag: 'team assigned post-signing'." },
+      { "@type": "HowToStep", "position": 2, "name": "Confirm ownership of code, domain, cloud and docs", "text": "Code in your GitHub from commit #1, domain at your registrar, cloud bills on your account, documentation handed off at every milestone, and offboarding defined as a one-week handover." },
+      { "@type": "HowToStep", "position": 3, "name": "Verify fixed price is fixed before discovery ends", "text": "The price must be locked in the scope doc, pivots inside the budget absorbed by the agency, and the under-quote-eat-the-difference clause written into the MSA. Hourly billing dressed up as fixed price is a trap." },
+      { "@type": "HowToStep", "position": 4, "name": "Check the day-500 support model", "text": "The same team that designs your product should maintain it after launch. Optional retainer at a published hourly rate, not a quote-per-ticket black box." },
+      { "@type": "HowToStep", "position": 5, "name": "Inspect the agency's own production stack", "text": "Sentry/Datadog error tracking, real uptime monitoring, type-checked CI gates, automated backups. If they don't run it on their own site, they will not install it on yours." },
+      { "@type": "HowToStep", "position": 6, "name": "Ask what they refuse to take on", "text": "An honest agency lists what they will not take — embedded firmware, SOC2 audits, hyper-specialised analytics — and names a specialist they would refer you to instead." }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does custom software development cost in India in 2026?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Indian software agency rates in 2026 typically range from INR 50,000 for a marketing site to INR 30L+ for a full multi-tenant SaaS build. Fixed-price agencies lock the number before discovery ends; hourly shops bill INR 1,500–4,000 per hour. The cheapest quote on the market is rarely the cheapest finished project — under-quoting agencies recover margin through change orders." }
+      },
+      {
+        "@type": "Question",
+        "name": "Should I hire an Indian software agency or freelancers?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Freelancers win on cost for narrow, well-defined work. Agencies win on accountability — one team, one contract, one throat to choke when the build slips. For anything beyond a single landing page or a one-shot script, a builder-operator agency that takes outcome ownership beats stitching freelancers together." }
+      },
+      {
+        "@type": "Question",
+        "name": "What's the difference between a builder-operator agency and a staff-augmentation shop?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A staff-aug shop sells you developers to manage. You're the project manager. A builder-operator agency takes outcome ownership — they scope, build, ship and support, and you measure them on the delivered product, not on hours billed." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I avoid vendor lock-in with a software agency?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Insist on ownership at the artifact level from day one: code in your GitHub org, domain at your registrar, cloud bills in your name, documentation at every milestone, and a written one-week offboarding clause in the MSA. If the agency dodges any of these, the lock-in is by design." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a custom prototype and how does Infocomiva ship one in 24 hours?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A custom prototype is a click-through Figma or HTML mockup of the proposed product, built from the brief on the discovery call. Infocomiva ships one within 24 hours of the call so the prospect can sanity-check direction before signing — much cheaper than catching a bad assumption in production code." }
+      }
     ]
   }
   </script>
@@ -93,6 +148,26 @@
     .prose a { color: #1e3a8a; text-decoration: underline; text-underline-offset: 3px; }
     .prose a:hover { color: #2563eb; }
     .prose blockquote { border-left: 3px solid #2563eb; padding-left: 1rem; color: #2d2d31; font-style: italic; margin: 1.5rem 0; }
+    /* TL;DR / key-takeaways block. AEO crawlers (Perplexity, Google
+       AIO, ChatGPT search) treat short bullet lists near the top of
+       an article as candidates for direct-answer extraction. Visual
+       differentiation (azure tint, prominent label) also helps human
+       skimmers who don't read the long form. */
+    .tldr { background: #eef2ff; border: 1px solid #dbe4ff; border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1rem 0 2rem; }
+    .tldr-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 800; color: #1e3a8a; margin-bottom: 0.5rem; }
+    .tldr ul { padding-left: 1.25rem; margin: 0; font-size: 0.95rem; line-height: 1.6; }
+    .tldr li { margin-bottom: 0.4rem; list-style: disc; color: #0a0a0a; }
+    .tldr li::marker { color: #2563eb; }
+    /* FAQ accordion. <details>/<summary> is the lightest possible
+       implementation — no JS, keyboard accessible by default, and
+       AEO/SEO bots read the closed content. */
+    .faq { background: #f7f7f8; border-top: 1px solid #ebebed; }
+    .faq details { border-bottom: 1px solid #ebebed; padding: 1rem 0; }
+    .faq details:last-of-type { border-bottom: 0; }
+    .faq summary { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.0625rem; color: #0a0a0a; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .faq summary::after { content: '+'; font-size: 1.5rem; color: #2563eb; font-weight: 300; transition: transform 0.2s; }
+    .faq details[open] summary::after { transform: rotate(45deg); }
+    .faq details p { color: #2d2d31; line-height: 1.7; margin-top: 0.75rem; }
   </style>
 </head>
 <body class="bg-white text-ink-900 selection:bg-azure-500/20 selection:text-ink-900">
@@ -158,8 +233,72 @@
     </div>
   </header>
 
+  <!-- HERO ILLUSTRATION
+       Inline SVG of a 6-row evaluation checklist — the visual analogue
+       of the post's 6-question structure. Pure SVG, no licensing risk,
+       scales infinitely, alt + role for screen readers. -->
+  <figure class="max-w-3xl mx-auto px-5 mt-10 mb-2" role="img" aria-label="A checklist illustration with six evaluation rows, three marked with green checkmarks and three with red flags — visual summary of the six questions covered in this post.">
+    <svg viewBox="0 0 800 320" class="w-full h-auto rounded-2xl bg-ink-50 border border-ink-100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="cardg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#f7f7f8"/>
+        </linearGradient>
+      </defs>
+      <!-- Clipboard backdrop -->
+      <rect x="180" y="32" width="440" height="256" rx="16" fill="url(#cardg)" stroke="#dbe4ff" stroke-width="1.5"/>
+      <!-- Clipboard tab top -->
+      <rect x="350" y="20" width="100" height="24" rx="6" fill="#1e3a8a"/>
+      <text x="400" y="37" text-anchor="middle" fill="#fff" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="11" letter-spacing="2">SHORTLIST</text>
+      <!-- 6 evaluation rows; greens then reds for visual rhythm -->
+      <g font-family="Inter, sans-serif" font-size="13" fill="#2d2d31">
+        <!-- Row 1: pass -->
+        <circle cx="215" cy="80" r="10" fill="#10b981"/>
+        <path d="M210 80 l4 4 l7 -7" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="240" y="74" width="340" height="12" rx="3" fill="#dbe4ff"/>
+        <!-- Row 2: pass -->
+        <circle cx="215" cy="118" r="10" fill="#10b981"/>
+        <path d="M210 118 l4 4 l7 -7" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="240" y="112" width="290" height="12" rx="3" fill="#dbe4ff"/>
+        <!-- Row 3: pass -->
+        <circle cx="215" cy="156" r="10" fill="#10b981"/>
+        <path d="M210 156 l4 4 l7 -7" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="240" y="150" width="320" height="12" rx="3" fill="#dbe4ff"/>
+        <!-- Row 4: fail -->
+        <circle cx="215" cy="194" r="10" fill="#ef4444"/>
+        <path d="M211 190 l8 8 m0 -8 l-8 8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+        <rect x="240" y="188" width="260" height="12" rx="3" fill="#fde2e2"/>
+        <!-- Row 5: fail -->
+        <circle cx="215" cy="232" r="10" fill="#ef4444"/>
+        <path d="M211 228 l8 8 m0 -8 l-8 8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+        <rect x="240" y="226" width="310" height="12" rx="3" fill="#fde2e2"/>
+        <!-- Row 6: pass -->
+        <circle cx="215" cy="270" r="10" fill="#10b981"/>
+        <path d="M210 270 l4 4 l7 -7" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="240" y="264" width="280" height="12" rx="3" fill="#dbe4ff"/>
+      </g>
+      <!-- Decorative gradient blob -->
+      <circle cx="80" cy="280" r="60" fill="#2563eb" opacity="0.08"/>
+      <circle cx="720" cy="60" r="50" fill="#1e3a8a" opacity="0.08"/>
+    </svg>
+    <figcaption class="text-center text-xs text-ink-500 mt-2">Six questions, two outcomes: a partner you can sign with, or a vendor you should walk away from.</figcaption>
+  </figure>
+
   <!-- BODY -->
   <article class="max-w-3xl mx-auto px-5 py-10 sm:py-14 prose">
+
+    <!-- TL;DR — fast-path summary for AI answer engines + human skimmers. -->
+    <aside class="tldr" aria-label="Key takeaways">
+      <div class="tldr-label">TL;DR</div>
+      <ul>
+        <li><strong>Ask who actually writes the code</strong> — and insist they're on the discovery call before you sign.</li>
+        <li><strong>Confirm you own the code, domain, cloud and docs from day one</strong>, with a one-week offboarding clause in the MSA.</li>
+        <li><strong>Fixed price must be locked before discovery ends</strong>, not after. Pivots inside the budget are the agency's risk to absorb.</li>
+        <li><strong>Same team after launch</strong> — not a handoff to a support desk that's never seen your code.</li>
+        <li><strong>Inspect the agency's own production stack</strong> — if they don't run Sentry / uptime / CI on their own site, they won't install it on yours.</li>
+        <li><strong>Ask what they refuse to take</strong>. An honest answer is the strongest credibility signal on a shortlist call.</li>
+      </ul>
+    </aside>
 
     <p>
       India has more software development agencies in 2026 than it has districts,
@@ -319,9 +458,44 @@
     </p>
 
     <p class="text-xs text-ink-500 mt-12 pt-6 border-t border-ink-100">
-      Published 4 Jun 2026 &middot; Read more on the <a href="/blog/" class="text-azure-700 underline">Infocomiva blog</a>.
+      Published 4 Jun 2026 by <strong class="text-ink-700">the Infocomiva engineering team</strong> &middot; Read more on the <a href="/blog/" class="text-azure-700 underline">Infocomiva blog</a>.
     </p>
   </article>
+
+  <!-- FAQ — mirrors the FAQPage JSON-LD in the <head>. Mirror is
+       deliberate: search engines read the JSON, users read the HTML,
+       AI answer engines cross-check both for confidence. -->
+  <section id="faq" class="faq py-12 sm:py-16">
+    <div class="max-w-3xl mx-auto px-5">
+      <h2 class="font-display text-2xl sm:text-3xl font-black text-ink-900 mb-6">Frequently asked questions</h2>
+
+      <details>
+        <summary>How much does custom software development cost in India in 2026?</summary>
+        <p>Indian software agency rates in 2026 typically range from ₹50,000 for a marketing site to ₹30L+ for a full multi-tenant SaaS build. Fixed-price agencies lock the number before discovery ends; hourly shops bill ₹1,500&ndash;4,000 per hour. The cheapest quote on the market is rarely the cheapest finished project &mdash; under-quoting agencies recover margin through change orders.</p>
+      </details>
+
+      <details>
+        <summary>Should I hire an Indian software agency or freelancers?</summary>
+        <p>Freelancers win on cost for narrow, well-defined work. Agencies win on accountability &mdash; one team, one contract, one throat to choke when the build slips. For anything beyond a single landing page or a one-shot script, a builder-operator agency that takes outcome ownership beats stitching freelancers together.</p>
+      </details>
+
+      <details>
+        <summary>What&rsquo;s the difference between a builder-operator agency and a staff-augmentation shop?</summary>
+        <p>A staff-aug shop sells you developers to manage &mdash; you&rsquo;re the project manager. A builder-operator agency takes outcome ownership: they scope, build, ship and support, and you measure them on the delivered product, not on hours billed.</p>
+      </details>
+
+      <details>
+        <summary>How do I avoid vendor lock-in with a software agency?</summary>
+        <p>Insist on ownership at the artifact level from day one: code in your GitHub org, domain at your registrar, cloud bills in your name, documentation handed off at every milestone, and a written one-week offboarding clause in the MSA. If the agency dodges any of these, the lock-in is by design.</p>
+      </details>
+
+      <details>
+        <summary>What is a custom prototype and how does Infocomiva ship one in 24 hours?</summary>
+        <p>A custom prototype is a click-through Figma or HTML mockup of the proposed product, built from the brief on the discovery call. Infocomiva ships one within 24 hours of the call so the prospect can sanity-check direction before signing &mdash; much cheaper than catching a bad assumption in production code. <a href="/#contact" class="text-azure-700 underline">Book a call</a> to get yours.</p>
+      </details>
+
+    </div>
+  </section>
 
   <!-- CTA -->
   <section class="bg-ink-50 border-t border-ink-100 py-12 sm:py-16">

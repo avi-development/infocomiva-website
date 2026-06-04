@@ -7,3 +7,24 @@ User-agent: *
 Allow: /
 
 Sitemap: https://infocomiva.live/sitemap.xml
+
+# LLM / answer-engine crawlers welcome.
+# /llms.txt is the structured site summary for LLMs (Anthropic /
+# Perplexity / Cohere / Google AI Overviews convention).
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
