@@ -377,7 +377,7 @@
           <span class="absolute inline-flex w-full h-full rounded-full bg-azure-400 opacity-75 animate-ping"></span>
           <span class="relative inline-flex w-2 h-2 rounded-full bg-azure-400"></span>
         </span>
-        <span>Custom prototype in <span class="text-azure-300">24 hours</span></span>
+        <span>Sign Up Now and Get Custom Prototype in <span class="text-azure-300">24 Hours</span></span>
         <span class="text-azure-300 group-hover:translate-x-0.5 transition">→</span>
       </div>
     </a>
@@ -397,7 +397,7 @@
           <a href="/#contact" class="text-ink-700 hover:text-ink-900 transition">Contact</a>
         </nav>
         <a href="/#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-4 py-2 rounded-lg text-sm font-semibold text-white">
-          Book a call
+          Sign Up
         </a>
       </div>
     </header>
@@ -566,7 +566,7 @@
         prototype, written scope, and a fixed price.
       </p>
       <a href="/#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-6 py-3 rounded-lg text-sm font-semibold text-white">
-        Get your prototype in 24h →
+        Get Your Prototype In 24h →
       </a>
     </div>
   </section>
@@ -577,7 +577,8 @@
   <footer class="bg-ink-900 text-white/50 border-t border-white/10">
     <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
       <div class="flex items-center gap-3">
-        <span class="inline-flex items-center justify-center h-8 w-8 rounded-md bg-white/10 border border-white/20 text-[10px] uppercase tracking-wider text-white font-bold">IT</span>
+        <img id="eagle-footer" alt="Infocomiva" class="h-8 w-8 object-contain hidden" width="32" height="32">
+        <span id="eagle-footer-fallback" class="inline-flex items-center justify-center h-8 w-8 rounded-md bg-white/10 border border-white/20 text-[10px] uppercase tracking-wider text-white font-bold">IT</span>
         <span>&copy; <span id="yr"></span> Infocomiva Technologies</span>
       </div>
       <div class="flex items-center gap-5">
@@ -613,10 +614,20 @@
       if (!url || typeof url !== "string") throw new Error("eagle URL missing");
       const img = document.getElementById("eagle-logo");
       const fb  = document.getElementById("eagle-fallback");
+      const footerImg = document.getElementById("eagle-footer");
+      const footerFb  = document.getElementById("eagle-footer-fallback");
       const probe = new Image();
       probe.onload = () => { img.src = url; img.classList.remove("hidden"); if (fb) fb.remove(); (function(h){var ls=document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"], link[rel="shortcut icon"]');ls.forEach(function(l){l.parentNode.removeChild(l);});var cb=h+(h.indexOf('?')<0?'?':'&')+'cb='+Date.now();['icon','apple-touch-icon','shortcut icon'].forEach(function(rel){var lk=document.createElement('link');lk.rel=rel;if(rel==='icon')lk.type='image/png';lk.href=cb;document.head.appendChild(lk);});})(url); };
       probe.onerror = () => {};
       probe.src = url;
+      // Footer eagle mirror — uses its own probe so the header swap
+      // does not race the footer decode.
+      if (footerImg) {
+        const fProbe = new Image();
+        fProbe.onload = () => { footerImg.src = url; footerImg.classList.remove("hidden"); if (footerFb) footerFb.remove(); };
+        fProbe.onerror = () => {};
+        fProbe.src = url;
+      }
     } catch (err) { console.warn("[infocomiva/estimator] eagle loader failed:", err); }
   </script>
 
@@ -795,7 +806,7 @@
         // wires to the chat panel — same panel the FAB opens.
         const cta = v.isUs ? `
           <button type="button" data-chat="open" class="mt-5 w-full bg-azure-500 hover:bg-azure-600 transition px-4 py-3 rounded-lg text-sm font-bold text-white inline-flex items-center justify-center gap-2">
-            Get your prototype in 24h <span>→</span>
+            Get Your Prototype In 24h <span>→</span>
           </button>
         ` : '';
         return `
