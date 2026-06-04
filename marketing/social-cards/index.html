@@ -144,10 +144,11 @@
       font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
       font-size: 92px; line-height: 1.0; letter-spacing: -0.025em;
     }
-    .card.cover .title .em {
-      background: linear-gradient(135deg, var(--azure-400) 0%, var(--azure-300) 100%);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-    }
+    /* Solid azure highlight — was a gradient-clip-text effect, but
+       html2canvas can't apply the text mask and renders it as a
+       solid blue rectangle in the captured PNG. Flat colour reads
+       just as well in a thumbnail and survives capture cleanly. */
+    .card.cover .title .em { color: var(--azure-300); }
     .card.cover .sub {
       position: absolute; top: 700px; left: 64px; right: 64px; z-index: 3;
       font-size: 26px; line-height: 1.45; color: rgba(255,255,255,0.82);
@@ -190,10 +191,8 @@
       font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
       font-size: 84px; line-height: 1.0; letter-spacing: -0.025em;
     }
-    .card.contact .title .em {
-      background: linear-gradient(135deg, var(--azure-400) 0%, var(--azure-300) 100%);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-    }
+    /* Same fix as cover — solid azure to survive html2canvas capture. */
+    .card.contact .title .em { color: var(--azure-300); }
     .card.contact .lines {
       position: absolute; top: 430px; left: 64px; right: 64px; z-index: 3;
       font-size: 32px; line-height: 1.55; font-weight: 700;
@@ -247,7 +246,7 @@
       </div>
       <div class="sub">
         Builder-operator software agency for Indian businesses.<br>
-        Software · Web · Mobile · ERP · AI · Marketing — under one accountable team.
+        Software · Web · Mobile · ERP · AI · Brand · Cloud — under one accountable team.
       </div>
 
       <div class="cta">Get your prototype in 24h <span class="arrow">→</span></div>
