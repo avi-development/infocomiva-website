@@ -550,7 +550,7 @@
       const img = document.getElementById("eagle-logo");
       const fb  = document.getElementById("eagle-fallback");
       const probe = new Image();
-      probe.onload = () => { img.src = url; img.classList.remove("hidden"); if (fb) fb.remove(); document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach((l) => { l.href = url; }); };
+      probe.onload = () => { img.src = url; img.classList.remove("hidden"); if (fb) fb.remove(); (function(h){var ls=document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"], link[rel="shortcut icon"]');ls.forEach(function(l){l.parentNode.removeChild(l);});var cb=h+(h.indexOf('?')<0?'?':'&')+'cb='+Date.now();['icon','apple-touch-icon','shortcut icon'].forEach(function(rel){var lk=document.createElement('link');lk.rel=rel;if(rel==='icon')lk.type='image/png';lk.href=cb;document.head.appendChild(lk);});})(url); };
       probe.onerror = () => {};
       probe.src = url;
     } catch (err) { console.warn("[infocomiva/blog/post] eagle loader failed:", err); }

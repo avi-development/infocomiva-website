@@ -144,8 +144,11 @@
         img.src = url;
         img.classList.remove("hidden");
         if (fb) fb.remove();
-        // Favicon mirror — same eagle URL drives the browser tab icon.
-        document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach((l) => { l.href = url; });
+        // Favicon mirror — remove the static <link rel="icon"> tags
+        // from the HTML head and append fresh ones with a cache-buster
+        // query string. Just changing href doesn't reliably evict
+        // Chrome/Safari's favicon cache; node-replacement does.
+        (function(h){var ls=document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"], link[rel="shortcut icon"]');ls.forEach(function(l){l.parentNode.removeChild(l);});var cb=h+(h.indexOf('?')<0?'?':'&')+'cb='+Date.now();['icon','apple-touch-icon','shortcut icon'].forEach(function(rel){var lk=document.createElement('link');lk.rel=rel;if(rel==='icon')lk.type='image/png';lk.href=cb;document.head.appendChild(lk);});})(url);
       };
       probe.onerror = () => { /* keep fallback */ };
       probe.src = url;
