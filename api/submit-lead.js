@@ -84,33 +84,40 @@ export default async function handler(req, res) {
   }
 
   const email        = clean(payload.e, 200);
-  const businessName = clean(body.businessName, 200);
-  const phone        = clean(body.phone, 40);
-  const businessType = clean(body.businessType, 200);
-  const projectDesc  = clean(body.projectDesc, 2000);
+  const businessName = clean(body.businessName, 120); // rules cap: name.size() <= 120
+  const phone        = clean(body.phone, 40);          // rules cap: phone.size() <= 40
+  const businessType = clean(body.businessType, 60);   // rules cap: fleetSize.size() <= 60
+  const projectDesc  = clean(body.projectDesc, 2000);  // rules cap: message.size() <= 2000
   const escalate     = !!body.escalate;
-  const sourcePath   = clean(body.sourcePath || '/estimator/', 300);
 
   if (!businessName || !phone) {
     return res.status(400).json({ error: 'Business name and phone are required.' });
   }
 
-  // Mirror the schema the home-page form already writes so Super Admin
-  // renders these identically. fleetSize column reused for businessType
-  // since chats don't ask for fleet size.
+  // Firestore rules for /leads use hasOnly([...]) — only these nine
+  // fields are accepted, no extras. So escalation + verification
+  // signals get encoded into the `source` string rather than as
+  // separate fields. Super Admin can grep "[esc]" / "[chat]" in the
+  // source chip to identify hot leads.
+  //
+  //   "infocomiva.live/estimator [chat]"     — verified chat lead
+  //   "infocomiva.live/estimator [chat][esc]" — wants to talk to founder
+  //
+  // Length stays under the rules' 60-char cap (max here is 37 chars).
+  const sourceStr =
+    'infocomiva.live/estimator [chat]' + (escalate ? '[esc]' : '');
+
   const document = {
     fields: {
-      name:            f(businessName),
-      company:         f(businessName),
-      phone:           f(phone),
-      email:           f(email),
-      message:         f(projectDesc),
-      fleetSize:       f(businessType),
-      escalateToOwner: f(escalate),
-      emailVerified:   f(true),
-      source:          f('infocomiva.live' + sourcePath + ' [chat-otp]'),
-      status:          f('new'),
-      createdAt:       f(new Date()),
+      name:      f(businessName),
+      email:     f(email),
+      company:   f(businessName),     // mirror name into company (chat treats them as one input)
+      phone:     f(phone),
+      fleetSize: f(businessType),     // re-purpose "fleet" column for "business type"
+      message:   f(projectDesc),
+      source:    f(sourceStr),
+      status:    f('new'),
+      createdAt: f(new Date()),
     },
   };
 
