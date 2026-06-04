@@ -1673,6 +1673,17 @@
       submitBtn.textContent = 'Sending…';
       try {
         await addDoc(collection(db, 'leads'), data);
+        // Fire-and-forget push notification to Super Admin via the
+        // serverless /api/notify-lead endpoint. We don't await — the
+        // user shouldn't see a delayed redirect because of a slow
+        // push. Doesn't block thank-you navigation.
+        fetch('/api/notify-lead', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            name: data.name, phone: data.phone, message: data.message, source: data.source,
+          }),
+        }).catch(() => { /* best-effort */ });
         form.reset();
         // Redirect to thank-you so analytics tracks the conversion as a
         // distinct URL hit (matches the traxn.in pattern).

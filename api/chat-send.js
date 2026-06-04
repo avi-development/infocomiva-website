@@ -126,5 +126,19 @@ export default async function handler(req, res) {
     body: JSON.stringify(threadPatchDoc),
   }).catch((err) => console.warn('[chat-send] thread bump failed (non-fatal):', err));
 
+  // Push notification to Super Admin — best-effort, never blocks.
+  (async () => {
+    try {
+      const { notifySuperAdmins } = await import('./_fcm.js');
+      await notifySuperAdmins(
+        '💬 New chat message',
+        text.slice(0, 140),
+        { url: 'https://app.traxn.in/super-admin', tag: 'chat-' + threadId },
+      );
+    } catch (err) {
+      console.warn('[chat-send] FCM notify failed (non-fatal):', err);
+    }
+  })();
+
   return res.status(200).json({ ok: true, sentAt: now.toISOString() });
 }

@@ -141,6 +141,20 @@ export default async function handler(req, res) {
         error: 'Could not save your details (' + String(detail).slice(0, 220) + '). Please WhatsApp +91 89188 97474.',
       });
     }
+    // Push notification — best-effort, fire-and-forget.
+    (async () => {
+      try {
+        const { notifySuperAdmins } = await import('./_fcm.js');
+        await notifySuperAdmins(
+          escalate ? '🔥 New HOT lead (chat-otp)' : '🆕 New lead (chat-otp)',
+          `${businessName} (${phone}) — ${(projectDesc || businessType || 'wants to talk').slice(0, 100)}`,
+          { url: 'https://app.traxn.in/super-admin', tag: 'new-lead' },
+        );
+      } catch (err) {
+        console.warn('[submit-lead] FCM notify failed (non-fatal):', err);
+      }
+    })();
+
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error('[submit-lead] write threw:', err);

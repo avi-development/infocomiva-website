@@ -91,52 +91,117 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing required fields.' });
   }
 
-  const threadId = crypto.randomUUID();
+  // Deterministic threadId = HMAC(email + OTP_SECRET).slice(0, 32).
+  // Same email → same threadId, every time, on every device. So when
+  // the visitor verifies again or returns later, they land on the SAME
+  // conversation thread instead of opening a fresh one each visit.
+  // Using HMAC (not a plain hash) means email-to-threadId can't be
+  // brute-forced without the server-side OTP_SECRET.
+  const threadId = crypto
+    .createHmac('sha256', SECRET)
+    .update('thread|' + email)
+    .digest('hex')
+    .slice(0, 32);
+  const threadDocUrl = `${FS_BASE}/chatThreads/${threadId}?key=${PUBLIC_API_KEY}`;
   const now = new Date();
 
-  const document = {
-    fields: {
-      email:          f(email),
-      name:           f(businessName),
-      company:        f(businessName),
-      phone:          f(phone),
-      businessType:   f(businessType || '(not provided)'),
-      projectDesc:    f(projectDesc || '(not provided)'),
-      source:         f('infocomiva.live' + sourcePath + ' [chat]'),
-      status:         f('open'),
-      createdAt:      f(now),
-      lastMessageAt:  f(now),
-      unreadByAdmin:  f(true),
-    },
-  };
-
-  // PATCH creates the doc at chatThreads/{threadId} since UUID
-  // guarantees no collision. updateMask=nothing means PATCH writes all
-  // fields on creation; that's the behaviour we want.
-  const url = `${FS_BASE}/chatThreads/${threadId}?key=${PUBLIC_API_KEY}`;
+  // Check if a thread for this email already exists.
+  let existing = null;
   try {
-    const fsRes = await fetch(url, {
-      method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(document),
-    });
-    if (!fsRes.ok) {
-      const errText = await fsRes.text().catch(() => '<unreadable>');
-      console.error('[chat-start] Firestore PATCH failed', fsRes.status, errText);
-      let detail = errText;
-      try {
-        const parsed = JSON.parse(errText);
-        detail = (parsed.error && (parsed.error.message || parsed.error.status)) || errText;
-      } catch { /* leave */ }
-      return res.status(500).json({
-        error: 'Could not open chat (' + String(detail).slice(0, 220) + ').',
-      });
+    const lookupRes = await fetch(threadDocUrl, { method: 'GET' });
+    if (lookupRes.ok) {
+      existing = await lookupRes.json().catch(() => null);
+    } else if (lookupRes.status !== 404) {
+      const errText = await lookupRes.text().catch(() => '<unreadable>');
+      console.warn('[chat-start] thread lookup non-OK', lookupRes.status, errText);
     }
   } catch (err) {
-    console.error('[chat-start] write threw:', err);
-    return res.status(500).json({
-      error: 'Network error opening chat (' + (err && err.message || String(err)).slice(0, 200) + ').',
-    });
+    console.warn('[chat-start] thread lookup threw (non-fatal):', err);
+  }
+
+  if (existing && existing.fields) {
+    // Thread already exists for this email. Reuse it. If it was
+    // closed previously, REOPEN it so the visitor can continue the
+    // conversation rather than starting fresh. Also bump the lead-
+    // info fields in case the visitor entered different details this
+    // round (new project description, new phone, etc.).
+    const patchUrl = threadDocUrl +
+      '&updateMask.fieldPaths=name' +
+      '&updateMask.fieldPaths=company' +
+      '&updateMask.fieldPaths=phone' +
+      '&updateMask.fieldPaths=businessType' +
+      '&updateMask.fieldPaths=projectDesc' +
+      '&updateMask.fieldPaths=status' +
+      '&updateMask.fieldPaths=lastMessageAt' +
+      '&updateMask.fieldPaths=unreadByAdmin';
+    const patchDoc = {
+      fields: {
+        name:          f(businessName),
+        company:       f(businessName),
+        phone:         f(phone),
+        businessType:  f(businessType || '(not provided)'),
+        projectDesc:   f(projectDesc || '(not provided)'),
+        status:        f('open'),
+        lastMessageAt: f(now),
+        unreadByAdmin: f(true),
+      },
+    };
+    try {
+      const patchRes = await fetch(patchUrl, {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(patchDoc),
+      });
+      if (!patchRes.ok) {
+        const errText = await patchRes.text().catch(() => '<unreadable>');
+        console.warn('[chat-start] thread reopen patch failed (non-fatal)', patchRes.status, errText);
+        // Non-fatal — we still return the threadToken and let visitor
+        // start chatting. Admin will see the old thread metadata.
+      }
+    } catch (err) {
+      console.warn('[chat-start] thread reopen patch threw (non-fatal):', err);
+    }
+  } else {
+    // First-time thread for this email. Create from scratch.
+    const document = {
+      fields: {
+        email:         f(email),
+        name:          f(businessName),
+        company:       f(businessName),
+        phone:         f(phone),
+        businessType:  f(businessType || '(not provided)'),
+        projectDesc:   f(projectDesc || '(not provided)'),
+        source:        f('infocomiva.live' + sourcePath + ' [chat]'),
+        status:        f('open'),
+        createdAt:     f(now),
+        lastMessageAt: f(now),
+        unreadByAdmin: f(true),
+      },
+    };
+    try {
+      const fsRes = await fetch(threadDocUrl, {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(document),
+      });
+      if (!fsRes.ok) {
+        const errText = await fsRes.text().catch(() => '<unreadable>');
+        console.error('[chat-start] Firestore PATCH failed', fsRes.status, errText);
+        let detail = errText;
+        try {
+          const parsed = JSON.parse(errText);
+          detail = (parsed.error && (parsed.error.message || parsed.error.status)) || errText;
+        } catch { /* leave */ }
+        return res.status(500).json({
+          error: 'Could not open chat (' + String(detail).slice(0, 220) + ').',
+        });
+      }
+    } catch (err) {
+      console.error('[chat-start] write threw:', err);
+      return res.status(500).json({
+        error: 'Network error opening chat (' + (err && err.message || String(err)).slice(0, 200) + ').',
+      });
+    }
   }
 
   // Sign a threadToken — the visitor's browser uses this on
