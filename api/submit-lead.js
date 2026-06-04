@@ -12,8 +12,19 @@
 import crypto from 'node:crypto';
 
 const PROJECT_ID = 'cargologic-saas';
+// Public web API key — same one shipped in every HTML page's Firebase
+// config. The Firestore REST API requires SOME form of project
+// identification: either an Authorization: Bearer token (Firebase Auth
+// ID token or Google service account) or the web API key on the query
+// string. Without it the request is rejected as "Missing or
+// insufficient permissions" before the security rules even run.
+// Safe to commit because:
+//   - It's already in every public page's HTML
+//   - Firestore security rules are the actual auth layer; the API
+//     key only identifies the project so rules can apply
+const PUBLIC_API_KEY = 'AIzaSyAmJKD3Saep17Ij4jWN2vgZSypk17VjuZg';
 const FIRESTORE_URL =
-  `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/leads`;
+  `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/leads?key=${PUBLIC_API_KEY}`;
 
 function b64urlDecode(s) {
   return Buffer.from(s.replace(/-/g, '+').replace(/_/g, '/'), 'base64');
