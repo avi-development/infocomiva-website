@@ -1,5 +1,13 @@
 {
-  "//": "Redirects to canonicalise every URL to https://infocomiva.live. Both the .vercel.app production URL AND the www subdomain 301-bounce to the apex domain, so Google indexes one canonical site and visitors who hit the wrong URL land on the right one. The deployment-specific preview URLs (infocomiva-website-git-*.vercel.app) intentionally do NOT redirect — those stay reachable for staging / PR review.",
+  "//": "Redirects to canonicalise every URL to https://infocomiva.live. Both the .vercel.app production URL AND the www subdomain 301-bounce to the apex domain, so Google indexes one canonical site and visitors who hit the wrong URL land on the right one. The deployment-specific preview URLs (infocomiva-website-git-*.vercel.app) intentionally do NOT redirect — those stay reachable for staging / PR review. HTML responses get a short max-age via headers below so the edge re-fetches faster after a redeploy (default Vercel edge cache held HTML for ~20 min, masking new deploys).",
+  "headers": [
+    {
+      "source": "/(.*\\.html|.*/|)$",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=60, must-revalidate" }
+      ]
+    }
+  ],
   "redirects": [
     {
       "source": "/:path*",
