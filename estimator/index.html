@@ -1085,13 +1085,13 @@
           if (existingThread) {
             state.threadToken = existingThread.threadToken;
             state.threadId    = existingThread.threadId;
-            state.lastPolledAt = null;
             addBot('Welcome back. Resuming your chat with Avilash…');
             renderDoneButtons(true);
             setInputMode({ placeholder: 'Type a message…', type: 'text', sendLabel: 'Send', multiline: true });
             state.step = 'live';
-            pollAdminMessages();
-            pollLoop();
+            // Attach real-time listener; existing admin replies from
+            // the past will replay immediately via the snapshot.
+            await attachFirestoreListener(state.threadId);
             return;
           }
           // Second priority: do we have a verified OTP session? Skip
@@ -1290,12 +1290,67 @@
     // ─── Live-chat mode ────────────────────────────────────────────
     //
     // After lead submit on escalate=yes, open a chat thread via
-    // /api/chat-start, then enter a loop that:
-    //   - lets the visitor type messages (Send → /api/chat-send)
-    //   - polls /api/chat-poll every ~3s for admin replies
-    //   - renders admin replies as bot bubbles
+    // /api/chat-start. Then attach a Firestore onSnapshot listener
+    // directly on the thread's messages subcollection — replies from
+    // Super Admin push to the visitor INSTANTLY, no polling, no
+    // composite index, no clock-skew tricks. The Firestore rules
+    // allow public read on messages (gated by UUID-secrecy on the
+    // threadId), so the unauthenticated browser SDK can subscribe.
+    //
     // WhatsApp + Call buttons stay visible above the input bar as
-    // escape hatches for visitors who'd rather not wait in-panel.
+    // escape hatches.
+
+    // Holds the Firestore-SDK unsubscribe function for the active
+    // onSnapshot listener so we can detach when the chat closes.
+    let chatUnsubscribe = null;
+    // Track which admin messages we've already shown to avoid double-
+    // rendering on snapshot re-fires.
+    const shownAdminIds = new Set();
+
+    async function attachFirestoreListener(threadId) {
+      // Detach any previous listener.
+      if (chatUnsubscribe) { try { chatUnsubscribe(); } catch {} chatUnsubscribe = null; }
+      shownAdminIds.clear();
+
+      // Dynamic import the Firebase SDK (already cached from eagle loader).
+      const fbApp = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
+      const fbFs  = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+
+      const config = {
+        apiKey: 'AIzaSyAmJKD3Saep17Ij4jWN2vgZSypk17VjuZg',
+        authDomain: 'cargologic-saas.firebaseapp.com',
+        projectId: 'cargologic-saas',
+        storageBucket: 'cargologic-saas.firebasestorage.app',
+        messagingSenderId: '1005412538844',
+        appId: '1:1005412538844:web:26e6ce0ae52c6065c3d719',
+      };
+      // Use a named app so we don't collide with the eagle loader's
+      // default app instance set up earlier on the page.
+      let app;
+      try { app = fbApp.initializeApp(config, 'estimator-chat'); }
+      catch (e) { app = fbApp.getApp('estimator-chat'); }
+      const db = fbFs.getFirestore(app);
+
+      const ref = fbFs.collection(db, 'chatThreads', threadId, 'messages');
+      const q = fbFs.query(ref, fbFs.orderBy('createdAt', 'asc'));
+
+      chatUnsubscribe = fbFs.onSnapshot(
+        q,
+        (snap) => {
+          snap.docs.forEach((doc) => {
+            const data = doc.data();
+            if (data.from !== 'admin') return;
+            if (shownAdminIds.has(doc.id)) return;
+            shownAdminIds.add(doc.id);
+            if (data.text) addBot(data.text);
+          });
+        },
+        (err) => {
+          console.warn('[chat] onSnapshot error:', err);
+          showError('Live chat error: ' + (err.message || err.code || 'subscription failed'));
+        },
+      );
+    }
     async function startLiveChat() {
       addBot('Opening a live chat with Avilash…');
       try {
@@ -1327,18 +1382,10 @@
         // conversation instead of opening a fresh thread (which would
         // leave admin's replies on the abandoned thread invisible).
         saveThread(data.threadToken, data.threadId, data.expiresIn || 24*3600);
-        // Don't seed lastPolledAt with the client clock — if the visitor's
-        // clock is even a second ahead of the server's serverTimestamp,
-        // the first poll's "createdAt > since" query silently misses any
-        // admin replies sent in the opening window. Leaving it null means
-        // chat-poll's defaults kick in (since='' → epoch), so the first
-        // poll fetches every admin message on the thread. After that the
-        // server's own polledAt timestamp advances things forward in
-        // server-time, no client clock involved.
-        state.lastPolledAt = null;
-        // Fire the first poll immediately (don't wait 3.5s) so admin
-        // messages that already exist appear right after connection.
-        pollAdminMessages();
+        // Attach the real-time Firestore listener for admin replies.
+        // Any message with from='admin' surfaces as a bot bubble within
+        // milliseconds of Super Admin clicking Send.
+        await attachFirestoreListener(state.threadId);
       } catch (e) {
         showError('Network error opening chat.');
         renderDoneButtons(true);
@@ -1360,47 +1407,8 @@
       pollLoop();
     }
 
-    function pollLoop() {
-      if (state.step !== 'live') return;
-      // Schedule the next poll; chain instead of setInterval so we
-      // never overlap requests if one is slow.
-      state.pollTimer = setTimeout(async () => {
-        await pollAdminMessages();
-        pollLoop();
-      }, 3500);
-    }
-
-    async function pollAdminMessages() {
-      if (!state.threadToken) return;
-      try {
-        const url = '/api/chat-poll?threadToken=' + encodeURIComponent(state.threadToken) +
-          '&since=' + encodeURIComponent(state.lastPolledAt || '');
-        const res = await fetch(url);
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) {
-          // Don't silently swallow — surface so we can debug. Auto-hides
-          // after 6s; loop continues and tries again next tick.
-          console.warn('[chat-poll] error:', data.error || res.status);
-          if (data.error) showError('Chat polling: ' + data.error);
-          return;
-        }
-        const msgs = Array.isArray(data.messages) ? data.messages : [];
-        for (const m of msgs) {
-          if (m.text) addBot(m.text);
-          if (m.createdAt && (!state.lastPolledAt || m.createdAt > state.lastPolledAt)) {
-            state.lastPolledAt = m.createdAt;
-          }
-        }
-        // Even when nothing new came in, advance lastPolledAt to the
-        // server's response time so the next poll doesn't refetch the
-        // same admin messages we already rendered.
-        if (!msgs.length && data.polledAt) {
-          state.lastPolledAt = data.polledAt;
-        }
-      } catch (e) {
-        console.warn('[chat-poll] network error:', e);
-      }
-    }
+    // pollLoop / pollAdminMessages removed — Firestore onSnapshot
+    // (attachFirestoreListener above) handles real-time delivery now.
 
     async function sendVisitorMessage(text) {
       if (!state.threadToken) return;
