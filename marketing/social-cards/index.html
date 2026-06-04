@@ -163,16 +163,12 @@
       box-shadow: 0 16px 40px rgba(37,99,235,0.4);
     }
     .card.service .icon-wrap svg { width: 60px; height: 60px; color: #fff; }
-    .card.service .ribbon {
-      position: absolute; top: 220px; left: 200px; z-index: 3;
-      font-size: 22px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--azure-300);
-    }
-    .card.service .ribbon .n { color: rgba(255,255,255,0.45); margin-right: 14px; }
+    /* Ribbon "[NN] Service" caption removed — title now sits centered
+       beside the icon for a cleaner, more confident layout. */
     .card.service .title {
-      position: absolute; top: 268px; left: 200px; right: 64px; z-index: 3;
+      position: absolute; top: 220px; left: 200px; right: 64px; z-index: 3;
       font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
-      font-size: 78px; line-height: 1.0; letter-spacing: -0.025em;
+      font-size: 84px; line-height: 1.0; letter-spacing: -0.025em;
     }
     .card.service .pillars {
       position: absolute; top: 460px; left: 64px; right: 64px; z-index: 3;
@@ -288,7 +284,6 @@
       <div class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
       </div>
-      <div class="ribbon"><span class="n">01</span> Service</div>
       <div class="title">Custom Software</div>
       <div class="pillars">
         <div class="row"><div class="tick">✓</div><div class="txt"><strong>Bespoke business apps</strong> — built around your operations, not generic SaaS.</div></div>
@@ -326,7 +321,6 @@
       <div class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       </div>
-      <div class="ribbon"><span class="n">02</span> Service</div>
       <div class="title">Web &amp; E-Commerce</div>
       <div class="pillars">
         <div class="row"><div class="tick">✓</div><div class="txt"><strong>Marketing sites</strong> that convert — SEO, analytics, lead capture wired in.</div></div>
@@ -364,7 +358,6 @@
       <div class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
       </div>
-      <div class="ribbon"><span class="n">03</span> Service</div>
       <div class="title">Mobile Apps</div>
       <div class="pillars">
         <div class="row"><div class="tick">✓</div><div class="txt"><strong>iOS + Android</strong> — React Native, Flutter, or native when scope demands.</div></div>
@@ -402,7 +395,6 @@
       <div class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
       </div>
-      <div class="ribbon"><span class="n">04</span> Service</div>
       <div class="title">ERP &amp; CRM Platforms</div>
       <div class="pillars">
         <div class="row"><div class="tick">✓</div><div class="txt"><strong>Multi-tenant ERPs</strong> with per-customer branding, billing &amp; isolation.</div></div>
@@ -440,7 +432,6 @@
       <div class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6M2 12h6m8 0h6"/><path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24M4.93 19.07l4.24-4.24m5.66-5.66 4.24-4.24"/></svg>
       </div>
-      <div class="ribbon"><span class="n">05</span> Service</div>
       <div class="title">AI &amp; Emerging Tech</div>
       <div class="pillars">
         <div class="row"><div class="tick">✓</div><div class="txt"><strong>Document OCR + LLM extraction</strong> — production-grade pipelines.</div></div>
@@ -457,47 +448,9 @@
     </section>
   </div>
 
-  <!-- ────── 7. MARKETING ────── -->
+  <!-- ────── 7. BRAND & CREATIVE ────── -->
   <div class="card-shell">
-    <button class="download-btn" onclick="dl('card-7','infocomiva-07-marketing')">⬇ Download PNG</button>
-    <section class="card service" id="card-7">
-      <img class="bg-image" crossorigin="anonymous" data-bg
-        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1080&h=1080&q=80" alt="">
-      <div class="overlay"></div>
-
-      <div class="brand">
-        <img class="eagle" data-eagle crossorigin="anonymous" src="" alt="" style="display:none">
-        <span class="eagle-fallback" data-eagle-fb>IT</span>
-        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
-      </div>
-      <div class="usp">
-        <span class="dot"></span>
-        <span>Prototype in <span class="h">24h</span></span>
-      </div>
-
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      </div>
-      <div class="ribbon"><span class="n">06</span> Service</div>
-      <div class="title">Digital Marketing</div>
-      <div class="pillars">
-        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Performance Google &amp; Meta ads</strong> — rupee-by-rupee accountable.</div></div>
-        <div class="row"><div class="tick">✓</div><div class="txt"><strong>SEO &amp; content</strong> built to rank for buyer-intent keywords.</div></div>
-        <div class="row"><div class="tick">✓</div><div class="txt">Lifecycle email, WhatsApp campaigns, lead-nurture automations.</div></div>
-        <div class="row"><div class="tick">✓</div><div class="txt">Same team builds your CRM — marketing reads the schema.</div></div>
-      </div>
-
-      <div class="cta">Get your prototype in 24h <span class="arrow">→</span></div>
-      <div class="contact-strip">
-        <div class="row"><span><span class="ic">📞</span> +91 89188 97474 · +91 77185 69194</span></div>
-        <div class="row"><span><span class="ic">✉</span> hello@infocomiva.live</span></div>
-      </div>
-    </section>
-  </div>
-
-  <!-- ────── 8. BRAND & CREATIVE ────── -->
-  <div class="card-shell">
-    <button class="download-btn" onclick="dl('card-8','infocomiva-08-brand-creative')">⬇ Download PNG</button>
+    <button class="download-btn" onclick="dl('card-8','infocomiva-07-brand-creative')">⬇ Download PNG</button>
     <section class="card service" id="card-8">
       <img class="bg-image" crossorigin="anonymous" data-bg
         src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?auto=format&fit=crop&w=1080&h=1080&q=80" alt="">
@@ -516,7 +469,6 @@
       <div class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".8" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".8" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
       </div>
-      <div class="ribbon"><span class="n">07</span> Service</div>
       <div class="title">Brand &amp; Creative</div>
       <div class="pillars">
         <div class="row"><div class="tick">✓</div><div class="txt"><strong>Visual identity</strong> — logo, palette, typography, design system.</div></div>
@@ -535,7 +487,7 @@
 
   <!-- ────── 9. CLOUD / DEVOPS ────── -->
   <div class="card-shell">
-    <button class="download-btn" onclick="dl('card-9','infocomiva-09-cloud-devops')">⬇ Download PNG</button>
+    <button class="download-btn" onclick="dl('card-9','infocomiva-08-cloud-devops')">⬇ Download PNG</button>
     <section class="card service" id="card-9">
       <img class="bg-image" crossorigin="anonymous" data-bg
         src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1080&h=1080&q=80" alt="">
@@ -554,7 +506,6 @@
       <div class="icon-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
       </div>
-      <div class="ribbon"><span class="n">08</span> Service</div>
       <div class="title">Cloud &amp; DevOps</div>
       <div class="pillars">
         <div class="row"><div class="tick">✓</div><div class="txt"><strong>Vercel, AWS, Cloudflare, GCP</strong> — deploy to your account.</div></div>
@@ -573,7 +524,7 @@
 
   <!-- ────── 10. CONTACT ────── -->
   <div class="card-shell">
-    <button class="download-btn" onclick="dl('card-10','infocomiva-10-contact')">⬇ Download PNG</button>
+    <button class="download-btn" onclick="dl('card-10','infocomiva-09-contact')">⬇ Download PNG</button>
     <section class="card contact" id="card-10">
       <img class="bg-image" crossorigin="anonymous" data-bg
         src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1080&h=1080&q=80" alt="">
@@ -736,10 +687,9 @@
       ['card-4',  'infocomiva-04-mobile-apps'],
       ['card-5',  'infocomiva-05-erp-crm'],
       ['card-6',  'infocomiva-06-ai'],
-      ['card-7',  'infocomiva-07-marketing'],
-      ['card-8',  'infocomiva-08-brand-creative'],
-      ['card-9',  'infocomiva-09-cloud-devops'],
-      ['card-10', 'infocomiva-10-contact'],
+      ['card-8',  'infocomiva-07-brand-creative'],
+      ['card-9',  'infocomiva-08-cloud-devops'],
+      ['card-10', 'infocomiva-09-contact'],
     ];
     for (const [id, name] of items) {
       try {
