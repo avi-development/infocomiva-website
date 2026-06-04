@@ -1,0 +1,24 @@
+# Never commit secrets — they live in Vercel env vars only.
+.env
+.env.*
+!.env.example
+
+# Vercel local build artifacts
+.vercel
+.next
+.turbo
+
+# Dependencies
+node_modules/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
