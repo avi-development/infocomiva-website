@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en-IN" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- Canonical-host redirect — see /index.html for the rationale. -->
+  <script>(function(){var h=location.hostname;if(h==='infocomiva-website.vercel.app'){location.replace('https://infocomiva.live'+location.pathname+location.search+location.hash);}})();</script>
+
+  <title>Project Cost Estimator — How Much Does Software Actually Cost in India? | Infocomiva</title>
+  <meta name="description" content="Interactive project cost estimator for software, web, mobile, ERP and SaaS builds in India 2026. Compare freelancer, mid-agency, big-agency and international rates side-by-side — then get a real fixed-price quote in 24 hours.">
+  <meta name="keywords" content="software project cost estimator India, mobile app cost India, SaaS development cost India, ERP development cost India, software pricing comparison, hire developer India cost">
+  <meta name="author" content="Infocomiva Technologies">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://infocomiva.live/estimator/">
+
+  <meta name="geo.region" content="IN">
+  <meta name="theme-color" content="#0a0a0a">
+
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Infocomiva Technologies">
+  <meta property="og:url" content="https://infocomiva.live/estimator/">
+  <meta property="og:title" content="Project Cost Estimator — How Much Does Software Actually Cost in India?">
+  <meta property="og:description" content="Compare freelancer, mid-agency, big-agency and international rates for your build side-by-side. Real INR ranges, recomputed live. Get a fixed-price quote in 24 hours.">
+  <meta property="og:image" content="https://infocomiva.live/assets/og-image.jpg">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Project Cost Estimator for Software, Web, Mobile, ERP, SaaS in India">
+  <meta name="twitter:description" content="Compare market rates side-by-side. Real INR ranges. Fixed-price quote in 24 hours.">
+  <meta name="twitter:image" content="https://infocomiva.live/assets/og-image.jpg">
+
+  <!-- JSON-LD: WebPage + Breadcrumb + FAQ for AEO surface. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Project Cost Estimator — Infocomiva Technologies",
+    "url": "https://infocomiva.live/estimator/",
+    "description": "Interactive cost estimator that compares freelancer, mid-agency, big-agency and international rates for software, web, mobile, ERP and SaaS builds in India 2026.",
+    "inLanguage": "en-IN",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Infocomiva Technologies",
+      "url": "https://infocomiva.live",
+      "logo": "https://infocomiva.live/assets/logo.png"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://infocomiva.live/" },
+      { "@type": "ListItem", "position": 2, "name": "Estimator", "item": "https://infocomiva.live/estimator/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does a mobile app cost to build in India in 2026?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Indian software agencies in 2026 typically charge INR 3-12L for a standard iOS + Android mobile app (React Native or Flutter) including auth, payments, push, and store submission. Freelancer pools quote lower (often INR 1-5L) with variable quality. Big-name IT services charge 4-8x more for the same scope due to overhead. Complexity (offline-first, AI features, multi-tenant backend) scales the number 2-4x." }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does custom SaaS development cost in India?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A production-grade multi-tenant SaaS build costs INR 8-30L at a mid-market Indian agency, INR 15L-1Cr at a tier-1 IT services firm, and USD 80k-300k at a US/UK agency. Pricing depends primarily on whether multi-tenancy is hybrid (shared app, isolated DBs — most common) or fully shared, and on the number of customer-facing modules." }
+      },
+      {
+        "@type": "Question",
+        "name": "Are freelancer agencies cheaper than software companies in India?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Freelancers win on hourly cost — typical Upwork rates are INR 800-3000/hr against INR 1500-4000/hr at mid-market agencies. But freelancer projects often need more rounds, lack code ownership, and have no production-grade support after launch. For projects beyond a single landing page or one-off script, the total cost-to-finished-product is often higher with freelancers, not lower." }
+      },
+      {
+        "@type": "Question",
+        "name": "Why are big Indian IT services firms 4-8x more expensive than mid-market agencies?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Tier-1 IT services firms (TCS, Infosys, Wipro, Accenture, etc.) carry enterprise sales teams, multi-layer project management hierarchies, audit overhead, and procurement-friendly billing structures. The actual engineering work isn't 4-8x harder — the markup pays for the overhead the agency model carries. Mid-market agencies skip most of that layer and price closer to the actual delivery cost." }
+      },
+      {
+        "@type": "Question",
+        "name": "How accurate are software project cost estimators?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Estimators give realistic ranges, not binding quotes. Real numbers depend on scope detail that only a discovery call can surface — integrations, data volumes, compliance, design ambition, edge cases. Use the estimator to sanity-check your budget before booking a vendor call. Infocomiva delivers a fixed-price quote within 24 hours of the discovery call, so the estimator-to-final-price gap is one short conversation." }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: {
+      fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'], display: ['"Plus Jakarta Sans"', 'Inter', 'ui-sans-serif', 'system-ui'] },
+      colors: { ink: { 50: '#f7f7f8', 100: '#ebebed', 200: '#d4d4d8', 500: '#71717a', 700: '#2d2d31', 900: '#0a0a0a' }, azure: { 50: '#eef2ff', 100: '#dbe4ff', 300: '#93c5fd', 400: '#60a5fa', 500: '#2563eb', 600: '#1d4ed8', 700: '#1e3a8a', 900: '#0f1f5e' } },
+    }}};
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .grad-text { background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    }
+    html, body { overflow-x: hidden; max-width: 100vw; }
+    body { padding-top: 88px; }
+    @media (min-width: 640px) { body { padding-top: 96px; } }
+    html { scroll-padding-top: 88px; }
+    @media (min-width: 640px) { html { scroll-padding-top: 96px; } }
+
+    /* Calculator chip-button — radio-style toggle that we drive via JS.
+       Active chip gets a navy fill; inactive chips stay outlined. */
+    .chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 16px;
+      border: 1.5px solid #ebebed;
+      border-radius: 999px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; background: #fff; color: #2d2d31;
+      transition: all .15s;
+    }
+    .chip:hover { border-color: #93c5fd; color: #1e3a8a; }
+    .chip.is-active { background: #0a0a0a; border-color: #0a0a0a; color: #fff; }
+    .chip.is-active:hover { background: #1e3a8a; border-color: #1e3a8a; color: #fff; }
+
+    /* Vendor comparison card. Infocomiva variant gets a gradient
+       border + lift treatment so the eye lands on it first. */
+    .vcard { background: #fff; border: 1.5px solid #ebebed; border-radius: 16px; padding: 22px 20px; position: relative; transition: all .2s; }
+    .vcard:hover { border-color: #93c5fd; transform: translateY(-2px); box-shadow: 0 10px 26px -8px rgba(15,31,94,.15); }
+    .vcard.is-us { background: linear-gradient(135deg, #0a0a0a 0%, #1e3a8a 100%); color: #fff; border-color: transparent; box-shadow: 0 18px 40px -10px rgba(37,99,235,.45); }
+    .vcard.is-us .label, .vcard.is-us .price, .vcard.is-us li { color: #fff; }
+    .vcard.is-us .price-meta { color: rgba(255,255,255,.7); }
+    .vcard .ribbon-best {
+      position: absolute; top: -10px; right: 16px;
+      background: #fbbf24; color: #0a0a0a; font-size: 10px; font-weight: 800;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px;
+    }
+
+    .price { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 28px; letter-spacing: -0.02em; }
+    .price-meta { font-size: 12px; color: #71717a; margin-top: 2px; }
+  </style>
+</head>
+<body class="bg-white text-ink-900 selection:bg-azure-500/20 selection:text-ink-900">
+
+  <!-- ============================================================
+       FIXED HEADER — announcement bar + nav, same shell as the rest
+       of the site so the brand reads continuously across pages.
+       ============================================================ -->
+  <div class="fixed top-0 left-0 right-0 z-50">
+    <a href="/#contact" data-lead class="bg-ink-900 text-white block group">
+      <div class="max-w-6xl mx-auto px-5 py-2 flex items-center justify-center gap-2.5 text-xs sm:text-sm font-semibold">
+        <span class="relative flex w-2 h-2 shrink-0">
+          <span class="absolute inline-flex w-full h-full rounded-full bg-azure-400 opacity-75 animate-ping"></span>
+          <span class="relative inline-flex w-2 h-2 rounded-full bg-azure-400"></span>
+        </span>
+        <span>Custom prototype in <span class="text-azure-300">24 hours</span></span>
+        <span class="text-azure-300 group-hover:translate-x-0.5 transition">→</span>
+      </div>
+    </a>
+    <header class="bg-white/90 backdrop-blur text-ink-900 border-b border-ink-100">
+      <div class="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3">
+          <img id="eagle-logo" alt="Infocomiva" class="h-10 w-10 object-contain hidden" width="40" height="40">
+          <span id="eagle-fallback" class="inline-flex items-center justify-center h-10 w-10 rounded-md bg-azure-50 border border-azure-100 text-[10px] uppercase tracking-wider text-azure-700 font-bold">IT</span>
+          <span class="font-display font-black text-base sm:text-lg tracking-tight">Infocomiva <span class="text-azure-600">Technologies</span></span>
+        </a>
+        <nav class="hidden md:flex items-center gap-5 text-sm">
+          <a href="/" class="text-ink-700 hover:text-ink-900 transition">Home</a>
+          <a href="/about/" class="text-ink-700 hover:text-ink-900 transition">About</a>
+          <a href="/blog/" class="text-ink-700 hover:text-ink-900 transition">Blog</a>
+          <a href="/estimator/" class="text-ink-900 font-semibold transition" aria-current="page">Estimator</a>
+          <a href="/#work" class="text-ink-700 hover:text-ink-900 transition">Work</a>
+          <a href="/#contact" class="text-ink-700 hover:text-ink-900 transition">Contact</a>
+        </nav>
+        <a href="/#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-4 py-2 rounded-lg text-sm font-semibold text-white">
+          Book a call
+        </a>
+      </div>
+    </header>
+  </div>
+
+  <!-- ============================================================
+       HERO
+       ============================================================ -->
+  <section class="bg-ink-900 text-white">
+    <div class="max-w-5xl mx-auto px-5 pt-12 pb-14 sm:pt-16 sm:pb-16">
+      <nav aria-label="Breadcrumb" class="text-xs text-white/55 mb-6">
+        <a href="/" class="hover:text-white">Home</a>
+        <span class="mx-2">/</span>
+        <span class="text-white/80">Estimator</span>
+      </nav>
+      <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-500 uppercase mb-4">
+        Project cost estimator
+      </div>
+      <h1 class="font-display text-3xl sm:text-5xl md:text-6xl font-black leading-[1.05] tracking-tight">
+        How much does this <span class="grad-text">actually cost?</span>
+      </h1>
+      <p class="mt-6 text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed">
+        Pick what you&rsquo;re building. We&rsquo;ll show you the realistic INR range across every
+        vendor tier on the Indian market &mdash; freelancer, mid-agency, big-name IT services,
+        international agency, and us. Numbers update live. No email gate, no &ldquo;request a quote&rdquo; wall.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CALCULATOR INPUTS
+       ============================================================ -->
+  <section class="bg-ink-50 border-y border-ink-100 py-10 sm:py-12">
+    <div class="max-w-5xl mx-auto px-5">
+      <div class="bg-white rounded-2xl shadow-sm border border-ink-100 p-6 sm:p-8">
+
+        <div class="mb-6">
+          <div class="text-xs font-bold tracking-widest text-azure-700 uppercase mb-3">01 · What are you building?</div>
+          <div class="flex flex-wrap gap-2" data-group="projectType">
+            <button type="button" class="chip" data-value="marketing-site">Marketing site / landing page</button>
+            <button type="button" class="chip" data-value="mobile-app">Mobile app (iOS + Android)</button>
+            <button type="button" class="chip" data-value="web-app">Web app / SaaS dashboard</button>
+            <button type="button" class="chip" data-value="erp-crm">Custom ERP / CRM</button>
+            <button type="button" class="chip" data-value="multi-tenant-saas">Multi-tenant SaaS</button>
+            <button type="button" class="chip" data-value="ai-pipeline">AI / OCR pipeline</button>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <div class="text-xs font-bold tracking-widest text-azure-700 uppercase mb-3">02 · Complexity</div>
+          <div class="flex flex-wrap gap-2" data-group="complexity">
+            <button type="button" class="chip" data-value="lite">Lite &mdash; single user-flow, no integrations</button>
+            <button type="button" class="chip" data-value="standard">Standard &mdash; multi-role, common integrations</button>
+            <button type="button" class="chip" data-value="complex">Complex &mdash; analytics, AI, multi-tenancy</button>
+            <button type="button" class="chip" data-value="enterprise">Enterprise &mdash; compliance, scale, audit trails</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-xs font-bold tracking-widest text-azure-700 uppercase mb-3">03 · Timeline</div>
+          <div class="flex flex-wrap gap-2" data-group="timeline">
+            <button type="button" class="chip" data-value="standard">Standard pace</button>
+            <button type="button" class="chip" data-value="rush">Rush &mdash; +30% to compress timeline</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       COMPARISON CARDS — dynamic
+       ============================================================ -->
+  <section class="py-12 sm:py-16 bg-white">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="flex flex-wrap items-end justify-between gap-4 mb-3">
+        <h2 class="font-display text-2xl sm:text-3xl font-black leading-tight text-ink-900">
+          What this build costs across the market
+        </h2>
+        <span class="text-xs text-ink-500" id="summary"></span>
+      </div>
+      <p class="text-sm text-ink-500 mb-8 max-w-3xl">
+        Ranges below are industry-typical estimates for India 2026, recomputed from your selections.
+        Not binding quotes &mdash; real numbers depend on scope detail surfaced on the discovery call.
+      </p>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4" id="cards"></div>
+
+      <!-- The Infocomiva positioning panel — fills in the qualitative
+           gap that the raw cost-range doesn't capture. -->
+      <div class="mt-12 bg-ink-900 text-white rounded-2xl p-6 sm:p-8">
+        <div class="grid sm:grid-cols-2 gap-8 items-center">
+          <div>
+            <div class="text-xs font-bold tracking-widest text-azure-300 uppercase mb-3">Why we&rsquo;re different</div>
+            <h3 class="font-display text-2xl sm:text-3xl font-black leading-tight mb-4">
+              We pair mid-market pricing with <span class="grad-text">enterprise delivery rigour.</span>
+            </h3>
+            <p class="text-white/75 leading-relaxed text-sm sm:text-base">
+              Most builds cost what a mid-market agency charges. What you get is the same engineering
+              stack the big-name IT services use &mdash; production-grade observability, type-checked CI gates,
+              automated backups, multi-tenant patterns &mdash; plus what they don&rsquo;t: a fixed price locked in
+              writing, full code ownership from day one, and the same team after launch.
+            </p>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-start gap-3"><div class="w-7 h-7 rounded-full bg-azure-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">✓</div><div><strong>Fixed scope, fixed price</strong> &mdash; locked before discovery ends. Pivots inside the budget absorbed, not change-ordered.</div></div>
+            <div class="flex items-start gap-3"><div class="w-7 h-7 rounded-full bg-azure-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">✓</div><div><strong>You own everything</strong> &mdash; code in your GitHub, domain on your registrar, cloud bills in your name.</div></div>
+            <div class="flex items-start gap-3"><div class="w-7 h-7 rounded-full bg-azure-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">✓</div><div><strong>Same team day 1 &amp; day 500</strong> &mdash; no handoff to a separate support shop.</div></div>
+            <div class="flex items-start gap-3"><div class="w-7 h-7 rounded-full bg-azure-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">✓</div><div><strong>Custom prototype in 24h</strong> after the discovery call &mdash; sanity-check direction before you sign anything.</div></div>
+          </div>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-6 py-3 rounded-lg text-sm font-semibold">
+            Get a real fixed-price quote in 24h →
+          </a>
+          <a href="/about/" class="inline-flex items-center gap-1.5 border border-white/15 hover:border-white/35 transition px-6 py-3 rounded-lg text-sm font-semibold">
+            How we work
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FAQ — mirrors the FAQPage JSON-LD in <head>.
+       ============================================================ -->
+  <section class="bg-ink-50 border-t border-ink-100 py-12 sm:py-16">
+    <div class="max-w-3xl mx-auto px-5">
+      <h2 class="font-display text-2xl sm:text-3xl font-black text-ink-900 mb-6">Frequently asked questions</h2>
+
+      <details class="border-b border-ink-100 py-4">
+        <summary class="font-semibold cursor-pointer">How much does a mobile app cost to build in India in 2026?</summary>
+        <p class="text-sm text-ink-700 leading-relaxed mt-3">Indian software agencies in 2026 typically charge ₹3-12L for a standard iOS + Android mobile app (React Native or Flutter) including auth, payments, push, and store submission. Freelancer pools quote lower (often ₹1-5L) with variable quality. Big-name IT services charge 4-8x more for the same scope due to overhead. Complexity (offline-first, AI features, multi-tenant backend) scales the number 2-4x.</p>
+      </details>
+
+      <details class="border-b border-ink-100 py-4">
+        <summary class="font-semibold cursor-pointer">How much does custom SaaS development cost in India?</summary>
+        <p class="text-sm text-ink-700 leading-relaxed mt-3">A production-grade multi-tenant SaaS build costs ₹8-30L at a mid-market Indian agency, ₹15L-1Cr at a tier-1 IT services firm, and USD 80k-300k at a US/UK agency. Pricing depends primarily on whether multi-tenancy is hybrid (shared app, isolated DBs &mdash; <a href="/blog/multi-tenant-saas-when-you-need-it/" class="text-azure-700 underline">most common</a>) or fully shared, and on the number of customer-facing modules.</p>
+      </details>
+
+      <details class="border-b border-ink-100 py-4">
+        <summary class="font-semibold cursor-pointer">Are freelancers cheaper than agencies in India?</summary>
+        <p class="text-sm text-ink-700 leading-relaxed mt-3">Freelancers win on hourly cost &mdash; typical Upwork rates are ₹800-3000/hr against ₹1500-4000/hr at mid-market agencies. But freelancer projects often need more rounds, lack code ownership, and have no production-grade support after launch. For projects beyond a single landing page or one-off script, the total cost-to-finished-product is often higher with freelancers, not lower.</p>
+      </details>
+
+      <details class="border-b border-ink-100 py-4">
+        <summary class="font-semibold cursor-pointer">Why are big IT services firms 4-8x more expensive than mid-market agencies?</summary>
+        <p class="text-sm text-ink-700 leading-relaxed mt-3">Tier-1 IT services firms carry enterprise sales teams, multi-layer project management hierarchies, audit overhead, and procurement-friendly billing structures. The engineering work isn&rsquo;t 4-8x harder &mdash; the markup pays for the overhead the agency model carries. Mid-market agencies skip most of that layer and price closer to the actual delivery cost.</p>
+      </details>
+
+      <details class="py-4">
+        <summary class="font-semibold cursor-pointer">How accurate are these estimates?</summary>
+        <p class="text-sm text-ink-700 leading-relaxed mt-3">Estimators give realistic ranges, not binding quotes. Real numbers depend on scope detail that only a discovery call can surface &mdash; integrations, data volumes, compliance, design ambition, edge cases. Use this estimator to sanity-check budget BEFORE booking a vendor call. Infocomiva delivers a fixed-price quote within 24 hours of the discovery call &mdash; the estimator-to-final-price gap is one short conversation.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CTA STRIP
+       ============================================================ -->
+  <section class="bg-white border-t border-ink-100 py-12 sm:py-16">
+    <div class="max-w-4xl mx-auto px-5 text-center">
+      <h2 class="font-display text-2xl sm:text-3xl font-black text-ink-900 mb-3">Skip the estimator. Get a real number.</h2>
+      <p class="text-ink-700 leading-relaxed max-w-xl mx-auto mb-6">
+        Book a 30-minute discovery call. We&rsquo;ll come back inside 24 hours with a working
+        prototype, written scope, and a fixed price.
+      </p>
+      <a href="/#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-6 py-3 rounded-lg text-sm font-semibold text-white">
+        Get your prototype in 24h →
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="bg-ink-900 text-white/50 border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center justify-center h-8 w-8 rounded-md bg-white/10 border border-white/20 text-[10px] uppercase tracking-wider text-white font-bold">IT</span>
+        <span>&copy; <span id="yr"></span> Infocomiva Technologies</span>
+      </div>
+      <div class="flex items-center gap-5">
+        <a href="/" class="hover:text-white transition">Home</a>
+        <a href="/about/" class="hover:text-white transition">About</a>
+        <a href="/blog/" class="hover:text-white transition">Blog</a>
+        <a href="mailto:hello@infocomiva.live" class="hover:text-white transition">hello@infocomiva.live</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+
+  <!-- ============================================================
+       Eagle loader — same Firestore source as the home page.
+       ============================================================ -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    const app = initializeApp({
+      apiKey: "AIzaSyAmJKD3Saep17Ij4jWN2vgZSypk17VjuZg",
+      authDomain: "cargologic-saas.firebaseapp.com",
+      projectId: "cargologic-saas",
+      storageBucket: "cargologic-saas.firebasestorage.app",
+      messagingSenderId: "1005412538844",
+      appId: "1:1005412538844:web:26e6ce0ae52c6065c3d719",
+    });
+    const db = getFirestore(app);
+    try {
+      const snap = await getDoc(doc(db, "appSettings", "infocomiva"));
+      if (!snap.exists()) throw new Error("appSettings/infocomiva missing");
+      const url = (snap.data() || {}).eagle;
+      if (!url || typeof url !== "string") throw new Error("eagle URL missing");
+      const img = document.getElementById("eagle-logo");
+      const fb  = document.getElementById("eagle-fallback");
+      const probe = new Image();
+      probe.onload = () => { img.src = url; img.classList.remove("hidden"); if (fb) fb.remove(); };
+      probe.onerror = () => {};
+      probe.src = url;
+    } catch (err) { console.warn("[infocomiva/estimator] eagle loader failed:", err); }
+  </script>
+
+  <!-- ============================================================
+       ESTIMATOR ENGINE
+       Pure math, no framework. Chip selections feed into a small
+       multiplier model that produces per-vendor INR ranges. The
+       baseline numbers below are calibrated against publicly-known
+       Indian market 2026 rates — adjust the constants here if the
+       market moves and the rest of the page tracks.
+       ============================================================ -->
+  <script>
+  (function () {
+    // ─── Pricing model ─────────────────────────────────────────────
+    //
+    // Base cost in INR Lakhs for a "Standard"-complexity project of
+    // each type, expressed as a [low, high] tuple. This is the
+    // mid-market-agency baseline; vendor multipliers below scale it
+    // up or down for the other tiers.
+    const BASE = {
+      'marketing-site':    { lo: 0.5, hi: 1.5 },
+      'mobile-app':        { lo: 3.0, hi: 7.0 },
+      'web-app':           { lo: 2.0, hi: 5.0 },
+      'erp-crm':           { lo: 5.0, hi: 12  },
+      'multi-tenant-saas': { lo: 8.0, hi: 22  },
+      'ai-pipeline':       { lo: 2.0, hi: 7.0 },
+    };
+
+    // Complexity multiplier — applied uniformly to all vendors.
+    const COMPLEX = { lite: 0.6, standard: 1.0, complex: 2.0, enterprise: 4.0 };
+
+    // Timeline multiplier — rush jobs cost more across the board.
+    const TIME = { standard: 1.0, rush: 1.3 };
+
+    // Vendor model. mult: relative to mid-market-agency baseline
+    // (mid-market itself is 1.0). Each tier carries a qualitative
+    // descriptor + timeline note that surfaces what the bare number
+    // doesn't capture.
+    const VENDORS = [
+      {
+        id: 'freelancer',
+        name: 'Freelancer / Upwork',
+        mult: [0.35, 1.1],
+        bullets: [
+          'Hourly billing, scope drift common',
+          'Code ownership varies',
+          'No day-500 support model',
+        ],
+      },
+      {
+        id: 'mid-agency',
+        name: 'Mid-market Indian agency',
+        mult: [1.0, 2.0],
+        bullets: [
+          'Fixed or T&M, written scope',
+          'Code ownership usually included',
+          'Retainer support after launch',
+        ],
+      },
+      {
+        id: 'big-agency',
+        name: 'Big-name IT services',
+        mult: [3.5, 8.0],
+        bullets: [
+          'PM overhead + sales layer baked in',
+          'Code ownership negotiated separately',
+          'Premium support tier',
+        ],
+      },
+      {
+        id: 'international',
+        name: 'US / UK agency',
+        mult: [8, 18],
+        bullets: [
+          'USD or GBP rates, ~7-10x India',
+          'Strong process, strong premium',
+          'Time-zone trade-off vs India',
+        ],
+      },
+      {
+        id: 'infocomiva',
+        name: 'Infocomiva',
+        mult: [0.85, 1.7],   // Mid-market band, slightly below median
+        bullets: [
+          'Fixed price locked before discovery ends',
+          'Code, domain, cloud — yours from day 1',
+          'Same team day 1 &amp; day 500',
+          'Custom prototype in 24h',
+        ],
+        isUs: true,
+        best: true,
+      },
+    ];
+
+    // ─── State ─────────────────────────────────────────────────────
+    const state = {
+      projectType: 'mobile-app',
+      complexity: 'standard',
+      timeline: 'standard',
+    };
+
+    // ─── Render: wire chips into the state object ──────────────────
+    function setActive(group, value) {
+      document.querySelectorAll(`[data-group="${group}"] .chip`).forEach((chip) => {
+        chip.classList.toggle('is-active', chip.dataset.value === value);
+      });
+    }
+    document.querySelectorAll('[data-group]').forEach((g) => {
+      const group = g.dataset.group;
+      g.querySelectorAll('.chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          state[group] = chip.dataset.value;
+          setActive(group, chip.dataset.value);
+          render();
+        });
+      });
+    });
+
+    // ─── Format a Lakh-scale number into a human INR string ────────
+    // <1 L  → "₹XXk"
+    // <100L → "₹X.XL"     (e.g. ₹4.5L)
+    // ≥100L → "₹X.XCr"    (e.g. ₹1.2Cr)
+    function fmt(lakhs) {
+      if (lakhs < 1)   return '₹' + Math.round(lakhs * 100) + 'k';
+      if (lakhs < 100) return '₹' + (Math.round(lakhs * 10) / 10).toString().replace(/\.0$/, '') + 'L';
+      return '₹' + (Math.round((lakhs / 100) * 10) / 10).toString().replace(/\.0$/, '') + 'Cr';
+    }
+
+    // ─── Compute + render all vendor cards ─────────────────────────
+    function computeRange(vendor) {
+      const b = BASE[state.projectType];
+      const c = COMPLEX[state.complexity];
+      const t = TIME[state.timeline];
+      const lo = b.lo * c * vendor.mult[0] * t;
+      const hi = b.hi * c * vendor.mult[1] * t;
+      return { lo, hi };
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+    }
+
+    function render() {
+      const wrap = document.getElementById('cards');
+      wrap.innerHTML = VENDORS.map((v) => {
+        const r = computeRange(v);
+        const isUs = v.isUs ? ' is-us' : '';
+        const ribbon = v.best ? '<div class="ribbon-best">Recommended</div>' : '';
+        const bullets = v.bullets.map((b) => `<li class="text-xs leading-relaxed mt-1">${b}</li>`).join('');
+        return `
+          <div class="vcard${isUs}">
+            ${ribbon}
+            <div class="label text-[11px] uppercase tracking-widest font-bold text-azure-700 mb-2">${escapeHtml(v.name)}</div>
+            <div class="price">${fmt(r.lo)} <span class="opacity-50 font-normal">–</span> ${fmt(r.hi)}</div>
+            <div class="price-meta">Typical range</div>
+            <ul class="mt-4 list-none p-0 space-y-1 text-ink-700">
+              ${bullets}
+            </ul>
+          </div>
+        `;
+      }).join('');
+
+      // Summary line — repeat the user's selections in plain English.
+      const projectLabel = document.querySelector(`[data-group="projectType"] .chip[data-value="${state.projectType}"]`).textContent.trim();
+      const complexityLabel = state.complexity[0].toUpperCase() + state.complexity.slice(1);
+      const timeLabel = state.timeline === 'rush' ? 'Rush timeline' : 'Standard timeline';
+      document.getElementById('summary').textContent = `${projectLabel} · ${complexityLabel} · ${timeLabel}`;
+    }
+
+    // ─── Boot ──────────────────────────────────────────────────────
+    setActive('projectType', state.projectType);
+    setActive('complexity',  state.complexity);
+    setActive('timeline',    state.timeline);
+    render();
+  })();
+  </script>
+</body>
+</html>

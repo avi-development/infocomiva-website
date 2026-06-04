@@ -39,6 +39,14 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Project cost estimator -->
+  <url>
+    <loc>https://infocomiva.live/estimator/</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- Blog index -->
   <url>
     <loc>https://infocomiva.live/blog/</loc>
