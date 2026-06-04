@@ -1,0 +1,12 @@
+{
+  "name": "infocomiva-website",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Marketing site for Infocomiva Technologies. Static HTML + serverless API routes under /api for OTP-verified chat capture.",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "firebase": "^10.7.0"
+  }
+}

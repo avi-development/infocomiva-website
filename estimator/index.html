@@ -266,10 +266,99 @@
     .chat-option .ic.mail     { background: #1e3a8a; }
     .chat-option .meta { font-size: 11px; font-weight: 500; color: #71717a; margin-top: 2px; }
 
+    /* Wizard chat thread — bot messages on the left, user messages
+       on the right, one adaptive input at the bottom. */
+    .chat-panel.is-wizard { width: 380px; max-width: calc(100vw - 32px); }
+    .chat-thread {
+      padding: 16px; max-height: 380px; min-height: 220px;
+      overflow-y: auto; background: #f7f7f8;
+      display: flex; flex-direction: column; gap: 10px;
+      scroll-behavior: smooth;
+    }
+    .chat-msg { display: flex; gap: 8px; max-width: 88%; }
+    .chat-msg.from-bot  { align-self: flex-start; }
+    .chat-msg.from-user { align-self: flex-end; flex-direction: row-reverse; }
+    .chat-msg .bubble {
+      padding: 10px 14px; border-radius: 16px;
+      font-size: 13.5px; line-height: 1.45;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    }
+    .chat-msg.from-bot  .bubble { background: #fff; color: #0a0a0a; border-top-left-radius: 4px; }
+    .chat-msg.from-user .bubble {
+      background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+      color: #fff; border-top-right-radius: 4px;
+    }
+    .chat-typing {
+      display: inline-flex; gap: 4px; padding: 12px 14px;
+      background: #fff; border-radius: 16px; border-top-left-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    }
+    .chat-typing span {
+      width: 6px; height: 6px; border-radius: 999px; background: #93c5fd;
+      animation: chat-typ 1.2s infinite;
+    }
+    .chat-typing span:nth-child(2) { animation-delay: .15s; }
+    .chat-typing span:nth-child(3) { animation-delay: .3s; }
+    @keyframes chat-typ {
+      0%, 60%, 100% { transform: translateY(0); opacity: .6; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+    .chat-input-bar {
+      display: flex; gap: 8px;
+      padding: 10px 12px;
+      border-top: 1px solid #ebebed;
+      background: #fff;
+      align-items: center;
+    }
+    .chat-input-bar input, .chat-input-bar textarea {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1.5px solid #ebebed;
+      border-radius: 10px;
+      font-family: inherit; font-size: 14px; color: #0a0a0a;
+      transition: border-color .15s;
+      resize: none; min-height: 40px;
+    }
+    .chat-input-bar input:focus, .chat-input-bar textarea:focus { outline: none; border-color: #2563eb; }
+    .chat-input-bar button {
+      width: 40px; height: 40px; flex-shrink: 0;
+      background: linear-gradient(135deg, #2563eb, #1e3a8a);
+      color: #fff; border: 0; border-radius: 10px;
+      cursor: pointer; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .15s, opacity .15s;
+    }
+    .chat-input-bar button:hover { transform: translateY(-1px); }
+    .chat-input-bar button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .chat-yesno {
+      display: flex; gap: 8px; padding: 0 12px 12px;
+      background: #fff;
+    }
+    .chat-yesno button {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-family: inherit; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all .15s;
+      border: 1.5px solid #ebebed; background: #fff; color: #0a0a0a;
+    }
+    .chat-yesno button.primary {
+      background: linear-gradient(135deg, #2563eb, #1e3a8a);
+      color: #fff; border-color: transparent;
+    }
+    .chat-yesno button:hover { transform: translateY(-1px); }
+
+    .chat-error {
+      display: none; padding: 8px 14px; background: #fef2f2; color: #b91c1c;
+      border-top: 1px solid #fecaca; font-size: 12px; line-height: 1.4;
+    }
+    .chat-error.is-shown { display: block; }
+
     @media (prefers-reduced-motion: reduce) {
       .chat-fab::after { animation: none; }
       .chat-fab:hover { transform: none; }
       .chat-bubble, .chat-panel { transition: none; }
+      .chat-typing span { animation: none; }
     }
   </style>
 </head>
@@ -734,109 +823,80 @@
     👋 Need help choosing? Chat with us &mdash; we reply on WhatsApp in minutes.
   </div>
 
-  <div class="chat-panel" id="chat-panel" role="dialog" aria-modal="false" aria-label="Contact options">
+  <div class="chat-panel is-wizard" id="chat-panel" role="dialog" aria-modal="false" aria-label="Chat with Infocomiva">
     <div class="chat-panel-header">
       <button type="button" class="chat-panel-close" id="chat-panel-close" aria-label="Close">×</button>
       <div class="usp"><span class="dot"></span> Prototype in 24h</div>
-      <div class="title">Let&rsquo;s talk &mdash; pick a channel</div>
-      <div class="sub">We respond inside 24 hours, usually much faster on WhatsApp.</div>
+      <div class="title">Chat with us</div>
+      <div class="sub">Quick questions so we can scope it right &mdash; takes a minute.</div>
     </div>
-    <div class="chat-panel-body">
-      <a class="chat-option" target="_blank" rel="noopener"
-         href="https://wa.me/918918897474?text=Hi%20Infocomiva%20%E2%80%94%20I%27m%20interested%20in%20a%20custom%20prototype.%20Can%20we%20talk%3F">
-        <span class="ic whatsapp">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 3.1 17.2L2 22l4.9-1.1A11 11 0 1 0 20.5 3.5zM12 20a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.7.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.7.9-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.2.2-.4.1-.2 0-.3 0-.4 0-.1-.5-1.3-.7-1.7-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9 0 1.1.8 2.2 1 2.4.1.1 1.6 2.4 3.9 3.4.5.2 1 .3 1.3.4.5.2 1 .1 1.4.1.4-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2z"/></svg>
-        </span>
-        <span>
-          WhatsApp &mdash; +91 89188 97474
-          <div class="meta">Usually replies in minutes</div>
-        </span>
-      </a>
-      <a class="chat-option" href="tel:+918918897474">
-        <span class="ic call">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        </span>
-        <span>
-          Call &mdash; +91 89188 97474
-          <div class="meta">Mon–Sat, 10am–7pm IST</div>
-        </span>
-      </a>
-      <a class="chat-option" href="tel:+917718569194">
-        <span class="ic call">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        </span>
-        <span>
-          Call &mdash; +91 77185 69194
-          <div class="meta">Backup line</div>
-        </span>
-      </a>
-      <a class="chat-option" href="mailto:hello@infocomiva.live?subject=Custom%20prototype%20request">
-        <span class="ic mail">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        </span>
-        <span>
-          Email &mdash; hello@infocomiva.live
-          <div class="meta">Replies within 24 hours</div>
-        </span>
-      </a>
+
+    <!-- Conversation thread — populated step by step by the wizard JS. -->
+    <div class="chat-thread" id="chat-thread" aria-live="polite"></div>
+
+    <!-- Single adaptive input bar. Its placeholder + value + type swap
+         per state. For yes/no steps the input is hidden and a pair of
+         buttons (.chat-yesno) is shown instead. -->
+    <div class="chat-input-bar" id="chat-input-bar">
+      <input type="text" id="chat-input" placeholder="" autocomplete="off">
+      <button type="button" id="chat-send" aria-label="Send">→</button>
     </div>
+
+    <!-- Yes/No prompt for the "Talk to Avilash" escalation step.
+         Toggled visible by JS only on that state. -->
+    <div class="chat-yesno" id="chat-yesno" style="display:none">
+      <button type="button" data-yn="no">No, just send my details</button>
+      <button type="button" class="primary" data-yn="yes">Yes, connect me now</button>
+    </div>
+
+    <div class="chat-error" id="chat-error" role="alert"></div>
   </div>
 
   <script>
   (function () {
-    const fab        = document.getElementById('chat-fab');
-    const panel      = document.getElementById('chat-panel');
-    const panelClose = document.getElementById('chat-panel-close');
-    const bubble     = document.getElementById('chat-bubble');
-    const bubbleClose= document.getElementById('chat-bubble-close');
+    // ─── DOM ────────────────────────────────────────────────────────
+    const fab         = document.getElementById('chat-fab');
+    const panel       = document.getElementById('chat-panel');
+    const panelClose  = document.getElementById('chat-panel-close');
+    const bubble      = document.getElementById('chat-bubble');
+    const bubbleClose = document.getElementById('chat-bubble-close');
+    const thread      = document.getElementById('chat-thread');
+    const inputBar    = document.getElementById('chat-input-bar');
+    const input       = document.getElementById('chat-input');
+    const sendBtn     = document.getElementById('chat-send');
+    const yesno       = document.getElementById('chat-yesno');
+    const errorBox    = document.getElementById('chat-error');
 
     if (!fab || !panel) return;
 
+    // ─── Open/close + outside click + ESC + bubble ─────────────────
     function openPanel()  {
       panel.classList.add('is-open');
-      // Opening the panel implicitly dismisses the attention bubble.
       if (bubble) bubble.classList.remove('is-shown');
+      // Boot the conversation the first time the panel opens.
+      if (!state.booted) { state.booted = true; advanceTo('email'); }
+      setTimeout(() => input && input.focus(), 80);
     }
     function closePanel() { panel.classList.remove('is-open'); }
-    function togglePanel() {
-      if (panel.classList.contains('is-open')) closePanel(); else openPanel();
-    }
-
-    fab.addEventListener('click', togglePanel);
+    fab.addEventListener('click', () => panel.classList.contains('is-open') ? closePanel() : openPanel());
     if (panelClose) panelClose.addEventListener('click', closePanel);
-
-    // Close on outside click. Pointer-events on the closed panel are
-    // none so a click that lands on its (invisible) box is impossible —
-    // we only need to check the FAB itself.
     document.addEventListener('click', (e) => {
       if (!panel.classList.contains('is-open')) return;
       if (panel.contains(e.target) || fab.contains(e.target)) return;
       closePanel();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closePanel();
+      if (e.key === 'Escape' && panel.classList.contains('is-open')) closePanel();
     });
-
-    // Event delegation: ANY element with data-chat="open" opens the
-    // panel — used by the Infocomiva card CTA and any future opt-in
-    // triggers without needing per-element bindings.
     document.addEventListener('click', (e) => {
       const t = e.target.closest && e.target.closest('[data-chat="open"]');
-      if (t) {
-        e.preventDefault();
-        openPanel();
-      }
+      if (t) { e.preventDefault(); openPanel(); }
     });
 
-    // Attention bubble — once per session, after ~8s dwell, until
-    // the visitor dismisses it OR opens the panel.
+    // Attention bubble — once per session, ~8s dwell.
     const BUBBLE_KEY = 'infocomiva-chat-bubble-dismissed';
-    function bubbleSeen() {
-      try { return sessionStorage.getItem(BUBBLE_KEY) === '1'; } catch { return false; }
-    }
-    function markBubbleSeen() {
-      try { sessionStorage.setItem(BUBBLE_KEY, '1'); } catch {}
-    }
+    function bubbleSeen() { try { return sessionStorage.getItem(BUBBLE_KEY) === '1'; } catch { return false; } }
+    function markBubbleSeen() { try { sessionStorage.setItem(BUBBLE_KEY, '1'); } catch {} }
     if (bubble && !bubbleSeen()) {
       setTimeout(() => {
         if (!panel.classList.contains('is-open')) bubble.classList.add('is-shown');
@@ -849,13 +909,319 @@
         });
       }
       bubble.addEventListener('click', (e) => {
-        // Clicking the bubble itself (not the close ×) opens the panel.
         if (e.target.closest('.chat-bubble-close')) return;
         bubble.classList.remove('is-shown');
         markBubbleSeen();
         openPanel();
       });
     }
+
+    // ─── State + storage ───────────────────────────────────────────
+    //
+    // We persist {email, verifiedAt, sessionToken} in localStorage for
+    // 1 hour so a visitor who closes and reopens the panel doesn't have
+    // to verify again. Captured chat fields are NOT persisted — they
+    // stay in memory and get sent in one POST at the end.
+    const STORE_KEY = 'infocomiva-chat-session';
+    function loadSession() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        if (!raw) return null;
+        const s = JSON.parse(raw);
+        if (!s || !s.sessionToken || !s.exp) return null;
+        if (Date.now() / 1000 > s.exp) { localStorage.removeItem(STORE_KEY); return null; }
+        return s;
+      } catch { return null; }
+    }
+    function saveSession(email, sessionToken, expiresIn) {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify({
+        email, sessionToken, exp: Math.floor(Date.now()/1000) + (expiresIn || 3600)
+      })); } catch {}
+    }
+    function clearSession() { try { localStorage.removeItem(STORE_KEY); } catch {} }
+
+    const state = {
+      booted: false,
+      step: null,               // 'email'|'otp'|'businessName'|'phone'|'businessType'|'project'|'escalate'|'submitting'|'done'
+      email: '',
+      otpToken: null,           // signed token from /api/send-otp
+      sessionToken: null,       // signed token from /api/verify-otp
+      businessName: '',
+      phone: '',
+      businessType: '',
+      projectDesc: '',
+      escalate: false,
+    };
+
+    // ─── Render helpers ────────────────────────────────────────────
+    function addBot(text) {
+      const el = document.createElement('div');
+      el.className = 'chat-msg from-bot';
+      el.innerHTML = '<div class="bubble"></div>';
+      el.querySelector('.bubble').textContent = text;
+      thread.appendChild(el);
+      scrollThreadBottom();
+    }
+    function addUser(text) {
+      const el = document.createElement('div');
+      el.className = 'chat-msg from-user';
+      el.innerHTML = '<div class="bubble"></div>';
+      el.querySelector('.bubble').textContent = text;
+      thread.appendChild(el);
+      scrollThreadBottom();
+    }
+    function showTyping() {
+      const el = document.createElement('div');
+      el.className = 'chat-msg from-bot';
+      el.dataset.typing = '1';
+      el.innerHTML = '<div class="chat-typing"><span></span><span></span><span></span></div>';
+      thread.appendChild(el);
+      scrollThreadBottom();
+      return el;
+    }
+    function removeTyping(el) { if (el && el.parentNode) el.parentNode.removeChild(el); }
+    function scrollThreadBottom() { thread.scrollTop = thread.scrollHeight; }
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.classList.add('is-shown');
+      setTimeout(() => errorBox.classList.remove('is-shown'), 6000);
+    }
+
+    // Configure the bottom bar per step.
+    function setInputMode({ placeholder, type = 'text', sendLabel = '→', yesno: showYN = false, multiline = false }) {
+      yesno.style.display = showYN ? 'flex' : 'none';
+      inputBar.style.display = showYN ? 'none' : 'flex';
+      if (!showYN) {
+        // Replace input element if switching multiline ↔ singleline so
+        // textareas grow nicely without inheriting type=email caret rules.
+        const wanted = multiline ? 'TEXTAREA' : 'INPUT';
+        if (input.tagName !== wanted) {
+          const fresh = document.createElement(multiline ? 'textarea' : 'input');
+          fresh.id = 'chat-input';
+          if (!multiline) fresh.type = type;
+          fresh.placeholder = placeholder;
+          fresh.autocomplete = 'off';
+          input.parentNode.replaceChild(fresh, input);
+        } else {
+          if (!multiline) input.type = type;
+          input.placeholder = placeholder;
+          input.value = '';
+        }
+        sendBtn.textContent = sendLabel;
+        sendBtn.disabled = false;
+        // Rebind because we may have just replaced the input element.
+        bindInput();
+        setTimeout(() => document.getElementById('chat-input').focus(), 50);
+      }
+    }
+    function getInputEl() { return document.getElementById('chat-input'); }
+
+    function bindInput() {
+      const el = getInputEl();
+      if (!el) return;
+      el.onkeydown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          handleSubmit();
+        }
+      };
+    }
+
+    // ─── State machine ─────────────────────────────────────────────
+    async function advanceTo(step) {
+      state.step = step;
+      switch (step) {
+        case 'email': {
+          // Skip straight to business name if we already have a valid session.
+          const existing = loadSession();
+          if (existing) {
+            state.email = existing.email;
+            state.sessionToken = existing.sessionToken;
+            addBot('Welcome back, ' + existing.email + '. Picking up where we left off.');
+            advanceTo('businessName');
+            return;
+          }
+          addBot('Hi! I’m the Infocomiva assistant. Let’s start — what’s your email? We’ll send a quick 6-digit code to verify it.');
+          setInputMode({ placeholder: 'you@company.com', type: 'email', sendLabel: 'Send' });
+          break;
+        }
+        case 'otp': {
+          addBot('Sent. Check your inbox (and the spam folder, just in case). Type the 6-digit code below.');
+          setInputMode({ placeholder: '123456', type: 'text', sendLabel: 'Verify' });
+          break;
+        }
+        case 'businessName': {
+          addBot('Verified ✅ Now, what’s your business name?');
+          setInputMode({ placeholder: 'e.g. Amirah Technologies', type: 'text', sendLabel: '→' });
+          break;
+        }
+        case 'phone': {
+          addBot('Thanks. What’s the best phone or WhatsApp number to reach you?');
+          setInputMode({ placeholder: '+91 …', type: 'tel', sendLabel: '→' });
+          break;
+        }
+        case 'businessType': {
+          addBot('What kind of business is it? (e.g. logistics, fintech, hospitality, education)');
+          setInputMode({ placeholder: 'Logistics, fintech, …', type: 'text', sendLabel: '→' });
+          break;
+        }
+        case 'project': {
+          addBot('And what would you like us to build? One line is enough — we’ll dig in on the call.');
+          setInputMode({ placeholder: 'Multi-tenant SaaS for …', type: 'text', sendLabel: '→', multiline: true });
+          break;
+        }
+        case 'escalate': {
+          addBot('Last question — would you like to talk to our founder Avilash directly, right now on WhatsApp?');
+          setInputMode({ placeholder: '', yesno: true });
+          break;
+        }
+        case 'submitting': {
+          showTyping();
+          await submitLead();
+          break;
+        }
+        case 'done': {
+          if (state.escalate) {
+            addBot('Sent. Avilash will WhatsApp you within the hour. If you’d like to message first, tap below:');
+            renderDoneButtons(true);
+          } else {
+            addBot('Sent. We’ll reply on phone or email within 24 hours. Talk soon!');
+            renderDoneButtons(false);
+          }
+          inputBar.style.display = 'none';
+          yesno.style.display = 'none';
+          break;
+        }
+      }
+    }
+
+    // Render final-state escape hatches (WhatsApp / call / start-over).
+    function renderDoneButtons(escalate) {
+      const wrap = document.createElement('div');
+      wrap.className = 'chat-yesno';
+      wrap.style.display = 'flex';
+      wrap.style.flexWrap = 'wrap';
+      wrap.style.padding = '0 12px 16px';
+      const waText = encodeURIComponent('Hi Infocomiva — I just left my details on the chat. I’m ' + (state.businessName || 'a prospect') + ', looking to build ' + (state.projectDesc || 'a custom product') + '.');
+      wrap.innerHTML = `
+        <a class="primary" style="text-align:center;text-decoration:none;display:inline-block;padding:11px 16px;border-radius:10px;font-size:14px;font-weight:700;background:linear-gradient(135deg,#25D366,#1ea54d);color:#fff;" target="_blank" rel="noopener" href="https://wa.me/918918897474?text=${waText}">WhatsApp now</a>
+        <a style="text-align:center;text-decoration:none;display:inline-block;padding:11px 16px;border-radius:10px;font-size:14px;font-weight:700;border:1.5px solid #ebebed;background:#fff;color:#0a0a0a;" href="tel:+918918897474">Call us</a>
+      `;
+      thread.parentNode.insertBefore(wrap, errorBox);
+      scrollThreadBottom();
+    }
+
+    // ─── Handlers ──────────────────────────────────────────────────
+    async function handleSubmit() {
+      const el = getInputEl();
+      if (!el) return;
+      const raw = (el.value || '').trim();
+      if (!raw && state.step !== 'project') return;
+
+      switch (state.step) {
+        case 'email':         await onSubmitEmail(raw); break;
+        case 'otp':           await onSubmitOtp(raw);   break;
+        case 'businessName':  addUser(raw); state.businessName = raw.slice(0, 200); advanceTo('phone'); break;
+        case 'phone':         addUser(raw); state.phone        = raw.slice(0, 40);  advanceTo('businessType'); break;
+        case 'businessType':  addUser(raw); state.businessType = raw.slice(0, 200); advanceTo('project'); break;
+        case 'project':       addUser(raw || '(no description)'); state.projectDesc = raw.slice(0, 2000); advanceTo('escalate'); break;
+      }
+    }
+
+    async function onSubmitEmail(email) {
+      const ok = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+      if (!ok) { showError('Please enter a valid email.'); return; }
+      addUser(email);
+      state.email = email.toLowerCase();
+      sendBtn.disabled = true; sendBtn.textContent = '…';
+      const typing = showTyping();
+      try {
+        const res = await fetch('/api/send-otp', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email: state.email }),
+        });
+        const data = await res.json().catch(() => ({}));
+        removeTyping(typing);
+        if (!res.ok) { showError(data.error || 'Could not send the code.'); sendBtn.disabled = false; sendBtn.textContent = 'Send'; return; }
+        state.otpToken = data.token;
+        advanceTo('otp');
+      } catch (e) {
+        removeTyping(typing);
+        showError('Network error. Try again in a moment.');
+        sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      }
+    }
+
+    async function onSubmitOtp(otp) {
+      if (!/^\d{6}$/.test(otp)) { showError('Enter the 6-digit code from your email.'); return; }
+      addUser(otp);
+      sendBtn.disabled = true; sendBtn.textContent = '…';
+      const typing = showTyping();
+      try {
+        const res = await fetch('/api/verify-otp', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email: state.email, otp, token: state.otpToken }),
+        });
+        const data = await res.json().catch(() => ({}));
+        removeTyping(typing);
+        if (!res.ok || !data.verified) { showError(data.error || 'Verification failed.'); sendBtn.disabled = false; sendBtn.textContent = 'Verify'; return; }
+        state.sessionToken = data.sessionToken;
+        saveSession(state.email, state.sessionToken, data.expiresIn || 3600);
+        advanceTo('businessName');
+      } catch (e) {
+        removeTyping(typing);
+        showError('Network error. Try again in a moment.');
+        sendBtn.disabled = false; sendBtn.textContent = 'Verify';
+      }
+    }
+
+    async function submitLead() {
+      try {
+        const res = await fetch('/api/submit-lead', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            sessionToken: state.sessionToken,
+            businessName: state.businessName,
+            phone:        state.phone,
+            businessType: state.businessType,
+            projectDesc:  state.projectDesc,
+            escalate:     state.escalate,
+            sourcePath:   location.pathname,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        // Strip the typing indicator regardless of result.
+        const typingEls = thread.querySelectorAll('[data-typing="1"]');
+        typingEls.forEach((t) => t.remove());
+        if (!res.ok || !data.ok) {
+          showError(data.error || 'Could not save your details. Please WhatsApp +91 89188 97474.');
+          state.step = 'escalate'; // let them retry / pick escalate again
+          inputBar.style.display = 'none';
+          yesno.style.display = 'flex';
+          return;
+        }
+        advanceTo('done');
+      } catch (e) {
+        const typingEls = thread.querySelectorAll('[data-typing="1"]');
+        typingEls.forEach((t) => t.remove());
+        showError('Network error. Please WhatsApp +91 89188 97474.');
+      }
+    }
+
+    // Wire send-button + yes/no.
+    sendBtn.addEventListener('click', handleSubmit);
+    yesno.querySelectorAll('[data-yn]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const yn = btn.dataset.yn;
+        state.escalate = (yn === 'yes');
+        addUser(yn === 'yes' ? 'Yes, connect me now' : 'No, just send my details');
+        advanceTo('submitting');
+      });
+    });
+    bindInput();
   })();
   </script>
 </body>
