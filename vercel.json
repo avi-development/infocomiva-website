@@ -13,12 +13,6 @@
       "has": [{ "type": "host", "value": "infocomiva-website.vercel.app" }],
       "destination": "https://infocomiva.live/:path*",
       "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.infocomiva.live" }],
-      "destination": "https://infocomiva.live/:path*",
-      "permanent": true
     }
   ]
 }
