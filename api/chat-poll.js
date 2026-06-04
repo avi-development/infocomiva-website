@@ -68,19 +68,25 @@ export default async function handler(req, res) {
     if (!isNaN(d.getTime())) sinceIso = d.toISOString();
   }
 
-  // structuredQuery: messages WHERE from='admin' AND createdAt > since
-  // ORDER BY createdAt ASC. Scoped to this thread via the runQuery path.
+  // structuredQuery: messages WHERE createdAt > since ORDER BY createdAt
+  // Then we filter for from='admin' in JS below. Why not put `from`
+  // in the WHERE? Because Firestore requires a COMPOSITE INDEX for any
+  // query that combines a range filter (createdAt >) with an equality
+  // filter (from ==) AND an ORDER BY. Without the index, runQuery
+  // returns an "index required" error. Single-field range + same-field
+  // order doesn't need any index — works out of the box.
+  // Trade-off: we over-fetch visitor messages and discard them in JS,
+  // but chat threads are short (max 50 messages per poll cap) so the
+  // extra payload is negligible.
   const runQueryUrl = `${FS_BASE}/chatThreads/${threadId}:runQuery?key=${PUBLIC_API_KEY}`;
   const queryBody = {
     structuredQuery: {
       from: [{ collectionId: 'messages' }],
       where: {
-        compositeFilter: {
-          op: 'AND',
-          filters: [
-            { fieldFilter: { field: { fieldPath: 'from' }, op: 'EQUAL', value: { stringValue: 'admin' } } },
-            { fieldFilter: { field: { fieldPath: 'createdAt' }, op: 'GREATER_THAN', value: { timestampValue: sinceIso } } },
-          ],
+        fieldFilter: {
+          field: { fieldPath: 'createdAt' },
+          op: 'GREATER_THAN',
+          value: { timestampValue: sinceIso },
         },
       },
       orderBy: [{ field: { fieldPath: 'createdAt' }, direction: 'ASCENDING' }],
@@ -113,18 +119,22 @@ export default async function handler(req, res) {
 
   const rows = await fsRes.json().catch(() => []);
   // runQuery returns an array of { document: { fields: {...} } } per match,
-  // plus a trailing { readTime } entry. Filter to documents only.
+  // plus a trailing { readTime } entry. Filter to documents only AND
+  // drop visitor messages (we only want to push admin replies down to
+  // the visitor; they already see their own bubbles client-side).
   const messages = (Array.isArray(rows) ? rows : [])
     .map((row) => row.document)
     .filter(Boolean)
     .map((doc) => {
       const fields = doc.fields || {};
       return {
-        text: (fields.text && fields.text.stringValue) || '',
+        from:      (fields.from      && fields.from.stringValue)      || '',
+        text:      (fields.text      && fields.text.stringValue)      || '',
         createdAt: (fields.createdAt && fields.createdAt.timestampValue) || null,
       };
     })
-    .filter((m) => m.text && m.createdAt);
+    .filter((m) => m.from === 'admin' && m.text && m.createdAt)
+    .map((m) => ({ text: m.text, createdAt: m.createdAt }));
 
   return res.status(200).json({
     messages,

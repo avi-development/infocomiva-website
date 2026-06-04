@@ -1333,7 +1333,13 @@
           '&since=' + encodeURIComponent(state.lastPolledAt || '');
         const res = await fetch(url);
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) return;
+        if (!res.ok) {
+          // Don't silently swallow — surface so we can debug. Auto-hides
+          // after 6s; loop continues and tries again next tick.
+          console.warn('[chat-poll] error:', data.error || res.status);
+          if (data.error) showError('Chat polling: ' + data.error);
+          return;
+        }
         const msgs = Array.isArray(data.messages) ? data.messages : [];
         for (const m of msgs) {
           if (m.text) addBot(m.text);
@@ -1341,13 +1347,14 @@
             state.lastPolledAt = m.createdAt;
           }
         }
-        // If nothing new came in, still advance lastPolledAt so we
-        // don't refetch the same admin messages on every poll.
+        // Even when nothing new came in, advance lastPolledAt to the
+        // server's response time so the next poll doesn't refetch the
+        // same admin messages we already rendered.
         if (!msgs.length && data.polledAt) {
           state.lastPolledAt = data.polledAt;
         }
       } catch (e) {
-        // Silent — try again next tick.
+        console.warn('[chat-poll] network error:', e);
       }
     }
 
