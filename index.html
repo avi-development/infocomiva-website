@@ -4,6 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
+  <!-- Canonical-host redirect. Fires before any other parsing so a
+       visitor who lands on the .vercel.app deployment URL (or the
+       www subdomain) bounces to the apex domain before the page
+       paints. Belt-and-braces fallback to the vercel.json 301 — the
+       edge rule silently no-ops on .vercel.app hosts because Vercel
+       routes those through the deployment alias before the redirects
+       table is consulted. -->
+  <script>(function(){var h=location.hostname;if(h==='infocomiva-website.vercel.app'||h==='www.infocomiva.live'){location.replace('https://infocomiva.live'+location.pathname+location.search+location.hash);}})();</script>
+
   <!-- ============================================================
        Primary SEO
        ============================================================ -->
