@@ -144,6 +144,133 @@
 
     .price { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 28px; letter-spacing: -0.02em; }
     .price-meta { font-size: 12px; color: #71717a; margin-top: 2px; }
+
+    /* ─── Floating chat button (FAB) ──────────────────────────────
+       Always-visible round button fixed to the bottom-right. Pulse
+       ring draws the eye; click toggles the chat-panel that offers
+       WhatsApp / call / email shortcuts. Mobile keeps the same
+       position but with a touch-friendly hit area.
+       The Infocomiva CTA on the Infocomiva card uses data-chat="open"
+       to open the same panel — single entry point for all "talk to
+       us" intent across the page. */
+    .chat-fab {
+      position: fixed; right: 22px; bottom: 22px; z-index: 60;
+      width: 60px; height: 60px; border-radius: 999px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+      color: #fff; border: 0; cursor: pointer;
+      box-shadow: 0 14px 36px -8px rgba(37,99,235,.55), 0 2px 6px rgba(0,0,0,.18);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .chat-fab:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 18px 44px -8px rgba(37,99,235,.7), 0 2px 6px rgba(0,0,0,.2); }
+    .chat-fab svg { width: 28px; height: 28px; }
+    .chat-fab::after {
+      content: ''; position: absolute; inset: 0; border-radius: 999px;
+      box-shadow: 0 0 0 0 rgba(37,99,235,.5);
+      animation: chat-pulse 2.2s infinite;
+    }
+    @keyframes chat-pulse {
+      0%   { box-shadow: 0 0 0 0   rgba(37,99,235,.55); }
+      70%  { box-shadow: 0 0 0 18px rgba(37,99,235,0); }
+      100% { box-shadow: 0 0 0 0   rgba(37,99,235,0); }
+    }
+
+    /* Attention bubble — auto-shows ~8s after page load, attached
+       to the FAB. Dismissible (× button); once dismissed it doesn't
+       reappear that session. Pure CSS positioning + a small JS hook
+       to add/remove the .is-shown class. */
+    .chat-bubble {
+      position: fixed; right: 96px; bottom: 30px; z-index: 60;
+      background: #fff; color: #0a0a0a;
+      padding: 12px 16px; padding-right: 36px;
+      border-radius: 14px;
+      box-shadow: 0 18px 40px -10px rgba(15,31,94,.25), 0 2px 6px rgba(0,0,0,.06);
+      font-size: 13px; font-weight: 600;
+      max-width: 260px;
+      opacity: 0; transform: translateX(8px); pointer-events: none;
+      transition: opacity .3s ease-out, transform .3s ease-out;
+    }
+    .chat-bubble::after {
+      content: ''; position: absolute;
+      right: -7px; bottom: 18px;
+      width: 14px; height: 14px;
+      background: #fff;
+      transform: rotate(45deg);
+      box-shadow: 2px -2px 6px -2px rgba(15,31,94,.12);
+    }
+    .chat-bubble.is-shown { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    .chat-bubble-close {
+      position: absolute; top: 6px; right: 8px;
+      background: none; border: 0; cursor: pointer;
+      color: #71717a; font-size: 16px; line-height: 1;
+      padding: 4px;
+    }
+    .chat-bubble-close:hover { color: #0a0a0a; }
+    @media (max-width: 480px) {
+      .chat-bubble { max-width: calc(100vw - 110px); right: 90px; }
+    }
+
+    /* The chat panel itself — appears above the FAB on click. */
+    .chat-panel {
+      position: fixed; right: 22px; bottom: 96px; z-index: 65;
+      width: 320px; max-width: calc(100vw - 32px);
+      background: #fff; border-radius: 18px;
+      box-shadow: 0 28px 60px -10px rgba(15,31,94,.4), 0 4px 10px rgba(0,0,0,.08);
+      overflow: hidden;
+      opacity: 0; transform: translateY(12px) scale(.97); pointer-events: none;
+      transition: opacity .22s ease-out, transform .22s ease-out;
+    }
+    .chat-panel.is-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .chat-panel-header {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1e3a8a 100%);
+      color: #fff; padding: 18px 20px 16px; position: relative;
+    }
+    .chat-panel-header .usp {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 10px; background: rgba(37,99,235,.25);
+      border: 1px solid rgba(96,165,250,.4);
+      border-radius: 999px; font-size: 11px; font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .chat-panel-header .usp .dot { width: 7px; height: 7px; border-radius: 999px; background: #60a5fa; }
+    .chat-panel-header .title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 18px; line-height: 1.2; }
+    .chat-panel-header .sub { font-size: 12px; color: rgba(255,255,255,.72); margin-top: 4px; line-height: 1.5; }
+    .chat-panel-close {
+      position: absolute; top: 12px; right: 12px;
+      width: 26px; height: 26px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 999px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; cursor: pointer; font-size: 14px; padding: 0; line-height: 1;
+    }
+    .chat-panel-close:hover { background: rgba(255,255,255,.22); }
+
+    .chat-panel-body { padding: 10px; }
+    .chat-option {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: #0a0a0a; text-decoration: none;
+      font-size: 14px; font-weight: 600;
+      transition: background .15s;
+    }
+    .chat-option:hover { background: #f7f7f8; }
+    .chat-option .ic {
+      width: 36px; height: 36px; border-radius: 999px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: #fff;
+    }
+    .chat-option .ic.whatsapp { background: #25D366; }
+    .chat-option .ic.call     { background: #2563eb; }
+    .chat-option .ic.mail     { background: #1e3a8a; }
+    .chat-option .meta { font-size: 11px; font-weight: 500; color: #71717a; margin-top: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .chat-fab::after { animation: none; }
+      .chat-fab:hover { transform: none; }
+      .chat-bubble, .chat-panel { transition: none; }
+    }
   </style>
 </head>
 <body class="bg-white text-ink-900 selection:bg-azure-500/20 selection:text-ink-900">
@@ -437,7 +564,23 @@
     // (mid-market itself is 1.0). Each tier carries a qualitative
     // descriptor + timeline note that surfaces what the bare number
     // doesn't capture.
+    // Infocomiva first — the recommended card leads the row so the
+    // visitor's eye lands there before scanning rightward through
+    // the more expensive alternatives.
     const VENDORS = [
+      {
+        id: 'infocomiva',
+        name: 'Infocomiva',
+        mult: [0.85, 1.7],
+        bullets: [
+          'Fixed price locked before discovery ends',
+          'Code, domain, cloud — yours from day 1',
+          'Same team day 1 &amp; day 500',
+          'Custom prototype in 24h',
+        ],
+        isUs: true,
+        best: true,
+      },
       {
         id: 'freelancer',
         name: 'Freelancer / Upwork',
@@ -477,19 +620,6 @@
           'Strong process, strong premium',
           'Time-zone trade-off vs India',
         ],
-      },
-      {
-        id: 'infocomiva',
-        name: 'Infocomiva',
-        mult: [0.85, 1.7],   // Mid-market band, slightly below median
-        bullets: [
-          'Fixed price locked before discovery ends',
-          'Code, domain, cloud — yours from day 1',
-          'Same team day 1 &amp; day 500',
-          'Custom prototype in 24h',
-        ],
-        isUs: true,
-        best: true,
       },
     ];
 
@@ -548,6 +678,16 @@
         const isUs = v.isUs ? ' is-us' : '';
         const ribbon = v.best ? '<div class="ribbon-best">Recommended</div>' : '';
         const bullets = v.bullets.map((b) => `<li class="text-xs leading-relaxed mt-1">${b}</li>`).join('');
+        // The Infocomiva card gets a CTA button below the bullets so a
+        // visitor convinced by the comparison can act in one click
+        // without scrolling to the contact form. data-chat="open" wires
+        // it to the floating chat panel below — same set of contact
+        // options the FAB exposes.
+        const cta = v.isUs ? `
+          <button type="button" data-chat="open" class="mt-5 w-full bg-azure-500 hover:bg-azure-600 transition px-4 py-3 rounded-lg text-sm font-bold text-white inline-flex items-center justify-center gap-2">
+            Get your prototype in 24h <span>→</span>
+          </button>
+        ` : '';
         return `
           <div class="vcard${isUs}">
             ${ribbon}
@@ -557,6 +697,7 @@
             <ul class="mt-4 list-none p-0 space-y-1 text-ink-700">
               ${bullets}
             </ul>
+            ${cta}
           </div>
         `;
       }).join('');
@@ -573,6 +714,148 @@
     setActive('complexity',  state.complexity);
     setActive('timeline',    state.timeline);
     render();
+  })();
+  </script>
+
+  <!-- ============================================================
+       FLOATING CHAT BUTTON + ATTENTION BUBBLE + PANEL
+       Single entry point for all "talk to us" intent on this page.
+       The Infocomiva-card CTA shares it via data-chat="open" so the
+       page has one consistent contact action instead of three.
+       ============================================================ -->
+  <button type="button" class="chat-fab" id="chat-fab" aria-label="Chat with us" aria-controls="chat-panel">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+    </svg>
+  </button>
+
+  <div class="chat-bubble" id="chat-bubble" role="status">
+    <button type="button" class="chat-bubble-close" id="chat-bubble-close" aria-label="Dismiss">×</button>
+    👋 Need help choosing? Chat with us &mdash; we reply on WhatsApp in minutes.
+  </div>
+
+  <div class="chat-panel" id="chat-panel" role="dialog" aria-modal="false" aria-label="Contact options">
+    <div class="chat-panel-header">
+      <button type="button" class="chat-panel-close" id="chat-panel-close" aria-label="Close">×</button>
+      <div class="usp"><span class="dot"></span> Prototype in 24h</div>
+      <div class="title">Let&rsquo;s talk &mdash; pick a channel</div>
+      <div class="sub">We respond inside 24 hours, usually much faster on WhatsApp.</div>
+    </div>
+    <div class="chat-panel-body">
+      <a class="chat-option" target="_blank" rel="noopener"
+         href="https://wa.me/918918897474?text=Hi%20Infocomiva%20%E2%80%94%20I%27m%20interested%20in%20a%20custom%20prototype.%20Can%20we%20talk%3F">
+        <span class="ic whatsapp">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 3.1 17.2L2 22l4.9-1.1A11 11 0 1 0 20.5 3.5zM12 20a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.7.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.7.9-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.2.2-.4.1-.2 0-.3 0-.4 0-.1-.5-1.3-.7-1.7-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9 0 1.1.8 2.2 1 2.4.1.1 1.6 2.4 3.9 3.4.5.2 1 .3 1.3.4.5.2 1 .1 1.4.1.4-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2z"/></svg>
+        </span>
+        <span>
+          WhatsApp &mdash; +91 89188 97474
+          <div class="meta">Usually replies in minutes</div>
+        </span>
+      </a>
+      <a class="chat-option" href="tel:+918918897474">
+        <span class="ic call">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </span>
+        <span>
+          Call &mdash; +91 89188 97474
+          <div class="meta">Mon–Sat, 10am–7pm IST</div>
+        </span>
+      </a>
+      <a class="chat-option" href="tel:+917718569194">
+        <span class="ic call">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </span>
+        <span>
+          Call &mdash; +91 77185 69194
+          <div class="meta">Backup line</div>
+        </span>
+      </a>
+      <a class="chat-option" href="mailto:hello@infocomiva.live?subject=Custom%20prototype%20request">
+        <span class="ic mail">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </span>
+        <span>
+          Email &mdash; hello@infocomiva.live
+          <div class="meta">Replies within 24 hours</div>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const fab        = document.getElementById('chat-fab');
+    const panel      = document.getElementById('chat-panel');
+    const panelClose = document.getElementById('chat-panel-close');
+    const bubble     = document.getElementById('chat-bubble');
+    const bubbleClose= document.getElementById('chat-bubble-close');
+
+    if (!fab || !panel) return;
+
+    function openPanel()  {
+      panel.classList.add('is-open');
+      // Opening the panel implicitly dismisses the attention bubble.
+      if (bubble) bubble.classList.remove('is-shown');
+    }
+    function closePanel() { panel.classList.remove('is-open'); }
+    function togglePanel() {
+      if (panel.classList.contains('is-open')) closePanel(); else openPanel();
+    }
+
+    fab.addEventListener('click', togglePanel);
+    if (panelClose) panelClose.addEventListener('click', closePanel);
+
+    // Close on outside click. Pointer-events on the closed panel are
+    // none so a click that lands on its (invisible) box is impossible —
+    // we only need to check the FAB itself.
+    document.addEventListener('click', (e) => {
+      if (!panel.classList.contains('is-open')) return;
+      if (panel.contains(e.target) || fab.contains(e.target)) return;
+      closePanel();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePanel();
+    });
+
+    // Event delegation: ANY element with data-chat="open" opens the
+    // panel — used by the Infocomiva card CTA and any future opt-in
+    // triggers without needing per-element bindings.
+    document.addEventListener('click', (e) => {
+      const t = e.target.closest && e.target.closest('[data-chat="open"]');
+      if (t) {
+        e.preventDefault();
+        openPanel();
+      }
+    });
+
+    // Attention bubble — once per session, after ~8s dwell, until
+    // the visitor dismisses it OR opens the panel.
+    const BUBBLE_KEY = 'infocomiva-chat-bubble-dismissed';
+    function bubbleSeen() {
+      try { return sessionStorage.getItem(BUBBLE_KEY) === '1'; } catch { return false; }
+    }
+    function markBubbleSeen() {
+      try { sessionStorage.setItem(BUBBLE_KEY, '1'); } catch {}
+    }
+    if (bubble && !bubbleSeen()) {
+      setTimeout(() => {
+        if (!panel.classList.contains('is-open')) bubble.classList.add('is-shown');
+      }, 8000);
+      if (bubbleClose) {
+        bubbleClose.addEventListener('click', (e) => {
+          e.stopPropagation();
+          bubble.classList.remove('is-shown');
+          markBubbleSeen();
+        });
+      }
+      bubble.addEventListener('click', (e) => {
+        // Clicking the bubble itself (not the close ×) opens the panel.
+        if (e.target.closest('.chat-bubble-close')) return;
+        bubble.classList.remove('is-shown');
+        markBubbleSeen();
+        openPanel();
+      });
+    }
   })();
   </script>
 </body>
