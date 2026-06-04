@@ -36,7 +36,13 @@
   <header class="bg-ink-900 text-white px-5 py-4">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <a href="/" class="flex items-center gap-3">
-        <img src="/assets/logo.png" alt="Infocomiva" class="h-10 w-10 object-contain" width="40" height="40">
+        <!-- Eagle src is empty here on purpose; the Firebase loader at
+             the bottom of this page fetches it from appSettings/infocomiva
+             (same doc the home page uses) so a Super Admin upload
+             flows here too without a rebuild. The IT badge is the
+             fallback if the loader fails / Firestore is unreachable. -->
+        <img id="eagle-logo" alt="Infocomiva" class="h-10 w-10 object-contain hidden" width="40" height="40">
+        <span id="eagle-fallback" class="inline-flex items-center justify-center h-10 w-10 rounded-md bg-white/10 border border-white/20 text-[10px] uppercase tracking-wider text-white font-bold">IT</span>
         <span class="font-display font-black text-base sm:text-lg tracking-tight">Infocomiva <span class="text-azure-500">Technologies</span></span>
       </a>
       <a href="/" class="text-sm text-white/80 hover:text-white transition">← Back to home</a>
@@ -95,5 +101,53 @@
     &copy; <span id="yr"></span> Infocomiva Technologies
   </footer>
   <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+
+  <!-- ============================================================
+       Eagle-logo loader. Reads appSettings/infocomiva.eagle from the
+       shared cargologic-saas Firestore project (same place the home
+       page reads it from) and swaps the empty <img> src to the
+       Cloudinary URL. On success, the IT text fallback is hidden and
+       the eagle is shown. On failure (Firestore unreachable, key
+       missing, image 404), the IT fallback stays visible. This keeps
+       the thank-you page header consistent with infocomiva.live/
+       even though it's a separate file with no shared layout. The
+       Firebase init is duplicated rather than imported because this
+       is a tiny static page with no bundler — adding a build step for
+       one logo isn't worth it.
+       ============================================================ -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const app = initializeApp({
+      apiKey: "AIzaSyAmJKD3Saep17Ij4jWN2vgZSypk17VjuZg",
+      authDomain: "cargologic-saas.firebaseapp.com",
+      projectId: "cargologic-saas",
+      storageBucket: "cargologic-saas.firebasestorage.app",
+      messagingSenderId: "1005412538844",
+      appId: "1:1005412538844:web:26e6ce0ae52c6065c3d719",
+    });
+    const db = getFirestore(app);
+
+    try {
+      const snap = await getDoc(doc(db, "appSettings", "infocomiva"));
+      if (!snap.exists()) throw new Error("appSettings/infocomiva missing");
+      const url = (snap.data() || {}).eagle;
+      if (!url || typeof url !== "string") throw new Error("eagle URL missing");
+      const img = document.getElementById("eagle-logo");
+      const fb  = document.getElementById("eagle-fallback");
+      const probe = new Image();
+      probe.onload = () => {
+        img.src = url;
+        img.classList.remove("hidden");
+        if (fb) fb.remove();
+      };
+      probe.onerror = () => { /* keep fallback */ };
+      probe.src = url;
+    } catch (err) {
+      console.warn("[infocomiva/thank-you] eagle loader failed:", err);
+      // IT fallback stays visible — no further action needed.
+    }
+  </script>
 </body>
 </html>
