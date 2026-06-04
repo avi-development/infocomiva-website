@@ -960,7 +960,7 @@
 
     const state = {
       booted: false,
-      step: null,               // 'email'|'otp'|'businessName'|'phone'|'businessType'|'project'|'escalate'|'submitting'|'done'
+      step: null,               // 'email'|'otp'|'businessName'|'phone'|'businessType'|'project'|'escalate'|'submitting'|'done'|'live'
       email: '',
       otpToken: null,           // signed token from /api/send-otp
       sessionToken: null,       // signed token from /api/verify-otp
@@ -969,6 +969,12 @@
       businessType: '',
       projectDesc: '',
       escalate: false,
+      // Live-chat state, populated when the visitor picks "Yes, connect me now"
+      // and /api/chat-start creates a thread.
+      threadToken: null,        // signed token from /api/chat-start
+      threadId: null,           // for debugging only
+      lastPolledAt: null,       // ISO timestamp of last successful poll
+      pollTimer: null,          // setTimeout handle for the polling loop
     };
 
     // ─── Render helpers ────────────────────────────────────────────
@@ -1099,15 +1105,19 @@
           break;
         }
         case 'done': {
-          if (state.escalate) {
-            addBot('Sent. Avilash will WhatsApp you within the hour. If you’d like to message first, tap below:');
-            renderDoneButtons(true);
-          } else {
-            addBot('Sent. We’ll reply on phone or email within 24 hours. Talk soon!');
-            renderDoneButtons(false);
-          }
+          // Reached only on escalate=NO. Lead is captured; we close out
+          // with a one-shot confirmation and the escape-hatch buttons.
+          addBot('Sent. We’ll reply on phone or email within 24 hours. Talk soon!');
+          renderDoneButtons(false);
           inputBar.style.display = 'none';
           yesno.style.display = 'none';
+          break;
+        }
+        case 'live': {
+          // Reached only on escalate=YES. Open the chat thread and
+          // transition to live-conversation mode. Input stays visible
+          // so the visitor can keep typing; we poll for admin replies.
+          await startLiveChat();
           break;
         }
       }
@@ -1143,6 +1153,13 @@
         case 'phone':         addUser(raw); state.phone        = raw.slice(0, 40);  advanceTo('businessType'); break;
         case 'businessType':  addUser(raw); state.businessType = raw.slice(0, 200); advanceTo('project'); break;
         case 'project':       addUser(raw || '(no description)'); state.projectDesc = raw.slice(0, 2000); advanceTo('escalate'); break;
+        case 'live':          {
+          // Clear the input value manually since we're not calling
+          // setInputMode (which would reset placeholder + listeners).
+          getInputEl().value = '';
+          await sendVisitorMessage(raw);
+          break;
+        }
       }
     }
 
@@ -1221,11 +1238,121 @@
           yesno.style.display = 'flex';
           return;
         }
-        advanceTo('done');
+        // Branch: escalate → open a live chat thread; otherwise close out.
+        advanceTo(state.escalate ? 'live' : 'done');
       } catch (e) {
         const typingEls = thread.querySelectorAll('[data-typing="1"]');
         typingEls.forEach((t) => t.remove());
         showError('Network error. Please WhatsApp +91 89188 97474.');
+      }
+    }
+
+    // ─── Live-chat mode ────────────────────────────────────────────
+    //
+    // After lead submit on escalate=yes, open a chat thread via
+    // /api/chat-start, then enter a loop that:
+    //   - lets the visitor type messages (Send → /api/chat-send)
+    //   - polls /api/chat-poll every ~3s for admin replies
+    //   - renders admin replies as bot bubbles
+    // WhatsApp + Call buttons stay visible above the input bar as
+    // escape hatches for visitors who'd rather not wait in-panel.
+    async function startLiveChat() {
+      addBot('Opening a live chat with Avilash…');
+      try {
+        const res = await fetch('/api/chat-start', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            sessionToken: state.sessionToken,
+            businessName: state.businessName,
+            phone:        state.phone,
+            businessType: state.businessType,
+            projectDesc:  state.projectDesc,
+            sourcePath:   location.pathname,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) {
+          // Couldn't open the thread — fall back to the static escape buttons.
+          showError(data.error || 'Could not open the live chat.');
+          renderDoneButtons(true);
+          addBot('You can WhatsApp or call Avilash directly using the buttons below.');
+          inputBar.style.display = 'none';
+          yesno.style.display = 'none';
+          return;
+        }
+        state.threadToken = data.threadToken;
+        state.threadId = data.threadId;
+        state.lastPolledAt = new Date().toISOString();
+      } catch (e) {
+        showError('Network error opening chat.');
+        renderDoneButtons(true);
+        inputBar.style.display = 'none';
+        yesno.style.display = 'none';
+        return;
+      }
+
+      // Show the escape-hatch buttons ABOVE the live-chat input so
+      // visitors who'd rather not wait can bail to WhatsApp/Call.
+      renderDoneButtons(true);
+
+      addBot('You’re connected. Type below — Avilash will reply here as soon as he sees this.');
+
+      // Switch the input mode for ongoing chat: plain text + Send.
+      setInputMode({ placeholder: 'Type a message…', type: 'text', sendLabel: 'Send', multiline: true });
+
+      // Kick off the polling loop.
+      pollLoop();
+    }
+
+    function pollLoop() {
+      if (state.step !== 'live') return;
+      // Schedule the next poll; chain instead of setInterval so we
+      // never overlap requests if one is slow.
+      state.pollTimer = setTimeout(async () => {
+        await pollAdminMessages();
+        pollLoop();
+      }, 3500);
+    }
+
+    async function pollAdminMessages() {
+      if (!state.threadToken) return;
+      try {
+        const url = '/api/chat-poll?threadToken=' + encodeURIComponent(state.threadToken) +
+          '&since=' + encodeURIComponent(state.lastPolledAt || '');
+        const res = await fetch(url);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) return;
+        const msgs = Array.isArray(data.messages) ? data.messages : [];
+        for (const m of msgs) {
+          if (m.text) addBot(m.text);
+          if (m.createdAt && (!state.lastPolledAt || m.createdAt > state.lastPolledAt)) {
+            state.lastPolledAt = m.createdAt;
+          }
+        }
+        // If nothing new came in, still advance lastPolledAt so we
+        // don't refetch the same admin messages on every poll.
+        if (!msgs.length && data.polledAt) {
+          state.lastPolledAt = data.polledAt;
+        }
+      } catch (e) {
+        // Silent — try again next tick.
+      }
+    }
+
+    async function sendVisitorMessage(text) {
+      if (!state.threadToken) return;
+      addUser(text);
+      try {
+        const res = await fetch('/api/chat-send', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ threadToken: state.threadToken, text }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) showError(data.error || 'Could not send message.');
+      } catch (e) {
+        showError('Network error. Try again.');
       }
     }
 
