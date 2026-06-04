@@ -140,7 +140,18 @@ export default async function handler(req, res) {
   if (!brevoRes.ok) {
     const errText = await brevoRes.text().catch(() => '<unreadable>');
     console.error('[send-otp] Brevo failed', brevoRes.status, errText);
-    return res.status(502).json({ error: 'Could not send the code. Try again in a minute.' });
+    // Surface the actual Brevo error code/message back to the client
+    // so you can see "sender not allowed" / "invalid api key" / etc.
+    // in the chat UI instead of a generic "try again". Pull this out
+    // once email is reliably sending — it leaks Brevo internals.
+    let brevoMessage = errText;
+    try {
+      const parsed = JSON.parse(errText);
+      brevoMessage = parsed.message || parsed.code || errText;
+    } catch { /* leave as-is */ }
+    return res.status(502).json({
+      error: 'Email provider rejected the send: ' + String(brevoMessage).slice(0, 220),
+    });
   }
 
   // 10-minute expiry so the client UI can show a countdown.
