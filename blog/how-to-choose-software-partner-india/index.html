@@ -555,5 +555,232 @@
       probe.src = url;
     } catch (err) { console.warn("[infocomiva/blog/post] eagle loader failed:", err); }
   </script>
+
+  <!-- ============================================================
+       LEAD POPUP
+       Triggers on whichever happens first AFTER a 15s dwell:
+         (a) the reader scrolls past 50% of the article body, OR
+         (b) the mouse leaves the viewport from the top (desktop
+             exit-intent — works only when the cursor crosses the
+             top edge, so the form doesn't blink up on every minor
+             tab switch).
+       Capped at once-per-7-days per visitor via localStorage so a
+       repeat reader doesn't get the same modal in their face twice.
+       Writes to the same /leads Firestore collection the home-page
+       form uses, with source tagged
+         "infocomiva.live/blog/<slug> [popup]"
+       so Super Admin can see which post a lead actually converted on.
+       Uses a NAMED Firebase app ("popup") so it doesn't clash with
+       the eagle loader's default-name app initialised above.
+       ============================================================ -->
+  <style>
+    .popup-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(10,10,10,.78); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 20px; }
+    .popup-overlay.is-open { display: flex; animation: pp-fade .25s ease-out; }
+    @keyframes pp-fade { from { opacity: 0 } to { opacity: 1 } }
+    .popup-card { background: #fff; border-radius: 20px; max-width: 480px; width: 100%; position: relative; overflow: hidden; box-shadow: 0 30px 80px rgba(15,31,94,.35); animation: pp-rise .35s cubic-bezier(.2,.9,.3,1.2); }
+    @keyframes pp-rise { from { transform: translateY(20px) scale(.96); opacity: 0 } to { transform: translateY(0) scale(1); opacity: 1 } }
+    .popup-header { background: linear-gradient(135deg, #0a0a0a 0%, #1e3a8a 100%); color: #fff; padding: 28px 28px 24px; position: relative; }
+    .popup-close { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; font-size: 18px; line-height: 1; transition: background .2s; padding: 0; font-family: inherit; }
+    .popup-close:hover { background: rgba(255,255,255,.22); }
+    .popup-usp { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(37,99,235,.25); border: 1px solid rgba(96,165,250,.45); border-radius: 999px; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
+    .popup-usp .dot { width: 8px; height: 8px; border-radius: 999px; background: #60a5fa; box-shadow: 0 0 0 3px rgba(96,165,250,.25); }
+    .popup-usp .h { color: #93c5fd; }
+    .popup-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.15; letter-spacing: -.02em; margin: 0; }
+    .popup-sub { margin: 8px 0 0; font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.78); }
+    .popup-body { padding: 22px 28px 24px; }
+    .popup-field { margin-bottom: 12px; }
+    .popup-field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #2d2d31; margin-bottom: 5px; }
+    .popup-field input, .popup-field textarea { width: 100%; padding: 11px 12px; border: 1.5px solid #ebebed; border-radius: 8px; font-family: inherit; font-size: 14px; color: #0a0a0a; transition: border-color .15s; box-sizing: border-box; }
+    .popup-field input:focus, .popup-field textarea:focus { outline: none; border-color: #2563eb; }
+    .popup-field textarea { resize: vertical; min-height: 56px; font-family: inherit; }
+    .popup-submit { width: 100%; background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%); color: #fff; border: none; padding: 13px 24px; border-radius: 10px; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer; margin-top: 6px; transition: transform .15s, box-shadow .15s; }
+    .popup-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(37,99,235,.42); }
+    .popup-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+    .popup-alt { margin-top: 14px; text-align: center; font-size: 12px; color: #71717a; }
+    .popup-alt a { color: #1e3a8a; text-decoration: underline; text-underline-offset: 2px; }
+    .popup-error { display: none; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+    .popup-error.is-shown { display: block; }
+    .popup-success { display: none; text-align: center; padding: 22px 8px; }
+    .popup-success.is-shown { display: block; }
+    .popup-success .check { width: 60px; height: 60px; background: #d1fae5; border-radius: 999px; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 30px; font-weight: 700; }
+    .popup-success h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 22px; margin: 0 0 8px; color: #0a0a0a; }
+    .popup-success p { font-size: 14px; color: #2d2d31; line-height: 1.5; margin: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      .popup-overlay.is-open, .popup-card { animation: none; }
+    }
+  </style>
+
+  <div class="popup-overlay" id="popup-overlay" role="dialog" aria-modal="true" aria-labelledby="popup-title">
+    <div class="popup-card">
+      <div class="popup-header">
+        <button type="button" class="popup-close" id="popup-close" aria-label="Close">×</button>
+        <div class="popup-usp">
+          <span class="dot"></span>
+          <span>Custom prototype in <span class="h">24 hours</span></span>
+        </div>
+        <h3 class="popup-title" id="popup-title">Have a build in mind?</h3>
+        <p class="popup-sub">Tell us about it. We&rsquo;ll send back a custom click-through prototype inside 24 hours &mdash; yours to keep, no strings.</p>
+      </div>
+      <div class="popup-body">
+        <form id="popup-form" novalidate>
+          <div class="popup-error" id="popup-error"></div>
+          <div class="popup-field">
+            <label for="pp-name">Name</label>
+            <input type="text" id="pp-name" name="name" required maxlength="100" autocomplete="name">
+          </div>
+          <div class="popup-field">
+            <label for="pp-phone">Phone / WhatsApp</label>
+            <input type="tel" id="pp-phone" name="phone" required maxlength="30" placeholder="+91…" autocomplete="tel">
+          </div>
+          <div class="popup-field">
+            <label for="pp-email">Email <span style="color:#71717a;text-transform:none;font-weight:500">(optional)</span></label>
+            <input type="email" id="pp-email" name="email" maxlength="160" autocomplete="email">
+          </div>
+          <div class="popup-field">
+            <label for="pp-message">What do you want to build? <span style="color:#71717a;text-transform:none;font-weight:500">(optional)</span></label>
+            <textarea id="pp-message" name="message" maxlength="1500" placeholder="One line is enough — we&rsquo;ll dig in on the call."></textarea>
+          </div>
+          <button type="submit" class="popup-submit" id="popup-submit">Get my prototype in 24h →</button>
+        </form>
+        <div class="popup-success" id="popup-success">
+          <div class="check">✓</div>
+          <h3>Got it. We&rsquo;re on it.</h3>
+          <p>Expect a WhatsApp from a +91 number within a few hours.</p>
+        </div>
+        <div class="popup-alt">
+          Or just call <a href="tel:+918918897474">+91 89188 97474</a> · <a href="mailto:hello@infocomiva.live">hello@infocomiva.live</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    // Named app so we don't clash with the eagle loader's default app
+    // already initialised earlier in this page.
+    const popupApp = initializeApp({
+      apiKey: "AIzaSyAmJKD3Saep17Ij4jWN2vgZSypk17VjuZg",
+      authDomain: "cargologic-saas.firebaseapp.com",
+      projectId: "cargologic-saas",
+      storageBucket: "cargologic-saas.firebasestorage.app",
+      messagingSenderId: "1005412538844",
+      appId: "1:1005412538844:web:26e6ce0ae52c6065c3d719",
+    }, "popup");
+    const db = getFirestore(popupApp);
+
+    const SEEN_KEY = "infocomiva-popup-seen";
+    const SEEN_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+    const MIN_DWELL_MS = 15000;                    // ignore triggers in first 15s
+    const SCROLL_TRIGGER_FRAC = 0.5;               // fire at >50% scrolled
+
+    function seenRecently() {
+      try {
+        const v = localStorage.getItem(SEEN_KEY);
+        if (!v) return false;
+        const ts = parseInt(v, 10);
+        return !isNaN(ts) && (Date.now() - ts) < SEEN_TTL_MS;
+      } catch { return false; }
+    }
+    function markSeen() {
+      try { localStorage.setItem(SEEN_KEY, String(Date.now())); } catch {}
+    }
+
+    const overlay   = document.getElementById("popup-overlay");
+    const closeBtn  = document.getElementById("popup-close");
+    const form      = document.getElementById("popup-form");
+    const submitBtn = document.getElementById("popup-submit");
+    const errorBox  = document.getElementById("popup-error");
+    const successBox= document.getElementById("popup-success");
+
+    let opened = false;
+    function show() {
+      if (opened) return;
+      opened = true;
+      overlay.classList.add("is-open");
+      document.body.style.overflow = "hidden";
+      // Focus the first field for keyboard users.
+      setTimeout(() => { const f = document.getElementById("pp-name"); if (f) f.focus(); }, 80);
+    }
+    function hide() {
+      overlay.classList.remove("is-open");
+      document.body.style.overflow = "";
+      markSeen();   // closing counts as "seen" — don't pester the same visitor
+    }
+
+    if (!seenRecently()) {
+      const start = Date.now();
+      const onScroll = () => {
+        if (Date.now() - start < MIN_DWELL_MS) return;
+        const scrolled = window.scrollY + window.innerHeight;
+        const total = document.documentElement.scrollHeight;
+        if (total > 0 && scrolled / total > SCROLL_TRIGGER_FRAC) {
+          show();
+          cleanup();
+        }
+      };
+      const onMouseLeave = (e) => {
+        if (Date.now() - start < MIN_DWELL_MS) return;
+        // Only fire when the mouse leaves through the TOP edge — the
+        // common exit-intent signal. Switching tabs or moving sideways
+        // doesn't trip it.
+        if (e.clientY < 50 && !e.relatedTarget && !e.toElement) {
+          show();
+          cleanup();
+        }
+      };
+      function cleanup() {
+        window.removeEventListener("scroll", onScroll);
+        document.removeEventListener("mouseleave", onMouseLeave);
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      document.addEventListener("mouseleave", onMouseLeave);
+    }
+
+    closeBtn.addEventListener("click", hide);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) hide(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("is-open")) hide();
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorBox.classList.remove("is-shown");
+
+      const fd = new FormData(form);
+      const name    = (fd.get("name")    || "").toString().trim().slice(0, 100);
+      const phone   = (fd.get("phone")   || "").toString().trim().slice(0, 30);
+      const email   = (fd.get("email")   || "").toString().trim().slice(0, 160);
+      const message = (fd.get("message") || "").toString().trim().slice(0, 1500);
+
+      if (!name || !phone) {
+        errorBox.textContent = "Name and phone are required.";
+        errorBox.classList.add("is-shown");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending…";
+
+      try {
+        await addDoc(collection(db, "leads"), {
+          name, phone, email, message,
+          source: "infocomiva.live" + location.pathname + " [popup]",
+          status: "new",
+          createdAt: serverTimestamp(),
+        });
+        form.style.display = "none";
+        successBox.classList.add("is-shown");
+        markSeen();
+      } catch (err) {
+        console.error("[popup] submit failed:", err);
+        errorBox.textContent = "Could not send right now. Please email hello@infocomiva.live.";
+        errorBox.classList.add("is-shown");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Get my prototype in 24h →";
+      }
+    });
+  </script>
 </body>
 </html>
