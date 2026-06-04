@@ -1,4 +1,4 @@
-# https://infocomiva.com/robots.txt
+# https://infocomiva.live/robots.txt
 # Marketing site for Infocomiva Technologies — fully crawlable.
 # /thank-you/ is noindex'd via meta tag (not blocked here, so search
 # engines can still follow links out of it).
@@ -6,4 +6,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://infocomiva.com/sitemap.xml
+Sitemap: https://infocomiva.live/sitemap.xml

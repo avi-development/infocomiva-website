@@ -3,7 +3,7 @@
 Static HTML + Tailwind CDN single-page site for **Infocomiva Technologies**, the
 services parent company behind TraxnCargo.
 
-Lives at **https://infocomiva.com** (or whichever domain you point at the Vercel
+Lives at **https://infocomiva.live** (or whichever domain you point at the Vercel
 project — domain is plug-and-play, change the canonical / OG URLs in
 `index.html` if you use a different one).
 
@@ -23,12 +23,12 @@ project — domain is plug-and-play, change the canonical / OG URLs in
 
 The form on the home page writes to the **same Firestore `/leads` collection**
 that TraxnCargo's landing form uses (`cargologic-saas` project). Every lead from
-this site is tagged `source: "infocomiva.com"` so the Super Admin Leads inbox
+this site is tagged `source: "infocomiva.live"` so the Super Admin Leads inbox
 on app.traxn.in can filter Infocomiva-vs-TraxnCargo leads at a glance:
 
 ```
 Super Admin → Leads
-Filter: source = infocomiva.com   ← Infocomiva enquiries
+Filter: source = infocomiva.live   ← Infocomiva enquiries
 Filter: source = traxn.in         ← TraxnCargo enquiries
 ```
 
@@ -108,7 +108,7 @@ git push -u origin main
 2. Import `infocomiva-website` from GitHub
 3. Framework preset: **Other** (Vercel auto-detects static HTML)
 4. Click **Deploy** — done in ~30 seconds
-5. After deploy, **Settings → Domains** → add `infocomiva.com` (or your domain)
+5. After deploy, **Settings → Domains** → add `infocomiva.live` (or your domain)
 
 ### 5. (Optional) Analytics
 

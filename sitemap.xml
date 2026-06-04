@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Infocomiva Technologies sitemap — https://infocomiva.com/sitemap.xml
+  Infocomiva Technologies sitemap — https://infocomiva.live/sitemap.xml
   Bump <lastmod> when the home-page copy / services / pricing change.
 
   Intentionally excluded:
@@ -10,17 +10,17 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <url>
-    <loc>https://infocomiva.com/</loc>
+    <loc>https://infocomiva.live/</loc>
     <lastmod>2026-06-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
 
     <image:image>
-      <image:loc>https://infocomiva.com/assets/logo.png</image:loc>
+      <image:loc>https://infocomiva.live/assets/logo.png</image:loc>
       <image:title>Infocomiva Technologies — eagle logo mark</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://infocomiva.com/assets/og-image.jpg</image:loc>
+      <image:loc>https://infocomiva.live/assets/og-image.jpg</image:loc>
       <image:title>Infocomiva Technologies — software, web, mobile, AI &amp; digital for India</image:title>
     </image:image>
   </url>

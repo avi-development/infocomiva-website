@@ -13,7 +13,7 @@
   <meta name="author" content="Infocomiva Technologies">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="googlebot" content="index, follow">
-  <link rel="canonical" href="https://infocomiva.com/">
+  <link rel="canonical" href="https://infocomiva.live/">
 
   <meta name="geo.region" content="IN">
   <meta name="geo.placename" content="India">
@@ -28,17 +28,17 @@
        ============================================================ -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Infocomiva Technologies">
-  <meta property="og:url" content="https://infocomiva.com/">
+  <meta property="og:url" content="https://infocomiva.live/">
   <meta property="og:title" content="Infocomiva Technologies — Software, Web, Mobile, AI &amp; Digital">
   <meta property="og:description" content="Custom prototype in 24 hours. Software, web &amp; mobile, ERP/CRM and AI products for Indian businesses — builder-operator team, production-grade by default, same team before and after launch.">
-  <meta property="og:image" content="https://infocomiva.com/assets/og-image.jpg">
+  <meta property="og:image" content="https://infocomiva.live/assets/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="en_IN">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Infocomiva Technologies — Software, Web, Mobile, AI &amp; Digital">
   <meta name="twitter:description" content="Custom prototype in 24 hours. Software, web &amp; mobile, ERP/CRM and AI products for Indian businesses.">
-  <meta name="twitter:image" content="https://infocomiva.com/assets/og-image.jpg">
+  <meta name="twitter:image" content="https://infocomiva.live/assets/og-image.jpg">
 
   <!-- ============================================================
        JSON-LD — Organization + WebSite
@@ -49,8 +49,8 @@
     "@type": "Organization",
     "name": "Infocomiva Technologies",
     "alternateName": "Infocomiva",
-    "url": "https://infocomiva.com",
-    "logo": "https://infocomiva.com/assets/logo.png",
+    "url": "https://infocomiva.live",
+    "logo": "https://infocomiva.live/assets/logo.png",
     "description": "Infocomiva Technologies builds custom software, web and mobile applications, ERP/CRM platforms, AI products and digital marketing campaigns for businesses across India.",
     "foundingDate": "2025",
     "address": { "@type": "PostalAddress", "addressCountry": "IN" },
@@ -67,7 +67,7 @@
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Infocomiva Technologies",
-    "url": "https://infocomiva.com",
+    "url": "https://infocomiva.live",
     "inLanguage": "en-IN"
   }
   </script>
@@ -1337,7 +1337,7 @@
       </div>
       <div class="flex items-center gap-5">
         <a href="https://traxn.in/cargo" target="_blank" rel="noopener" class="hover:text-white transition">TraxnCargo</a>
-        <a href="mailto:hello@infocomiva.com" class="hover:text-white transition">hello@infocomiva.com</a>
+        <a href="mailto:hello@infocomiva.live" class="hover:text-white transition">hello@infocomiva.live</a>
       </div>
     </div>
   </footer>
@@ -1470,7 +1470,7 @@
 
   <!-- ============================================================
        Firebase init — shared by:
-         (a) the lead form (writes to /leads with source='infocomiva.com')
+         (a) the lead form (writes to /leads with source='infocomiva.live')
          (b) the brand-asset loader (reads /appSettings/infocomiva and
              swaps every <img data-asset-key="..."> src with the URL
              stored there — so when the platform team uploads a new
@@ -1642,7 +1642,7 @@
         email:     (fd.get('email')     || '').toString().trim().slice(0, 160),
         fleetSize: (fd.get('fleetSize') || '').toString().trim().slice(0, 40),
         message:   (fd.get('message')   || '').toString().trim().slice(0, 1500),
-        source:    'infocomiva.com',
+        source:    'infocomiva.live',
         status:    'new',
         createdAt: serverTimestamp(),
       };
@@ -1663,7 +1663,7 @@
         window.location.assign('/thank-you/');
       } catch (err) {
         console.error('[leads] submit failed', err);
-        errBox.textContent = 'Could not send right now. Please email us at hello@infocomiva.com.';
+        errBox.textContent = 'Could not send right now. Please email us at hello@infocomiva.live.';
         errBox.classList.remove('hidden');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Send — we’ll reply within 24 hours';
