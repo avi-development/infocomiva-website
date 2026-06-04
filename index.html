@@ -1542,6 +1542,12 @@
         // naturalWidth===0 on the in-flight image, and clobbers it with
         // text. So we count outstanding probes and call signalReady()
         // only once all of them resolve (or 3.5s elapse — whichever).
+        // Favicon mirror — point the browser tab icon at the same
+        // eagle URL the Super Admin uploaded. No separate upload slot
+        // needed; one image drives <img>, footer mark, AND tab favicon.
+        if (data.eagle && typeof data.eagle === 'string') {
+          document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach((l) => { l.href = data.eagle; });
+        }
         const imgs = document.querySelectorAll('img[data-asset-key]');
         const probes = [];
         imgs.forEach((img) => {

@@ -144,6 +144,8 @@
         img.src = url;
         img.classList.remove("hidden");
         if (fb) fb.remove();
+        // Favicon mirror — same eagle URL drives the browser tab icon.
+        document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach((l) => { l.href = url; });
       };
       probe.onerror = () => { /* keep fallback */ };
       probe.src = url;

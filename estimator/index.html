@@ -387,11 +387,11 @@
           <span class="font-display font-black text-base sm:text-lg tracking-tight">Infocomiva <span class="text-azure-600">Technologies</span></span>
         </a>
         <nav class="hidden md:flex items-center gap-5 text-sm">
-          <a href="/" class="text-ink-700 hover:text-ink-900 transition">Home</a>
           <a href="/about/" class="text-ink-700 hover:text-ink-900 transition">About</a>
-          <a href="/blog/" class="text-ink-700 hover:text-ink-900 transition">Blog</a>
-          <a href="/estimator/" class="text-ink-900 font-semibold transition" aria-current="page">Estimator</a>
+          <a href="/#services" class="text-ink-700 hover:text-ink-900 transition">Services</a>
           <a href="/#work" class="text-ink-700 hover:text-ink-900 transition">Work</a>
+          <a href="/estimator/" class="text-ink-900 font-semibold transition" aria-current="page">Estimator</a>
+          <a href="/blog/" class="text-ink-700 hover:text-ink-900 transition">Blog</a>
           <a href="/#contact" class="text-ink-700 hover:text-ink-900 transition">Contact</a>
         </nav>
         <a href="/#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-4 py-2 rounded-lg text-sm font-semibold text-white">
@@ -612,7 +612,7 @@
       const img = document.getElementById("eagle-logo");
       const fb  = document.getElementById("eagle-fallback");
       const probe = new Image();
-      probe.onload = () => { img.src = url; img.classList.remove("hidden"); if (fb) fb.remove(); };
+      probe.onload = () => { img.src = url; img.classList.remove("hidden"); if (fb) fb.remove(); document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach((l) => { l.href = url; }); };
       probe.onerror = () => {};
       probe.src = url;
     } catch (err) { console.warn("[infocomiva/estimator] eagle loader failed:", err); }
@@ -660,12 +660,19 @@
       {
         id: 'infocomiva',
         name: 'Infocomiva',
-        mult: [0.85, 1.7],
+        // No numeric multiplier — the Infocomiva card intentionally
+        // hides an INR range. Showing a number here narrates "we
+        // charge ₹X upfront" which is the OPPOSITE of how the
+        // engagement is structured. customPrice overrides the
+        // computed price band; the price-meta line below it gives a
+        // soft hint at the model without committing to specifics.
+        customPrice: 'Pay as you go',
+        customPriceMeta: 'Talk to us on the call',
         bullets: [
-          'Fixed price locked before discovery ends',
           'Code, domain, cloud — yours from day 1',
           'Same team day 1 &amp; day 500',
           'Custom prototype in 24h',
+          'Built for Indian businesses',
         ],
         isUs: true,
         best: true,
@@ -763,15 +770,27 @@
     function render() {
       const wrap = document.getElementById('cards');
       wrap.innerHTML = VENDORS.map((v) => {
-        const r = computeRange(v);
         const isUs = v.isUs ? ' is-us' : '';
         const ribbon = v.best ? '<div class="ribbon-best">Recommended</div>' : '';
         const bullets = v.bullets.map((b) => `<li class="text-xs leading-relaxed mt-1">${b}</li>`).join('');
-        // The Infocomiva card gets a CTA button below the bullets so a
-        // visitor convinced by the comparison can act in one click
-        // without scrolling to the contact form. data-chat="open" wires
-        // it to the floating chat panel below — same set of contact
-        // options the FAB exposes.
+        // Price block: vendors with a customPrice (Infocomiva) skip
+        // the computed range — see VENDORS comment above for why.
+        let priceBlock;
+        if (v.customPrice) {
+          priceBlock = `
+            <div class="price">${escapeHtml(v.customPrice)}</div>
+            <div class="price-meta">${escapeHtml(v.customPriceMeta || '')}</div>
+          `;
+        } else {
+          const r = computeRange(v);
+          priceBlock = `
+            <div class="price">${fmt(r.lo)} <span class="opacity-50 font-normal">–</span> ${fmt(r.hi)}</div>
+            <div class="price-meta">Typical range</div>
+          `;
+        }
+        // The Infocomiva card gets a CTA below the bullets so a
+        // convinced visitor can act in one click. data-chat="open"
+        // wires to the chat panel — same panel the FAB opens.
         const cta = v.isUs ? `
           <button type="button" data-chat="open" class="mt-5 w-full bg-azure-500 hover:bg-azure-600 transition px-4 py-3 rounded-lg text-sm font-bold text-white inline-flex items-center justify-center gap-2">
             Get your prototype in 24h <span>→</span>
@@ -781,8 +800,7 @@
           <div class="vcard${isUs}">
             ${ribbon}
             <div class="label text-[11px] uppercase tracking-widest font-bold text-azure-700 mb-2">${escapeHtml(v.name)}</div>
-            <div class="price">${fmt(r.lo)} <span class="opacity-50 font-normal">–</span> ${fmt(r.hi)}</div>
-            <div class="price-meta">Typical range</div>
+            ${priceBlock}
             <ul class="mt-4 list-none p-0 space-y-1 text-ink-700">
               ${bullets}
             </ul>

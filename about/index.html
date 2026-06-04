@@ -188,11 +188,11 @@
           <span class="font-display font-black text-base sm:text-lg tracking-tight">Infocomiva <span class="text-azure-600">Technologies</span></span>
         </a>
         <nav class="hidden md:flex items-center gap-5 text-sm">
-          <a href="/" class="text-ink-700 hover:text-ink-900 transition">Home</a>
           <a href="/about/" class="text-ink-900 font-semibold transition" aria-current="page">About</a>
-          <a href="/blog/" class="text-ink-700 hover:text-ink-900 transition">Blog</a>
+          <a href="/#services" class="text-ink-700 hover:text-ink-900 transition">Services</a>
           <a href="/#work" class="text-ink-700 hover:text-ink-900 transition">Work</a>
-          <a href="/#pricing" class="text-ink-700 hover:text-ink-900 transition">Pricing</a>
+          <a href="/estimator/" class="text-ink-700 hover:text-ink-900 transition">Estimator</a>
+          <a href="/blog/" class="text-ink-700 hover:text-ink-900 transition">Blog</a>
           <a href="/#contact" class="text-ink-700 hover:text-ink-900 transition">Contact</a>
         </nav>
         <a href="/#contact" data-lead class="inline-flex items-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-4 py-2 rounded-lg text-sm font-semibold text-white">
@@ -425,7 +425,7 @@
       const img = document.getElementById("eagle-logo");
       const fb  = document.getElementById("eagle-fallback");
       const probe = new Image();
-      probe.onload = () => { img.src = url; img.classList.remove("hidden"); if (fb) fb.remove(); };
+      probe.onload = () => { img.src = url; img.classList.remove("hidden"); if (fb) fb.remove(); document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach((l) => { l.href = url; }); };
       probe.onerror = () => {};
       probe.src = url;
     } catch (err) { console.warn("[infocomiva/about] eagle loader failed:", err); }
