@@ -936,11 +936,16 @@
 
     // ─── State + storage ───────────────────────────────────────────
     //
-    // We persist {email, verifiedAt, sessionToken} in localStorage for
-    // 1 hour so a visitor who closes and reopens the panel doesn't have
-    // to verify again. Captured chat fields are NOT persisted — they
-    // stay in memory and get sent in one POST at the end.
+    // Two localStorage keys:
+    //   infocomiva-chat-session — OTP-verified session (1h expiry).
+    //     Lets a returning visitor skip email + OTP.
+    //   infocomiva-chat-thread  — active chat thread (24h expiry).
+    //     Lets a returning visitor RESUME the live conversation with
+    //     Avilash instead of starting a brand-new thread. Without this,
+    //     every panel reopen abandons the previous thread and admin
+    //     replies on the old one never reach the visitor.
     const STORE_KEY = 'infocomiva-chat-session';
+    const THREAD_KEY = 'infocomiva-chat-thread';
     function loadSession() {
       try {
         const raw = localStorage.getItem(STORE_KEY);
@@ -957,6 +962,23 @@
       })); } catch {}
     }
     function clearSession() { try { localStorage.removeItem(STORE_KEY); } catch {} }
+    function loadThread() {
+      try {
+        const raw = localStorage.getItem(THREAD_KEY);
+        if (!raw) return null;
+        const t = JSON.parse(raw);
+        if (!t || !t.threadToken || !t.exp) return null;
+        if (Date.now() / 1000 > t.exp) { localStorage.removeItem(THREAD_KEY); return null; }
+        return t;
+      } catch { return null; }
+    }
+    function saveThread(threadToken, threadId, expiresIn) {
+      try { localStorage.setItem(THREAD_KEY, JSON.stringify({
+        threadToken, threadId,
+        exp: Math.floor(Date.now()/1000) + (expiresIn || 24*3600)
+      })); } catch {}
+    }
+    function clearThread() { try { localStorage.removeItem(THREAD_KEY); } catch {} }
 
     const state = {
       booted: false,
@@ -1056,7 +1078,25 @@
       state.step = step;
       switch (step) {
         case 'email': {
-          // Skip straight to business name if we already have a valid session.
+          // First priority: do we have a live chat thread already?
+          // If yes, skip ALL the wizard and resume the live conversation
+          // with Avilash. This is the path returning visitors land on.
+          const existingThread = loadThread();
+          if (existingThread) {
+            state.threadToken = existingThread.threadToken;
+            state.threadId    = existingThread.threadId;
+            state.lastPolledAt = null;
+            addBot('Welcome back. Resuming your chat with Avilash…');
+            renderDoneButtons(true);
+            setInputMode({ placeholder: 'Type a message…', type: 'text', sendLabel: 'Send', multiline: true });
+            state.step = 'live';
+            pollAdminMessages();
+            pollLoop();
+            return;
+          }
+          // Second priority: do we have a verified OTP session? Skip
+          // straight to business name in that case so a returning
+          // visitor who didn't escalate previously doesn't re-do OTP.
           const existing = loadSession();
           if (existing) {
             state.email = existing.email;
@@ -1283,6 +1323,10 @@
         }
         state.threadToken = data.threadToken;
         state.threadId = data.threadId;
+        // Persist the threadToken so a returning visitor resumes THIS
+        // conversation instead of opening a fresh thread (which would
+        // leave admin's replies on the abandoned thread invisible).
+        saveThread(data.threadToken, data.threadId, data.expiresIn || 24*3600);
         // Don't seed lastPolledAt with the client clock — if the visitor's
         // clock is even a second ahead of the server's serverTimestamp,
         // the first poll's "createdAt > since" query silently misses any
