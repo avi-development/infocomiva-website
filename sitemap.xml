@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Infocomiva Technologies sitemap — https://infocomiva.live/sitemap.xml
-  Bump <lastmod> when the home-page copy / services / pricing change.
+  Bump <lastmod> on each URL when its copy changes.
 
   Intentionally excluded:
     /thank-you/ — noindex; sitemap is for indexable URLs only.
+
+  When adding a new blog post:
+    1) Create /blog/<slug>/index.html
+    2) Add a <url> entry below with lastmod = publish date and priority 0.6
+    3) Add a card on /blog/index.html so the listing surfaces it
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
+  <!-- Home -->
   <url>
     <loc>https://infocomiva.live/</loc>
-    <lastmod>2026-06-02</lastmod>
+    <lastmod>2026-06-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
 
@@ -23,6 +29,38 @@
       <image:loc>https://infocomiva.live/assets/og-image.jpg</image:loc>
       <image:title>Infocomiva Technologies — software, web, mobile, AI &amp; digital for India</image:title>
     </image:image>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://infocomiva.live/about/</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog index -->
+  <url>
+    <loc>https://infocomiva.live/blog/</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog post: How to choose a software development partner in India -->
+  <url>
+    <loc>https://infocomiva.live/blog/how-to-choose-software-partner-india/</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Blog post: Multi-tenant SaaS — when your business actually needs it -->
+  <url>
+    <loc>https://infocomiva.live/blog/multi-tenant-saas-when-you-need-it/</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 
 </urlset>
