@@ -321,12 +321,14 @@
     }
     .chat-input-bar input:focus, .chat-input-bar textarea:focus { outline: none; border-color: #2563eb; }
     .chat-input-bar button {
-      width: 40px; height: 40px; flex-shrink: 0;
+      min-width: 40px; height: 40px; flex-shrink: 0;
+      padding: 0 14px;
       background: linear-gradient(135deg, #2563eb, #1e3a8a);
       color: #fff; border: 0; border-radius: 10px;
-      cursor: pointer; font-size: 18px;
+      cursor: pointer; font-size: 15px; font-weight: 700; font-family: inherit;
       display: flex; align-items: center; justify-content: center;
       transition: transform .15s, opacity .15s;
+      white-space: nowrap;
     }
     .chat-input-bar button:hover { transform: translateY(-1px); }
     .chat-input-bar button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
@@ -1307,9 +1309,16 @@
     // rendering on snapshot re-fires.
     const shownAdminIds = new Set();
 
+    // Holds the SECOND listener — on the thread doc itself. Fires
+    // when admin closes/deletes the thread, so we can reset the
+    // visitor's local state instead of letting them keep typing into
+    // a void.
+    let threadDocUnsubscribe = null;
+
     async function attachFirestoreListener(threadId) {
-      // Detach any previous listener.
-      if (chatUnsubscribe) { try { chatUnsubscribe(); } catch {} chatUnsubscribe = null; }
+      // Detach any previous listeners.
+      if (chatUnsubscribe)      { try { chatUnsubscribe();      } catch {} chatUnsubscribe      = null; }
+      if (threadDocUnsubscribe) { try { threadDocUnsubscribe(); } catch {} threadDocUnsubscribe = null; }
       shownAdminIds.clear();
 
       // Dynamic import the Firebase SDK (already cached from eagle loader).
@@ -1331,6 +1340,8 @@
       catch (e) { app = fbApp.getApp('estimator-chat'); }
       const db = fbFs.getFirestore(app);
 
+      // Subscription #1 — messages subcollection. Renders admin replies
+      // as bot bubbles in real time.
       const ref = fbFs.collection(db, 'chatThreads', threadId, 'messages');
       const q = fbFs.query(ref, fbFs.orderBy('createdAt', 'asc'));
 
@@ -1350,6 +1361,55 @@
           showError('Live chat error: ' + (err.message || err.code || 'subscription failed'));
         },
       );
+
+      // Subscription #2 — the thread doc itself. If admin deletes
+      // the thread, the doc-snapshot fires with !exists, we tear
+      // down both subscriptions, clear localStorage, and reset the
+      // wizard so the visitor can start a fresh conversation. Without
+      // this the visitor was silently stranded — typing into an input
+      // that wrote to a thread no longer in Firestore.
+      const threadDocRef = fbFs.doc(db, 'chatThreads', threadId);
+      // Track whether we've seen the thread exist at least once,
+      // since onSnapshot fires immediately with the current state.
+      // If we never saw it (it was already deleted when listener
+      // attached), we trigger reset on the first non-existence.
+      let everExisted = false;
+      threadDocUnsubscribe = fbFs.onSnapshot(
+        threadDocRef,
+        (snap) => {
+          if (snap.exists()) { everExisted = true; return; }
+          // Not exists. If we'd seen it before, admin just deleted
+          // it; if we never saw it, it was deleted before we got
+          // here. Either way: reset.
+          if (everExisted) {
+            addBot('Avilash closed this conversation. Starting fresh — what would you like to chat about?');
+          } else {
+            addBot('This chat is no longer available. Starting a new one — what would you like to chat about?');
+          }
+          resetChatToWizard();
+        },
+        (err) => {
+          console.warn('[chat] thread-doc onSnapshot error:', err);
+          // Non-fatal — we just can't auto-detect deletion. Messages
+          // listener will still work for active threads.
+        },
+      );
+    }
+
+    // Tear down the live chat session entirely and route the visitor
+    // back to a fresh wizard start. Called when the thread is deleted
+    // server-side, OR when chat-send returns a "thread missing" error.
+    function resetChatToWizard() {
+      // Detach Firestore listeners.
+      if (chatUnsubscribe)      { try { chatUnsubscribe();      } catch {} chatUnsubscribe      = null; }
+      if (threadDocUnsubscribe) { try { threadDocUnsubscribe(); } catch {} threadDocUnsubscribe = null; }
+      shownAdminIds.clear();
+      // Drop the persisted thread + drop the in-memory thread state.
+      clearThread();
+      state.threadToken = null;
+      state.threadId    = null;
+      // Skip back to business name — they're still email-verified.
+      advanceTo('businessName');
     }
     async function startLiveChat() {
       addBot('Opening a live chat with Avilash…');
@@ -1420,7 +1480,15 @@
           body: JSON.stringify({ threadToken: state.threadToken, text }),
         });
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) showError(data.error || 'Could not send message.');
+        if (!res.ok) {
+          // 404 → the thread no longer exists (admin deleted it).
+          // 401 → expired session. Either way, reset and restart.
+          if (res.status === 404 || res.status === 410 || res.status === 401) {
+            resetChatToWizard();
+            return;
+          }
+          showError(data.error || 'Could not send message.');
+        }
       } catch (e) {
         showError('Network error. Try again.');
       }
