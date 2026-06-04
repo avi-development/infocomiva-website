@@ -1283,7 +1283,18 @@
         }
         state.threadToken = data.threadToken;
         state.threadId = data.threadId;
-        state.lastPolledAt = new Date().toISOString();
+        // Don't seed lastPolledAt with the client clock — if the visitor's
+        // clock is even a second ahead of the server's serverTimestamp,
+        // the first poll's "createdAt > since" query silently misses any
+        // admin replies sent in the opening window. Leaving it null means
+        // chat-poll's defaults kick in (since='' → epoch), so the first
+        // poll fetches every admin message on the thread. After that the
+        // server's own polledAt timestamp advances things forward in
+        // server-time, no client clock involved.
+        state.lastPolledAt = null;
+        // Fire the first poll immediately (don't wait 3.5s) so admin
+        // messages that already exist appear right after connection.
+        pollAdminMessages();
       } catch (e) {
         showError('Network error opening chat.');
         renderDoneButtons(true);
