@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Infocomiva — Social card kit (internal)</title>
+
+  <!-- Internal asset kit; we don't want this in the search index. -->
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <!-- html2canvas turns each <section class="card"> into a 1080×1080 PNG
+       on click of its Download button. We host from a CDN (jsDelivr) so
+       the page works without any build step. -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --ink-900: #0a0a0a;
+      --ink-700: #2d2d31;
+      --ink-100: #ebebed;
+      --azure-300: #93c5fd;
+      --azure-400: #60a5fa;
+      --azure-500: #2563eb;
+      --azure-600: #1d4ed8;
+      --azure-700: #1e3a8a;
+      --azure-900: #0f1f5e;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #f7f7f8; color: var(--ink-900); font-family: Inter, system-ui, sans-serif; }
+    .display { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    /* Page chrome — not captured in the PNGs. */
+    .page-header { padding: 28px 24px; background: var(--ink-900); color: #fff; }
+    .page-header h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 22px; margin: 0; }
+    .page-header p { font-size: 14px; opacity: .7; margin: 6px 0 0; line-height: 1.5; max-width: 720px; }
+    .download-all { margin-top: 14px; background: var(--azure-500); color: #fff; font-weight: 600; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+    .download-all:hover { background: var(--azure-600); }
+
+    .cards-wrapper { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 28px 16px; }
+    .card-shell { position: relative; }
+    .card-shell .download-btn {
+      position: absolute; top: 12px; right: 12px; z-index: 10;
+      background: rgba(255,255,255,0.95); color: var(--ink-900);
+      border: none; padding: 8px 12px; border-radius: 6px;
+      font-weight: 600; font-size: 12px; cursor: pointer; font-family: Inter, sans-serif;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .card-shell .download-btn:hover { background: #fff; }
+
+    /* The actual card — captured to PNG. Fixed 1080×1080 so screenshots
+       come out at Instagram-square dimensions. On narrow viewports we
+       scale the display only (transform), not the underlying box, so
+       html2canvas still captures the full 1080×1080. */
+    .card {
+      width: 1080px; height: 1080px; position: relative; overflow: hidden;
+      background: var(--ink-900); color: #fff;
+      transform-origin: top center;
+    }
+    @media (max-width: 1120px) {
+      .card { transform: scale(calc((100vw - 32px) / 1080)); }
+      .card-shell { height: calc((100vw - 32px) * 1); margin-bottom: 0; }
+    }
+
+    /* Shared card pieces */
+    .card .brand { position: absolute; top: 56px; left: 64px; display: flex; align-items: center; gap: 16px; }
+    .card .brand .badge { width: 56px; height: 56px; border-radius: 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; letter-spacing: 0.08em; }
+    .card .brand .name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 24px; letter-spacing: -0.01em; }
+    .card .brand .name .ti { color: var(--azure-400); }
+
+    .card .usp { position: absolute; top: 64px; right: 64px; display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; background: rgba(37,99,235,0.18); border: 1px solid rgba(37,99,235,0.40); border-radius: 999px; font-size: 16px; font-weight: 700; }
+    .card .usp .dot { width: 10px; height: 10px; border-radius: 999px; background: var(--azure-400); box-shadow: 0 0 0 4px rgba(96,165,250,0.25); }
+    .card .usp .h { color: var(--azure-300); }
+
+    .card .footer { position: absolute; bottom: 56px; left: 64px; right: 64px; display: flex; justify-content: space-between; align-items: flex-end; font-size: 16px; line-height: 1.5; }
+    .card .footer .left { opacity: 0.85; }
+    .card .footer .left .row { display: flex; align-items: center; gap: 10px; }
+    .card .footer .right { text-align: right; font-weight: 700; color: var(--azure-300); font-size: 18px; }
+
+    /* Blob decorations */
+    .blob { position: absolute; border-radius: 999px; filter: blur(80px); pointer-events: none; }
+
+    /* Cover card */
+    .card.cover .title {
+      position: absolute; top: 320px; left: 64px; right: 64px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
+      font-size: 96px; line-height: 1.02; letter-spacing: -0.02em;
+    }
+    .card.cover .title .em {
+      background: linear-gradient(135deg, var(--azure-400) 0%, var(--azure-700) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .card.cover .sub {
+      position: absolute; top: 740px; left: 64px; right: 64px;
+      font-size: 26px; line-height: 1.4; color: rgba(255,255,255,0.75); max-width: 880px;
+    }
+
+    /* Service card */
+    .card.service .icon-wrap {
+      position: absolute; top: 220px; left: 64px;
+      width: 120px; height: 120px; border-radius: 24px;
+      background: linear-gradient(135deg, var(--azure-500) 0%, var(--azure-700) 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card.service .icon-wrap svg { width: 64px; height: 64px; color: #fff; }
+    .card.service .ribbon {
+      position: absolute; top: 240px; left: 220px;
+      font-size: 22px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--azure-300);
+    }
+    .card.service .ribbon .n { color: rgba(255,255,255,0.4); margin-right: 12px; }
+    .card.service .title {
+      position: absolute; top: 290px; left: 220px; right: 64px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
+      font-size: 84px; line-height: 1.05; letter-spacing: -0.02em;
+    }
+    .card.service .pillars {
+      position: absolute; top: 480px; left: 64px; right: 64px;
+      font-size: 26px; line-height: 1.5; color: rgba(255,255,255,0.85);
+    }
+    .card.service .pillars .row { display: flex; align-items: start; gap: 16px; margin-bottom: 14px; }
+    .card.service .pillars .row .tick {
+      flex-shrink: 0; width: 28px; height: 28px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--azure-500), var(--azure-700));
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px; margin-top: 4px;
+    }
+    .card.service .pillars .row .txt strong { color: #fff; font-weight: 700; }
+
+    /* Contact card */
+    .card.contact .title {
+      position: absolute; top: 240px; left: 64px; right: 64px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
+      font-size: 80px; line-height: 1.05; letter-spacing: -0.02em;
+    }
+    .card.contact .title .em {
+      background: linear-gradient(135deg, var(--azure-400), var(--azure-700));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .card.contact .lines {
+      position: absolute; top: 480px; left: 64px; right: 64px;
+      font-size: 30px; line-height: 1.6; font-weight: 600;
+    }
+    .card.contact .lines .row { display: flex; align-items: center; gap: 20px; margin-bottom: 18px; }
+    .card.contact .lines .row .lab { color: var(--azure-300); width: 130px; font-weight: 700; }
+    .card.contact .lines .row .val { color: #fff; }
+    .card.contact .cta {
+      position: absolute; bottom: 200px; left: 64px;
+      display: inline-flex; align-items: center; gap: 16px;
+      padding: 24px 40px; background: var(--azure-500); border-radius: 16px;
+      font-weight: 800; font-size: 26px;
+    }
+    .card.contact .cta:hover { background: var(--azure-600); }
+
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Infocomiva — social card kit</h1>
+  <p>
+    10 ready-to-share cards (1080×1080) covering brand cover, eight service pillars and contact.
+    Click <strong>Download PNG</strong> on any card to save it as a square image you can post
+    directly to WhatsApp, Instagram, LinkedIn, or send as a media file in a chat.
+  </p>
+  <button class="download-all" onclick="downloadAll()">Download all 10 as PNG</button>
+</div>
+
+<div class="cards-wrapper">
+
+  <!-- 1. COVER -->
+  <div class="card-shell">
+    <button class="download-btn" onclick="dl('card-1','infocomiva-01-cover')">⬇ Download PNG</button>
+    <section class="card cover" id="card-1">
+      <div class="blob" style="width:600px;height:600px;top:-180px;right:-120px;background:radial-gradient(circle, rgba(37,99,235,0.55) 0%, rgba(37,99,235,0) 70%);"></div>
+      <div class="blob" style="width:480px;height:480px;bottom:-160px;left:-120px;background:radial-gradient(circle, rgba(30,58,138,0.55) 0%, rgba(30,58,138,0) 70%);"></div>
+
+      <div class="brand">
+        <div class="badge">IT</div>
+        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Custom prototype in <span class="h">24 hours</span></span>
+      </div>
+      <div class="title">
+        We build what you <span class="em">envision</span> — from a clean idea to a live product.
+      </div>
+      <div class="sub">
+        Builder-operator software agency for Indian businesses. Software · Web · Mobile · ERP · AI · Marketing — under one accountable team.
+      </div>
+      <div class="footer">
+        <div class="left">
+          <div class="row">📞 +91 89188 97474 &nbsp; · &nbsp; +91 77185 69194</div>
+          <div class="row">✉ hello@infocomiva.live &nbsp; · &nbsp; 🌐 infocomiva.live</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 2. CUSTOM SOFTWARE -->
+  <div class="card-shell">
+    <button class="download-btn" onclick="dl('card-2','infocomiva-02-custom-software')">⬇ Download PNG</button>
+    <section class="card service" id="card-2">
+      <div class="blob" style="width:520px;height:520px;top:-160px;right:-120px;background:radial-gradient(circle, rgba(37,99,235,0.45) 0%, rgba(37,99,235,0) 70%);"></div>
+
+      <div class="brand">
+        <div class="badge">IT</div>
+        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Prototype in <span class="h">24h</span></span>
+      </div>
+
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </div>
+      <div class="ribbon"><span class="n">01</span> Service</div>
+      <div class="title">Custom Software</div>
+      <div class="pillars">
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Bespoke business apps</strong> built around your operations &mdash; not generic SaaS.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Multi-user, role-based access, branded billing artifacts.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Production-grade observability on day one &mdash; Sentry, CI, backups.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Same team before and after launch. No handoff to a support desk.</div></div>
+      </div>
+
+      <div class="footer">
+        <div class="left">
+          <div class="row">+91 89188 97474 &nbsp;·&nbsp; +91 77185 69194</div>
+          <div class="row">hello@infocomiva.live &nbsp;·&nbsp; infocomiva.live</div>
+        </div>
+        <div class="right">Get a prototype in 24h →</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 3. WEB & E-COMMERCE -->
+  <div class="card-shell">
+    <button class="download-btn" onclick="dl('card-3','infocomiva-03-web-ecommerce')">⬇ Download PNG</button>
+    <section class="card service" id="card-3">
+      <div class="blob" style="width:520px;height:520px;top:-160px;left:-120px;background:radial-gradient(circle, rgba(30,58,138,0.55) 0%, rgba(30,58,138,0) 70%);"></div>
+
+      <div class="brand">
+        <div class="badge">IT</div>
+        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Prototype in <span class="h">24h</span></span>
+      </div>
+
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="ribbon"><span class="n">02</span> Service</div>
+      <div class="title">Web &amp; E-Commerce</div>
+      <div class="pillars">
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Marketing sites</strong> that convert &mdash; SEO baseline, fast hosting, analytics wired in.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Web apps &amp; SaaS dashboards</strong> on Next.js, React, Supabase, Firestore.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Headless e-commerce</strong> &mdash; Shopify Hydrogen, Medusa, custom builds.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Lead capture → CRM out of the box. Ships in 2-4 weeks.</div></div>
+      </div>
+
+      <div class="footer">
+        <div class="left">
+          <div class="row">+91 89188 97474 &nbsp;·&nbsp; +91 77185 69194</div>
+          <div class="row">hello@infocomiva.live &nbsp;·&nbsp; infocomiva.live</div>
+        </div>
+        <div class="right">Get a prototype in 24h →</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 4. MOBILE APPS -->
+  <div class="card-shell">
+    <button class="download-btn" onclick="dl('card-4','infocomiva-04-mobile-apps')">⬇ Download PNG</button>
+    <section class="card service" id="card-4">
+      <div class="blob" style="width:520px;height:520px;bottom:-160px;right:-120px;background:radial-gradient(circle, rgba(37,99,235,0.45) 0%, rgba(37,99,235,0) 70%);"></div>
+
+      <div class="brand">
+        <div class="badge">IT</div>
+        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Prototype in <span class="h">24h</span></span>
+      </div>
+
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      </div>
+      <div class="ribbon"><span class="n">03</span> Service</div>
+      <div class="title">Mobile Apps</div>
+      <div class="pillars">
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>iOS + Android</strong> &mdash; React Native, Flutter, or native when scope demands it.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Offline-first patterns</strong> for drivers, agents and field staff.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Auth, payments, push notifications, geo-stamping, photo upload, OCR.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">App Store + Play Store submission handled end-to-end.</div></div>
+      </div>
+
+      <div class="footer">
+        <div class="left">
+          <div class="row">+91 89188 97474 &nbsp;·&nbsp; +91 77185 69194</div>
+          <div class="row">hello@infocomiva.live &nbsp;·&nbsp; infocomiva.live</div>
+        </div>
+        <div class="right">Get a prototype in 24h →</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 5. ERP / CRM -->
+  <div class="card-shell">
+    <button class="download-btn" onclick="dl('card-5','infocomiva-05-erp-crm')">⬇ Download PNG</button>
+    <section class="card service" id="card-5">
+      <div class="blob" style="width:520px;height:520px;top:-160px;right:-120px;background:radial-gradient(circle, rgba(30,58,138,0.55) 0%, rgba(30,58,138,0) 70%);"></div>
+
+      <div class="brand">
+        <div class="badge">IT</div>
+        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Prototype in <span class="h">24h</span></span>
+      </div>
+
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      </div>
+      <div class="ribbon"><span class="n">04</span> Service</div>
+      <div class="title">ERP &amp; CRM Platforms</div>
+      <div class="pillars">
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Multi-tenant ERPs</strong> with per-customer branding, billing &amp; isolation.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Sales / ops CRMs</strong> that integrate with your existing data sources.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">GST-compliant invoices, annexures, e-way bills &mdash; built for India.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Role-based access, audit logs, exportable everything.</div></div>
+      </div>
+
+      <div class="footer">
+        <div class="left">
+          <div class="row">+91 89188 97474 &nbsp;·&nbsp; +91 77185 69194</div>
+          <div class="row">hello@infocomiva.live &nbsp;·&nbsp; infocomiva.live</div>
+        </div>
+        <div class="right">Get a prototype in 24h →</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 6. AI -->
+  <div class="card-shell">
+    <button class="download-btn" onclick="dl('card-6','infocomiva-06-ai')">⬇ Download PNG</button>
+    <section class="card service" id="card-6">
+      <div class="blob" style="width:520px;height:520px;top:-160px;left:-120px;background:radial-gradient(circle, rgba(37,99,235,0.45) 0%, rgba(37,99,235,0) 70%);"></div>
+
+      <div class="brand">
+        <div class="badge">IT</div>
+        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Prototype in <span class="h">24h</span></span>
+      </div>
+
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6M2 12h6m8 0h6"/><path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24M4.93 19.07l4.24-4.24m5.66-5.66 4.24-4.24"/></svg>
+      </div>
+      <div class="ribbon"><span class="n">05</span> Service</div>
+      <div class="title">AI &amp; Emerging Tech</div>
+      <div class="pillars">
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Document OCR + LLM extraction</strong> &mdash; production-grade, not notebook demos.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Chat agents &amp; copilots</strong> wired to your internal data.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Computer-vision pipelines, AR experiences, drones &amp; IoT integration.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Pragmatic, not buzzword-driven. Ships what works.</div></div>
+      </div>
+
+      <div class="footer">
+        <div class="left">
+          <div class="row">+91 89188 97474 &nbsp;·&nbsp; +91 77185 69194</div>
+          <div class="row">hello@infocomiva.live &nbsp;·&nbsp; infocomiva.live</div>
+        </div>
+        <div class="right">Get a prototype in 24h →</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 7. MARKETING -->
+  <div class="card-shell">
+    <button class="download-btn" onclick="dl('card-7','infocomiva-07-marketing')">⬇ Download PNG</button>
+    <section class="card service" id="card-7">
+      <div class="blob" style="width:520px;height:520px;bottom:-160px;right:-120px;background:radial-gradient(circle, rgba(30,58,138,0.55) 0%, rgba(30,58,138,0) 70%);"></div>
+
+      <div class="brand">
+        <div class="badge">IT</div>
+        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Prototype in <span class="h">24h</span></span>
+      </div>
+
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="ribbon"><span class="n">06</span> Service</div>
+      <div class="title">Digital Marketing</div>
+      <div class="pillars">
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Performance Google &amp; Meta ads</strong> &mdash; rupee-by-rupee accountable.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>SEO &amp; content</strong> built to rank for buyer-intent keywords.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Lifecycle email, WhatsApp campaigns, lead-nurture automations.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Same team also builds your CRM &mdash; marketing reads the schema.</div></div>
+      </div>
+
+      <div class="footer">
+        <div class="left">
+          <div class="row">+91 89188 97474 &nbsp;·&nbsp; +91 77185 69194</div>
+          <div class="row">hello@infocomiva.live &nbsp;·&nbsp; infocomiva.live</div>
+        </div>
+        <div class="right">Get a prototype in 24h →</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 8. BRAND & CREATIVE -->
+  <div class="card-shell">
+    <button class="download-btn" onclick="dl('card-8','infocomiva-08-brand-creative')">⬇ Download PNG</button>
+    <section class="card service" id="card-8">
+      <div class="blob" style="width:520px;height:520px;top:-160px;right:-120px;background:radial-gradient(circle, rgba(37,99,235,0.45) 0%, rgba(37,99,235,0) 70%);"></div>
+
+      <div class="brand">
+        <div class="badge">IT</div>
+        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Prototype in <span class="h">24h</span></span>
+      </div>
+
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+      </div>
+      <div class="ribbon"><span class="n">07</span> Service</div>
+      <div class="title">Brand &amp; Creative</div>
+      <div class="pillars">
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Visual identity</strong> &mdash; logo, palette, typography, design system.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Pitch decks, brochures, social kits</strong> aligned with your story.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Product UI/UX that doesn&rsquo;t need a separate design agency.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Video, motion, photo &mdash; everything one accountable team.</div></div>
+      </div>
+
+      <div class="footer">
+        <div class="left">
+          <div class="row">+91 89188 97474 &nbsp;·&nbsp; +91 77185 69194</div>
+          <div class="row">hello@infocomiva.live &nbsp;·&nbsp; infocomiva.live</div>
+        </div>
+        <div class="right">Get a prototype in 24h →</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 9. CLOUD / DEVOPS -->
+  <div class="card-shell">
+    <button class="download-btn" onclick="dl('card-9','infocomiva-09-cloud-devops')">⬇ Download PNG</button>
+    <section class="card service" id="card-9">
+      <div class="blob" style="width:520px;height:520px;bottom:-160px;left:-120px;background:radial-gradient(circle, rgba(30,58,138,0.55) 0%, rgba(30,58,138,0) 70%);"></div>
+
+      <div class="brand">
+        <div class="badge">IT</div>
+        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Prototype in <span class="h">24h</span></span>
+      </div>
+
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+      </div>
+      <div class="ribbon"><span class="n">08</span> Service</div>
+      <div class="title">Cloud &amp; DevOps</div>
+      <div class="pillars">
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Vercel, AWS, Cloudflare, GCP</strong> &mdash; deploy to your account, not ours.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt"><strong>Observability by default</strong> &mdash; Sentry, uptime, alerting wired pre-launch.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">Type-checked CI gates. Automated backups. Reproducible deploys.</div></div>
+        <div class="row"><div class="tick">✓</div><div class="txt">You own the cloud bill. We&rsquo;re collaborators, never the account holder.</div></div>
+      </div>
+
+      <div class="footer">
+        <div class="left">
+          <div class="row">+91 89188 97474 &nbsp;·&nbsp; +91 77185 69194</div>
+          <div class="row">hello@infocomiva.live &nbsp;·&nbsp; infocomiva.live</div>
+        </div>
+        <div class="right">Get a prototype in 24h →</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 10. CONTACT -->
+  <div class="card-shell">
+    <button class="download-btn" onclick="dl('card-10','infocomiva-10-contact')">⬇ Download PNG</button>
+    <section class="card contact" id="card-10">
+      <div class="blob" style="width:600px;height:600px;top:-200px;right:-120px;background:radial-gradient(circle, rgba(37,99,235,0.55) 0%, rgba(37,99,235,0) 70%);"></div>
+      <div class="blob" style="width:500px;height:500px;bottom:-160px;left:-150px;background:radial-gradient(circle, rgba(30,58,138,0.55) 0%, rgba(30,58,138,0) 70%);"></div>
+
+      <div class="brand">
+        <div class="badge">IT</div>
+        <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Custom prototype in <span class="h">24 hours</span></span>
+      </div>
+
+      <div class="title">
+        Let&rsquo;s build <span class="em">something live.</span>
+      </div>
+      <div class="lines">
+        <div class="row"><div class="lab">CALL</div><div class="val">+91 89188 97474</div></div>
+        <div class="row"><div class="lab">CALL</div><div class="val">+91 77185 69194</div></div>
+        <div class="row"><div class="lab">EMAIL</div><div class="val">hello@infocomiva.live</div></div>
+        <div class="row"><div class="lab">WEB</div><div class="val">infocomiva.live</div></div>
+      </div>
+      <div class="cta">
+        Book a discovery call → prototype in 24h
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<script>
+  // html2canvas options that produce sharp, true-1080×1080 captures even on
+  // narrow viewports. scale:1 because the source div is already 1080×1080;
+  // useCORS so the future eagle-from-Firestore image (if added) doesn't
+  // taint the canvas; backgroundColor null lets the card's own background
+  // win — no white flash.
+  function captureCard(id) {
+    const el = document.getElementById(id);
+    if (!el) return Promise.reject(new Error('card not found: ' + id));
+    // Temporarily clear any CSS transform (used for responsive preview
+    // shrink) so html2canvas sees the real 1080×1080 size.
+    const prevTransform = el.style.transform;
+    el.style.transform = 'none';
+    return html2canvas(el, {
+      width: 1080,
+      height: 1080,
+      scale: 1,
+      useCORS: true,
+      backgroundColor: null,
+      logging: false,
+    }).finally(() => { el.style.transform = prevTransform; });
+  }
+
+  function triggerDownload(canvas, filename) {
+    canvas.toBlob(function (blob) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename + '.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, 'image/png');
+  }
+
+  function dl(id, filename) {
+    captureCard(id).then((canvas) => triggerDownload(canvas, filename)).catch((err) => {
+      alert('Could not capture card: ' + err.message);
+    });
+  }
+
+  // Download all 10 with a slight gap so the browser doesn't choke the
+  // download queue. Filenames stay numbered (01..10) so the kit lands
+  // sorted in the user's Downloads folder.
+  async function downloadAll() {
+    const items = [
+      ['card-1',  'infocomiva-01-cover'],
+      ['card-2',  'infocomiva-02-custom-software'],
+      ['card-3',  'infocomiva-03-web-ecommerce'],
+      ['card-4',  'infocomiva-04-mobile-apps'],
+      ['card-5',  'infocomiva-05-erp-crm'],
+      ['card-6',  'infocomiva-06-ai'],
+      ['card-7',  'infocomiva-07-marketing'],
+      ['card-8',  'infocomiva-08-brand-creative'],
+      ['card-9',  'infocomiva-09-cloud-devops'],
+      ['card-10', 'infocomiva-10-contact'],
+    ];
+    for (const [id, name] of items) {
+      try {
+        const canvas = await captureCard(id);
+        triggerDownload(canvas, name);
+        await new Promise((r) => setTimeout(r, 400));
+      } catch (e) {
+        console.warn('skipped', id, e);
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
