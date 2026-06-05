@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Infocomiva — Category banner kit 620×620 (internal)</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --ink-900: #0a0a0a;
+      --ink-700: #2d2d31;
+      --azure-300: #93c5fd;
+      --azure-400: #60a5fa;
+      --azure-500: #2563eb;
+      --azure-700: #1e3a8a;
+      --indigo-900: #1e1b4b;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #0a0a0a; color: #fff; font-family: Inter, system-ui, sans-serif; }
+    .display { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    .page-header { padding: 32px 24px; background: linear-gradient(135deg, #0a0a0a 0%, #1e3a8a 100%); }
+    .page-header h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 22px; margin: 0; }
+    .page-header p { font-size: 13px; opacity: .8; margin: 8px 0 0; line-height: 1.5; max-width: 760px; }
+    .page-header .actions { margin-top: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .download-all { background: var(--azure-500); color: #fff; font-weight: 700; border: none; padding: 11px 20px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    .download-all:hover { background: var(--azure-700); }
+    .download-all:disabled { background: #4b5563; cursor: not-allowed; }
+    .status { font-size: 12px; color: #93c5fd; }
+
+    .grid-wrapper { padding: 24px 16px; background: #18181b; display: grid; grid-template-columns: repeat(auto-fit, minmax(620px, 1fr)); gap: 24px; justify-items: center; }
+    @media (max-width: 720px) { .grid-wrapper { grid-template-columns: 1fr; } }
+
+    .card-shell { position: relative; box-shadow: 0 16px 40px rgba(0,0,0,.5); border-radius: 16px; }
+    .card-shell .download-btn {
+      position: absolute; top: 10px; right: 10px; z-index: 100;
+      background: rgba(255,255,255,0.95); color: var(--ink-900);
+      border: none; padding: 8px 12px; border-radius: 6px;
+      font-weight: 700; font-size: 11px; cursor: pointer; font-family: Inter, sans-serif;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .card-shell .download-btn:hover { background: #fff; transform: translateY(-1px); }
+
+    /* The actual capture target — exactly 620×620 px. */
+    .card {
+      width: 620px; height: 620px; position: relative; overflow: hidden;
+      color: #fff; border-radius: 16px;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(96,165,250,0.22) 0%, transparent 45%),
+        radial-gradient(circle at 15% 90%, rgba(124,58,237,0.18) 0%, transparent 50%),
+        linear-gradient(135deg, #0a0a0a 0%, #1e1b4b 55%, #1e3a8a 100%);
+      transform-origin: top center;
+    }
+    /* Responsive scale-down so the 620 card fits narrow screens cleanly. */
+    @media (max-width: 660px) {
+      .card { transform: scale(calc((100vw - 32px) / 620)); }
+      .card-shell { height: calc(100vw - 32px); width: calc(100vw - 32px); }
+    }
+
+    /* Decorative dots top-right — purely visual texture. */
+    .card::before {
+      content: ''; position: absolute;
+      top: 70px; right: 60px; width: 60px; height: 60px;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.18) 1.2px, transparent 1.4px);
+      background-size: 10px 10px;
+      z-index: 1;
+    }
+
+    /* Brand block — top-left. */
+    .brand { position: absolute; top: 28px; left: 32px; display: flex; align-items: center; gap: 12px; z-index: 3; }
+    .brand .eagle { width: 44px; height: 44px; object-fit: contain; display: block; }
+    .brand .eagle-fallback {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.22);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 11px; letter-spacing: 0.08em; color: #fff;
+    }
+    .brand .name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 17px; line-height: 1.1; letter-spacing: -0.01em; }
+    .brand .name .ti { color: var(--azure-400); display: block; }
+    .brand .tag { font-size: 9px; color: rgba(255,255,255,0.6); font-style: italic; font-weight: 500; margin-top: 2px; }
+
+    /* USP pill — top-right. */
+    .usp {
+      position: absolute; top: 36px; right: 32px; z-index: 3;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 14px;
+      background: linear-gradient(135deg, rgba(37,99,235,0.32) 0%, rgba(124,58,237,0.32) 100%);
+      border: 1px solid rgba(96,165,250,0.55);
+      border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+      backdrop-filter: blur(6px);
+    }
+    .usp .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--azure-400); box-shadow: 0 0 0 4px rgba(96,165,250,0.25); }
+    .usp .h { color: var(--azure-300); }
+
+    /* Icon — sits beside the title block. */
+    .icon-wrap {
+      position: absolute; top: 132px; left: 32px; z-index: 3;
+      width: 68px; height: 68px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--azure-500) 0%, var(--azure-700) 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 10px 26px rgba(37,99,235,0.45);
+    }
+    .icon-wrap svg { width: 38px; height: 38px; color: #fff; }
+
+    /* Tagline — small uppercase eyebrow above title. */
+    .tagline {
+      position: absolute; top: 142px; left: 120px; right: 32px; z-index: 3;
+      font-size: 11px; font-weight: 800; color: var(--azure-300);
+      letter-spacing: 0.18em; text-transform: uppercase;
+    }
+
+    /* Title — big and bold. Auto-fits up to ~3 lines. */
+    .title {
+      position: absolute; top: 168px; left: 120px; right: 32px; z-index: 3;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
+      font-size: 34px; line-height: 1.05; letter-spacing: -0.025em;
+    }
+    .title .em { color: var(--azure-300); }
+
+    /* Bullets — three short value props. */
+    .bullets {
+      position: absolute; top: 350px; left: 32px; right: 32px; z-index: 3;
+      font-size: 14px; line-height: 1.4; color: rgba(255,255,255,0.92);
+    }
+    .bullets .row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+    .bullets .row .tick {
+      flex-shrink: 0; width: 22px; height: 22px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--azure-400) 0%, var(--azure-700) 100%);
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 12px; margin-top: 1px;
+      box-shadow: 0 3px 10px rgba(37,99,235,0.45);
+    }
+    .bullets .row .txt strong { color: #fff; font-weight: 700; }
+
+    /* CTA button — bottom-left, above contact strip. */
+    .cta {
+      position: absolute; bottom: 78px; left: 32px; z-index: 3;
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 12px 22px;
+      background: linear-gradient(135deg, var(--azure-500) 0%, var(--azure-700) 100%);
+      border-radius: 10px;
+      font-weight: 800; font-size: 14px; color: #fff;
+      box-shadow: 0 10px 26px rgba(37,99,235,0.45);
+    }
+    .cta .arrow { font-size: 16px; }
+
+    /* Contact strip — bottom edge, full width. */
+    .contact-strip {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+      padding: 14px 32px;
+      background: rgba(10,10,10,0.82);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 11px; font-weight: 700;
+      gap: 12px;
+    }
+    .contact-strip .col { display: flex; flex-direction: column; gap: 3px; }
+    .contact-strip .ic { color: var(--azure-400); margin-right: 5px; }
+    .contact-strip .web { color: var(--azure-300); font-weight: 800; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Infocomiva — category banner kit (620 × 620)</h1>
+  <p>
+    47 service-category banners. Each carries the eagle logo, "Sign Up Today · Prototype in 24h" USP,
+    a CTA, both phone numbers and infocomiva.live. Wait for the <strong>"Images ready"</strong>
+    status before downloading.
+  </p>
+  <div class="actions">
+    <button class="download-all" id="dl-all" onclick="downloadAll()" disabled>Download all 47 as PNG</button>
+    <span class="status" id="status">Loading…</span>
+  </div>
+</div>
+
+<div class="grid-wrapper" id="cards"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+  // ─── Icon library ───────────────────────────────────────────────
+  // Compact lucide-style SVG paths. The renderer wraps each in a
+  // <svg viewBox="0 0 24 24" ...> with the brand stroke styling.
+  const ICONS = {
+    megaphone: '<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+    monitor:   '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+    mobile:    '<rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
+    palette:   '<circle cx="13.5" cy="6.5" r=".8" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".8" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".8" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".8" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+    code:      '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+    database:  '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/>',
+    facebook:  '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
+    server:    '<rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>',
+    share:     '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+    chart:     '<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>',
+    cube:      '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+    briefcase: '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+    users:     '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    gear:      '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+    cart:      '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
+    layout:    '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>',
+    book:      '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+    search:    '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+    cloud:     '<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>',
+    shield:    '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    chip:      '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/><line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="14" x2="4" y2="14"/>',
+    heart:     '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+    api:       '<path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><line x1="14.5" y1="4" x2="9.5" y2="20"/>',
+    network:   '<rect x="2" y="2" width="6" height="6" rx="1"/><rect x="16" y="2" width="6" height="6" rx="1"/><rect x="9" y="16" width="6" height="6" rx="1"/><path d="M5 8v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8"/><path d="M12 12v4"/>',
+    brain:     '<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>',
+    calculator:'<rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="12" y1="10" x2="14" y2="10"/><line x1="16" y1="10" x2="16.01" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="12" y1="14" x2="14" y2="14"/><line x1="16" y1="14" x2="16.01" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="12" y1="18" x2="14" y2="18"/><line x1="16" y1="18" x2="16.01" y2="18"/>',
+    layers:    '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+    building:  '<rect x="4" y="2" width="16" height="20" rx="1"/><line x1="9" y1="6" x2="9.01" y2="6"/><line x1="15" y1="6" x2="15.01" y2="6"/><line x1="9" y1="10" x2="9.01" y2="10"/><line x1="15" y1="10" x2="15.01" y2="10"/><line x1="9" y1="14" x2="9.01" y2="14"/><line x1="15" y1="14" x2="15.01" y2="14"/><path d="M10 22v-4h4v4"/>',
+    house:     '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  };
+
+  // ─── Category data ──────────────────────────────────────────────
+  // 47 banners. Each: { slug, title, tagline (3-word brand promise),
+  // icon (key in ICONS), bullets (exactly 3 short strings, ≤55 chars
+  // each so they fit one line) }.
+  const CATEGORIES = [
+    { slug: 'digital-marketing-services', title: 'Digital Marketing Services', tagline: 'Reach. Engage. Convert.', icon: 'megaphone',
+      bullets: ['Performance ads on Meta & Google', 'SEO that ranks for buyers, not bots', 'ROI tracking, not vanity metrics'] },
+    { slug: 'website-developers', title: 'Internet Website Developers', tagline: 'Build. Ship. Scale.', icon: 'monitor',
+      bullets: ['Fast, responsive sites that convert', 'Modern stack — Next.js, React, Tailwind', 'CMS-ready · SEO-ready · analytics-ready'] },
+    { slug: 'mobile-app-developers', title: 'Mobile Application Developers', tagline: 'Native. Cross-platform. Fast.', icon: 'mobile',
+      bullets: ['iOS + Android — React Native or native', 'Offline-first patterns for field staff', 'Play Store & App Store submission handled'] },
+    { slug: 'website-designers', title: 'Internet Website Designers', tagline: 'Design. Test. Delight.', icon: 'palette',
+      bullets: ['Brand-aligned, mobile-first layouts', 'Conversion-optimised — buttons that earn clicks', 'Design systems that scale across pages'] },
+    { slug: 'social-media-marketing-agencies', title: 'Social Media Marketing Agencies', tagline: 'Plan. Post. Perform.', icon: 'share',
+      bullets: ['Content calendars across IG, FB, LinkedIn', 'Paid amplification with weekly ROAS reports', 'Community DMs & comment moderation'] },
+    { slug: 'computer-software-developers', title: 'Computer Software Developers', tagline: 'Architect. Build. Maintain.', icon: 'code',
+      bullets: ['Full-stack engineering — frontend + backend', 'Type-safe codebase, production observability', 'Same team before and after launch'] },
+    { slug: 'database-management-software-developers', title: 'Database Management Software Developers', tagline: 'Store. Query. Scale.', icon: 'database',
+      bullets: ['Postgres, MySQL, Mongo — picked for fit', 'Indexed queries, automated backups', 'Replication, sharding & read-replicas'] },
+    { slug: 'facebook-page-designers', title: 'Facebook Page Designers', tagline: 'Brand. Boost. Grow.', icon: 'facebook',
+      bullets: ['Cover, profile & post templates aligned', 'Ad-ready creatives sized for every placement', 'Page setup, pixel & insights wired in'] },
+    { slug: 'android-app-developers', title: 'Software Developers for Android', tagline: 'Native. Smooth. Tested.', icon: 'mobile',
+      bullets: ['Kotlin-native — Material 3 components', 'Play Store policy compliance built in', 'Crashlytics, Play Console release pipeline'] },
+    { slug: 'wordpress-hosting-services', title: 'WordPress Website Hosting Services', tagline: 'Fast. Secure. Managed.', icon: 'server',
+      bullets: ['Managed WP on Vercel / Cloudways / Kinsta', 'Automated daily backups + 1-click restore', 'CDN, image optimisation, malware scanning'] },
+    { slug: 'social-media-optimization-services', title: 'Social Media Optimization Services', tagline: 'Profile. Position. Pop.', icon: 'share',
+      bullets: ['Profile audits across every platform', 'Hashtag, bio & content-pillar strategy', 'Monthly insights — growth, reach, engagement'] },
+    { slug: 'business-intelligence-software-developers', title: 'Business Intelligence Software Developers', tagline: 'Collect. Connect. Decide.', icon: 'chart',
+      bullets: ['Dashboards over Postgres, Sheets, ERP exports', 'Metabase / custom React — your call', 'Cohorts, funnels, alerts — auto-emailed'] },
+    { slug: 'augmented-reality-software-developers', title: 'Augmented Reality Software Developers', tagline: 'Visualise. Try. Buy.', icon: 'cube',
+      bullets: ['WebAR & native — Unity, ARKit, ARCore', 'Try-before-buy for furniture, fashion, retail', '3D model pipeline from your CAD or photos'] },
+    { slug: 'user-experience-designers', title: 'User Experience Designers', tagline: 'Research. Design. Validate.', icon: 'users',
+      bullets: ['User interviews, journey maps, IA audits', 'Interactive Figma prototypes in 1 week', 'Usability testing with real users'] },
+    { slug: 'it-solution-providers', title: 'IT Solution Providers', tagline: 'Plan. Build. Run.', icon: 'briefcase',
+      bullets: ['End-to-end IT — strategy to support', 'Software, networks, devices, cloud, security', 'One accountable team, one invoice'] },
+    { slug: 'employee-self-service-software-developers', title: 'Employee Self Service Software Developers', tagline: 'Self-serve. Anywhere. Anytime.', icon: 'users',
+      bullets: ['Leave, payroll, attendance, reimbursements', 'Mobile-first portal — works on any phone', 'HR approvals workflows + audit trail'] },
+    { slug: 'hotel-management-software-developers', title: 'Hotel Management Software Developers', tagline: 'Book. Check-in. Bill.', icon: 'building',
+      bullets: ['PMS — bookings, rooms, housekeeping, F&B', 'Channel manager + OTA sync (Booking, MMT)', 'GST invoices, tally-ready, GSTR-1 export'] },
+    { slug: 'customised-software-developers', title: 'Customised Computer Software Developers', tagline: 'Yours. Bespoke. Built.', icon: 'gear',
+      bullets: ['Bespoke business apps — not generic SaaS', 'Built around your ops, not template flows', 'You own the code, not a per-seat licence'] },
+    { slug: 'hr-management-software-developers', title: 'HR Management Software Developers', tagline: 'Hire. Manage. Pay.', icon: 'users',
+      bullets: ['Recruitment, onboarding, payroll, exit', 'India-ready — PF, ESI, TDS, PT compliant', 'Self-serve dashboards for employees & HR'] },
+    { slug: 'web-designing-software-developers', title: 'Web Designing Software Developers', tagline: 'Drag. Drop. Done.', icon: 'palette',
+      bullets: ['Custom site builders for your team', 'Block-based editor — no engineer needed', 'White-label for your agency or client base'] },
+    { slug: 'user-experience-developers', title: 'User Experience Developers', tagline: 'Design. Engineer. Ship.', icon: 'code',
+      bullets: ['Pixel-perfect implementation from Figma', 'Accessible — WCAG AA, keyboard-first', 'Performance budgets, Lighthouse 95+'] },
+    { slug: 'ecommerce-website-designers', title: 'E-Commerce Website Designers', tagline: 'Browse. Add. Buy.', icon: 'cart',
+      bullets: ['Shopify, WooCommerce, Magento, custom', 'Conversion-tuned — cart, checkout, upsells', 'Payments: Razorpay, PayU, Stripe, COD'] },
+    { slug: 'user-interface-developers', title: 'User Interface Developers', tagline: 'Components. Consistency. Craft.', icon: 'layout',
+      bullets: ['Design systems in React + Tailwind', 'Storybook-documented, type-safe components', 'Theming, dark-mode, RTL — out of the box'] },
+    { slug: 'erp-software-developers', title: 'ERP Computer Software Developers', tagline: 'Unify. Automate. Report.', icon: 'layers',
+      bullets: ['Multi-tenant ERPs with per-customer branding', 'Sales, inventory, accounts, HR — modular', 'GST-compliant, e-invoice, e-way bill ready'] },
+    { slug: 'elearning-solution-developers', title: 'E-Learning Solution Developers', tagline: 'Teach. Track. Certify.', icon: 'book',
+      bullets: ['LMS — courses, quizzes, certificates', 'Live classes, recordings, doubt-clearing', 'Mobile-first, offline-mode, low-bandwidth'] },
+    { slug: 'seo-consultants', title: 'SEO Consultants', tagline: 'Audit. Optimise. Rank.', icon: 'search',
+      bullets: ['Technical audit — Core Web Vitals, schema', 'Keyword strategy mapped to buyer intent', 'Link-building & content briefs that rank'] },
+    { slug: 'web-application-developers', title: 'Web Application Developers', tagline: 'Plan. Build. Deploy.', icon: 'monitor',
+      bullets: ['SPAs & dashboards on React, Next.js, Vue', 'Auth, payments, file upload, real-time', 'CI/CD to Vercel, AWS, Cloudflare — your cloud'] },
+    { slug: 'cloud-hosting-services', title: 'Cloud Hosting Services', tagline: 'Deploy. Scale. Sleep.', icon: 'cloud',
+      bullets: ['AWS, GCP, Azure, Vercel — deploy to yours', 'Auto-scaling, CDN, load-balanced by default', 'Uptime monitoring + alerting pre-launch'] },
+    { slug: 'application-service-providers', title: 'Application Service Providers', tagline: 'Subscribe. Sign-in. Go.', icon: 'briefcase',
+      bullets: ['Hosted SaaS — we run the infra, you use it', 'Multi-tenant, role-based, SSO-ready', 'SLA-backed uptime, automated backups'] },
+    { slug: 'erp-real-estate', title: 'ERP for Real Estate', tagline: 'Plot. Sell. Collect.', icon: 'house',
+      bullets: ['Inventory, bookings, EMI schedules, dues', 'Builder, broker, channel-partner workflows', 'RERA-aware reporting, GST e-invoice ready'] },
+    { slug: 'tally-integration-services', title: 'Tally Integration Services', tagline: 'Sync. Reconcile. Done.', icon: 'calculator',
+      bullets: ['Two-way sync — ERP / CRM ↔ Tally', 'Invoices, ledgers, GST — zero double entry', 'On-prem Tally bridge + cloud connector'] },
+    { slug: 'cybersecurity-software-developers', title: 'Cybersecurity Software Developers', tagline: 'Detect. Defend. Recover.', icon: 'shield',
+      bullets: ['Pen-testing, SAST, dependency scanning', 'Incident response & forensics playbooks', 'Zero-trust auth, audit logs, SOC-ready'] },
+    { slug: 'embedded-software-developers', title: 'Embedded System Software Developers', tagline: 'Sense. Compute. Act.', icon: 'chip',
+      bullets: ['Firmware in C / Rust on STM32, ESP32, NXP', 'IoT — MQTT, BLE, LoRa, cellular telemetry', 'OTA updates, secure boot, low-power design'] },
+    { slug: 'matrimonial-portal-developers', title: 'Matrimonial Portal Development Services', tagline: 'Match. Meet. Marry.', icon: 'heart',
+      bullets: ['Profile, search, match algorithms', 'KYC, photo moderation, chat & video call', 'Subscription tiers, payment gateway built-in'] },
+    { slug: 'cloud-application-developers', title: 'Cloud Application Software Developers', tagline: 'Build. Deploy. Iterate.', icon: 'cloud',
+      bullets: ['Cloud-native — serverless, containers, edge', 'Stateless services, queues, event-driven', 'Cost-aware architecture — pay for what runs'] },
+    { slug: 'product-designers', title: 'Product Designers', tagline: 'Discover. Design. Deliver.', icon: 'cube',
+      bullets: ['End-to-end product design — research to spec', 'High-fidelity prototypes in Figma', 'Design QA all the way to production'] },
+    { slug: 'graphic-designers', title: 'Computer Graphic Designers', tagline: 'Sketch. Style. Ship.', icon: 'palette',
+      bullets: ['Logos, brand kits, social creatives, decks', 'Print-ready — flyers, packaging, hoardings', 'Illustration, icon sets, motion graphics'] },
+    { slug: 'ios-app-developers', title: 'iOS Mobile Application Developers', tagline: 'Native. Smooth. Beautiful.', icon: 'mobile',
+      bullets: ['Swift / SwiftUI — iOS 16+ targeted', 'Apple HIG-compliant, App Store ready', 'TestFlight, App Store Connect handled'] },
+    { slug: 'martech-software-developers', title: 'Digital Marketing Software Developers', tagline: 'Build. Automate. Measure.', icon: 'megaphone',
+      bullets: ['MarTech — campaigns, attribution, CRM sync', 'Integrations: GA4, Meta, GTM, HubSpot', 'White-label dashboards for agencies'] },
+    { slug: 'api-service-providers', title: 'API Service Providers', tagline: 'Design. Document. Deliver.', icon: 'api',
+      bullets: ['REST & GraphQL — versioned, typed, tested', 'OpenAPI docs, SDKs, sandbox keys', 'Rate limits, auth (OAuth, JWT, API keys)'] },
+    { slug: 'crm-software-developers', title: 'CRM Computer Software Developers', tagline: 'Capture. Nurture. Close.', icon: 'users',
+      bullets: ['Custom CRMs around your sales process', 'WhatsApp + email automation, lead scoring', 'Integrates with your existing tools & data'] },
+    { slug: 'website-hosting-services', title: 'Website Hosting Services', tagline: 'Fast. Secure. Always-on.', icon: 'server',
+      bullets: ['Managed hosting — Vercel, Netlify, Cloudways', 'SSL, CDN, daily backups, malware scanning', '24/7 monitoring + WhatsApp incident alerts'] },
+    { slug: 'it-infrastructure-providers', title: 'IT Infrastructure Solution Providers', tagline: 'Design. Deploy. Defend.', icon: 'network',
+      bullets: ['Networks, servers, storage, virtualisation', 'On-prem to cloud migration, DR planning', 'Endpoint management, SSO, MDM, patching'] },
+    { slug: 'it-consultants', title: 'IT Consultants', tagline: 'Audit. Advise. Execute.', icon: 'briefcase',
+      bullets: ['Tech-stack audits, vendor selection, RFPs', 'Architecture reviews, cost optimisation', 'Roadmaps tied to business outcomes'] },
+    { slug: 'ecommerce-development-services', title: 'E-Commerce Website Development Services', tagline: 'Build. Sell. Grow.', icon: 'cart',
+      bullets: ['Shopify, WooCommerce, Magento, headless', 'Payments, shipping, ERP & inventory sync', 'SEO-ready, fast, conversion-tuned'] },
+    { slug: 'cms-software-developers', title: 'CMS Software Developers', tagline: 'Author. Publish. Localise.', icon: 'layers',
+      bullets: ['Headless CMS — Sanity, Strapi, Payload', 'WordPress, Drupal — themed & extended', 'Roles, drafts, scheduling, multi-language'] },
+    { slug: 'ai-software-developers', title: 'Artificial Intelligence Software Developers', tagline: 'Automate. Predict. Win.', icon: 'brain',
+      bullets: ['LLM agents, RAG, document OCR pipelines', 'Computer vision, recommendation engines', 'Production-grade — eval, monitoring, fallback'] },
+  ];
+
+  // ─── Template ───────────────────────────────────────────────────
+  function renderCard(cat, idx) {
+    const cardId = 'card-' + idx;
+    const filename = String(idx + 1).padStart(2, '0') + '-' + cat.slug;
+    const svg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[cat.icon] || ICONS.code}</svg>`;
+    const bullets = cat.bullets.map(b => `
+        <div class="row"><div class="tick">✓</div><div class="txt">${b}</div></div>`).join('');
+    return `
+  <div class="card-shell">
+    <button class="download-btn" data-card="${cardId}" data-name="infocomiva-${filename}">⬇ Download</button>
+    <section class="card" id="${cardId}">
+      <div class="brand">
+        <img class="eagle" data-eagle crossorigin="anonymous" src="" alt="" style="display:none">
+        <span class="eagle-fallback" data-eagle-fb>IT</span>
+        <div>
+          <div class="name">Infocomiva <span class="ti">Technologies</span></div>
+          <div class="tag">where you can rely upon!</div>
+        </div>
+      </div>
+      <div class="usp">
+        <span class="dot"></span>
+        <span>Sign Up Today · Prototype in <span class="h">24h</span></span>
+      </div>
+
+      <div class="icon-wrap">${svg}</div>
+      <div class="tagline">${cat.tagline}</div>
+      <div class="title">${cat.title}</div>
+
+      <div class="bullets">${bullets}
+      </div>
+
+      <div class="cta">Get Your Prototype In 24h <span class="arrow">→</span></div>
+
+      <div class="contact-strip">
+        <div class="col">
+          <span><span class="ic">📞</span>+91 89188 97474</span>
+          <span><span class="ic">📞</span>+91 77185 69194</span>
+        </div>
+        <div class="col" style="align-items: flex-end;">
+          <span class="web">www.infocomiva.live</span>
+          <span><span class="ic">✉</span>hello@infocomiva.live</span>
+        </div>
+      </div>
+    </section>
+  </div>`;
+  }
+
+  // ─── Mount all cards into the grid ──────────────────────────────
+  const cardsWrap = document.getElementById('cards');
+  cardsWrap.innerHTML = CATEGORIES.map(renderCard).join('');
+
+  // Wire individual download buttons (avoids inline-onclick CSP woes).
+  cardsWrap.querySelectorAll('.download-btn').forEach((btn) => {
+    btn.addEventListener('click', () => window.dl(btn.dataset.card, btn.dataset.name));
+  });
+
+  // ─── Eagle loader (same pattern as social-cards) ────────────────
+  // Fetch eagle URL from Firestore, convert to data URL so html2canvas
+  // never trips on cross-origin canvas-taint protection.
+  const app = initializeApp({
+    apiKey: "AIzaSyAmJKD3Saep17Ij4jWN2vgZSypk17VjuZg",
+    authDomain: "cargologic-saas.firebaseapp.com",
+    projectId: "cargologic-saas",
+    storageBucket: "cargologic-saas.firebasestorage.app",
+    messagingSenderId: "1005412538844",
+    appId: "1:1005412538844:web:26e6ce0ae52c6065c3d719",
+  });
+  const db = getFirestore(app);
+
+  async function urlToDataUrl(url) {
+    const res = await fetch(url, { mode: 'cors' });
+    if (!res.ok) throw new Error('fetch failed: ' + res.status);
+    const blob = await res.blob();
+    return await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = reject;
+      r.readAsDataURL(blob);
+    });
+  }
+
+  async function loadEagle() {
+    try {
+      const snap = await getDoc(doc(db, "appSettings", "infocomiva"));
+      if (!snap.exists()) throw new Error("appSettings/infocomiva missing");
+      const url = (snap.data() || {}).eagle;
+      if (!url || typeof url !== "string") throw new Error("eagle URL missing");
+      const dataUrl = await urlToDataUrl(url);
+      document.querySelectorAll('[data-eagle]').forEach((img) => {
+        img.src = dataUrl;
+        img.style.display = 'block';
+      });
+      document.querySelectorAll('[data-eagle-fb]').forEach((fb) => fb.remove());
+      console.info('[category-banners] eagle loaded and inlined');
+    } catch (err) {
+      console.warn('[category-banners] eagle loader failed — IT badge stays:', err);
+    }
+  }
+
+  // ─── Capture + download ─────────────────────────────────────────
+  async function captureCard(id) {
+    const el = document.getElementById(id);
+    if (!el) throw new Error('card not found: ' + id);
+    const prev = el.style.transform;
+    el.style.transform = 'none';
+    try {
+      return await html2canvas(el, {
+        width: 620, height: 620, scale: 2,    // scale: 2 for sharper PNG
+        useCORS: true, allowTaint: false, backgroundColor: null,
+        logging: false, imageTimeout: 15000,
+      });
+    } finally { el.style.transform = prev; }
+  }
+
+  function triggerDownload(canvas, filename) {
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename + '.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, 'image/png');
+  }
+
+  window.dl = async function (id, filename) {
+    try {
+      const canvas = await captureCard(id);
+      triggerDownload(canvas, filename);
+    } catch (err) {
+      alert('Capture failed: ' + err.message);
+    }
+  };
+
+  window.downloadAll = async function () {
+    const btn = document.getElementById('dl-all');
+    btn.disabled = true;
+    const status = document.getElementById('status');
+    for (let i = 0; i < CATEGORIES.length; i++) {
+      const cat = CATEGORIES[i];
+      const name = 'infocomiva-' + String(i + 1).padStart(2, '0') + '-' + cat.slug;
+      status.textContent = `Capturing ${i + 1} / ${CATEGORIES.length}: ${cat.title}…`;
+      try {
+        const canvas = await captureCard('card-' + i);
+        triggerDownload(canvas, name);
+        await new Promise((r) => setTimeout(r, 400));
+      } catch (e) {
+        console.warn('skipped', i, e);
+      }
+    }
+    status.textContent = `Done — ${CATEGORIES.length} PNGs queued.`;
+    btn.disabled = false;
+  };
+
+  // ─── Boot ───────────────────────────────────────────────────────
+  const status = document.getElementById('status');
+  const dlAll = document.getElementById('dl-all');
+  status.textContent = 'Loading eagle logo…';
+  await loadEagle();
+  status.textContent = `Images ready ✓ ${CATEGORIES.length} banners loaded — click Download to save PNGs.`;
+  status.style.color = '#10b981';
+  dlAll.disabled = false;
+</script>
+
+</body>
+</html>
