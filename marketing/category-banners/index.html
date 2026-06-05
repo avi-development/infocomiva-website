@@ -679,7 +679,7 @@
       <div class="three-word">${cat.tagline}</div>
 
       <div class="description">
-        ${cat.bullets[0]}. ${cat.bullets[1]}.
+        ${cat.bullets.filter(b => b !== 'STAT').slice(0, 2).map(b => b.replace(/\.$/, '') + '.').join(' ')}
       </div>
 
       <div class="features">${featuresHtml}
