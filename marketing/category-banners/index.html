@@ -225,104 +225,118 @@
     house:     '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
   };
 
+  // ─── Offer types ────────────────────────────────────────────────
+  // Different services warrant different "free first-step" offers.
+  // A marketing engagement can't ship a "prototype" — it ships an
+  // audit. Hosting ships a free migration / trial. Consulting ships
+  // a strategy call. Each category picks one via its `offer` field;
+  // the USP pill and CTA button text both pull from here.
+  const OFFERS = {
+    prototype: { pill: 'Prototype in 24h',     cta: 'Get Your Prototype In 24h' },
+    audit:     { pill: 'Free Audit in 24h',    cta: 'Get a Free Audit'          },
+    mockup:    { pill: 'Free Mockup in 24h',   cta: 'See a Sample Mockup'       },
+    call:      { pill: 'Free Strategy Call',   cta: 'Book a Strategy Call'      },
+    trial:     { pill: 'Free Migration',       cta: 'Start a Free Migration'    },
+  };
+
   // ─── Category data ──────────────────────────────────────────────
   // 47 banners. Each: { slug, title, tagline (3-word brand promise),
   // icon (key in ICONS), bullets (exactly 3 short strings, ≤55 chars
   // each so they fit one line) }.
   const CATEGORIES = [
-    { slug: 'digital-marketing-services', title: 'Digital Marketing Services', tagline: 'Reach. Engage. Convert.', icon: 'megaphone',
+    { slug: 'digital-marketing-services', offer: 'audit', title: 'Digital Marketing Services', tagline: 'Reach. Engage. Convert.', icon: 'megaphone',
       bullets: ['Performance ads on Meta & Google', 'SEO that ranks for buyers, not bots', 'ROI tracking, not vanity metrics'] },
-    { slug: 'website-developers', title: 'Internet Website Developers', tagline: 'Build. Ship. Scale.', icon: 'monitor',
+    { slug: 'website-developers', offer: 'prototype', title: 'Internet Website Developers', tagline: 'Build. Ship. Scale.', icon: 'monitor',
       bullets: ['Fast, responsive sites that convert', 'Modern stack — Next.js, React, Tailwind', 'CMS-ready · SEO-ready · analytics-ready'] },
-    { slug: 'mobile-app-developers', title: 'Mobile Application Developers', tagline: 'Native. Cross-platform. Fast.', icon: 'mobile',
+    { slug: 'mobile-app-developers', offer: 'prototype', title: 'Mobile Application Developers', tagline: 'Native. Cross-platform. Fast.', icon: 'mobile',
       bullets: ['iOS + Android — React Native or native', 'Offline-first patterns for field staff', 'Play Store & App Store submission handled'] },
-    { slug: 'website-designers', title: 'Internet Website Designers', tagline: 'Design. Test. Delight.', icon: 'palette',
+    { slug: 'website-designers', offer: 'mockup', title: 'Internet Website Designers', tagline: 'Design. Test. Delight.', icon: 'palette',
       bullets: ['Brand-aligned, mobile-first layouts', 'Conversion-optimised — buttons that earn clicks', 'Design systems that scale across pages'] },
-    { slug: 'social-media-marketing-agencies', title: 'Social Media Marketing Agencies', tagline: 'Plan. Post. Perform.', icon: 'share',
+    { slug: 'social-media-marketing-agencies', offer: 'audit', title: 'Social Media Marketing Agencies', tagline: 'Plan. Post. Perform.', icon: 'share',
       bullets: ['Content calendars across IG, FB, LinkedIn', 'Paid amplification with weekly ROAS reports', 'Community DMs & comment moderation'] },
-    { slug: 'computer-software-developers', title: 'Computer Software Developers', tagline: 'Architect. Build. Maintain.', icon: 'code',
+    { slug: 'computer-software-developers', offer: 'prototype', title: 'Computer Software Developers', tagline: 'Architect. Build. Maintain.', icon: 'code',
       bullets: ['Full-stack engineering — frontend + backend', 'Type-safe codebase, production observability', 'Same team before and after launch'] },
-    { slug: 'database-management-software-developers', title: 'Database Management Software Developers', tagline: 'Store. Query. Scale.', icon: 'database',
+    { slug: 'database-management-software-developers', offer: 'prototype', title: 'Database Management Software Developers', tagline: 'Store. Query. Scale.', icon: 'database',
       bullets: ['Postgres, MySQL, Mongo — picked for fit', 'Indexed queries, automated backups', 'Replication, sharding & read-replicas'] },
-    { slug: 'facebook-page-designers', title: 'Facebook Page Designers', tagline: 'Brand. Boost. Grow.', icon: 'facebook',
+    { slug: 'facebook-page-designers', offer: 'mockup', title: 'Facebook Page Designers', tagline: 'Brand. Boost. Grow.', icon: 'facebook',
       bullets: ['Cover, profile & post templates aligned', 'Ad-ready creatives sized for every placement', 'Page setup, pixel & insights wired in'] },
-    { slug: 'android-app-developers', title: 'Software Developers for Android', tagline: 'Native. Smooth. Tested.', icon: 'mobile',
+    { slug: 'android-app-developers', offer: 'prototype', title: 'Computer Software Developers For Android Phone', tagline: 'Native. Smooth. Tested.', icon: 'mobile',
       bullets: ['Kotlin-native — Material 3 components', 'Play Store policy compliance built in', 'Crashlytics, Play Console release pipeline'] },
-    { slug: 'wordpress-hosting-services', title: 'WordPress Website Hosting Services', tagline: 'Fast. Secure. Managed.', icon: 'server',
+    { slug: 'wordpress-hosting-services', offer: 'trial', title: 'WordPress Website Hosting Services', tagline: 'Fast. Secure. Managed.', icon: 'server',
       bullets: ['Managed WP on Vercel / Cloudways / Kinsta', 'Automated daily backups + 1-click restore', 'CDN, image optimisation, malware scanning'] },
-    { slug: 'social-media-optimization-services', title: 'Social Media Optimization Services', tagline: 'Profile. Position. Pop.', icon: 'share',
+    { slug: 'social-media-optimization-services', offer: 'audit', title: 'Social Media Optimization Services', tagline: 'Profile. Position. Pop.', icon: 'share',
       bullets: ['Profile audits across every platform', 'Hashtag, bio & content-pillar strategy', 'Monthly insights — growth, reach, engagement'] },
-    { slug: 'business-intelligence-software-developers', title: 'Business Intelligence Software Developers', tagline: 'Collect. Connect. Decide.', icon: 'chart',
+    { slug: 'business-intelligence-software-developers', offer: 'prototype', title: 'Business Intelligence Software Developers', tagline: 'Collect. Connect. Decide.', icon: 'chart',
       bullets: ['Dashboards over Postgres, Sheets, ERP exports', 'Metabase / custom React — your call', 'Cohorts, funnels, alerts — auto-emailed'] },
-    { slug: 'augmented-reality-software-developers', title: 'Augmented Reality Software Developers', tagline: 'Visualise. Try. Buy.', icon: 'cube',
+    { slug: 'augmented-reality-software-developers', offer: 'prototype', title: 'Augmented Reality Software Developers', tagline: 'Visualise. Try. Buy.', icon: 'cube',
       bullets: ['WebAR & native — Unity, ARKit, ARCore', 'Try-before-buy for furniture, fashion, retail', '3D model pipeline from your CAD or photos'] },
-    { slug: 'user-experience-designers', title: 'User Experience Designers', tagline: 'Research. Design. Validate.', icon: 'users',
+    { slug: 'user-experience-designers', offer: 'mockup', title: 'User Experience Designers', tagline: 'Research. Design. Validate.', icon: 'users',
       bullets: ['User interviews, journey maps, IA audits', 'Interactive Figma prototypes in 1 week', 'Usability testing with real users'] },
-    { slug: 'it-solution-providers', title: 'IT Solution Providers', tagline: 'Plan. Build. Run.', icon: 'briefcase',
+    { slug: 'it-solution-providers', offer: 'call', title: 'IT Solution Providers', tagline: 'Plan. Build. Run.', icon: 'briefcase',
       bullets: ['End-to-end IT — strategy to support', 'Software, networks, devices, cloud, security', 'One accountable team, one invoice'] },
-    { slug: 'employee-self-service-software-developers', title: 'Employee Self Service Software Developers', tagline: 'Self-serve. Anywhere. Anytime.', icon: 'users',
+    { slug: 'employee-self-service-software-developers', offer: 'prototype', title: 'Employee Self Service Software Developers', tagline: 'Self-serve. Anywhere. Anytime.', icon: 'users',
       bullets: ['Leave, payroll, attendance, reimbursements', 'Mobile-first portal — works on any phone', 'HR approvals workflows + audit trail'] },
-    { slug: 'hotel-management-software-developers', title: 'Hotel Management Software Developers', tagline: 'Book. Check-in. Bill.', icon: 'building',
+    { slug: 'hotel-management-software-developers', offer: 'prototype', title: 'Hotel Management Software Developers', tagline: 'Book. Check-in. Bill.', icon: 'building',
       bullets: ['PMS — bookings, rooms, housekeeping, F&B', 'Channel manager + OTA sync (Booking, MMT)', 'GST invoices, tally-ready, GSTR-1 export'] },
-    { slug: 'customised-software-developers', title: 'Customised Computer Software Developers', tagline: 'Yours. Bespoke. Built.', icon: 'gear',
+    { slug: 'customised-software-developers', offer: 'prototype', title: 'Customised Computer Software Developers', tagline: 'Yours. Bespoke. Built.', icon: 'gear',
       bullets: ['Bespoke business apps — not generic SaaS', 'Built around your ops, not template flows', 'You own the code, not a per-seat licence'] },
-    { slug: 'hr-management-software-developers', title: 'HR Management Software Developers', tagline: 'Hire. Manage. Pay.', icon: 'users',
+    { slug: 'hr-management-software-developers', offer: 'prototype', title: 'HR Management Software Developers', tagline: 'Hire. Manage. Pay.', icon: 'users',
       bullets: ['Recruitment, onboarding, payroll, exit', 'India-ready — PF, ESI, TDS, PT compliant', 'Self-serve dashboards for employees & HR'] },
-    { slug: 'web-designing-software-developers', title: 'Web Designing Software Developers', tagline: 'Drag. Drop. Done.', icon: 'palette',
+    { slug: 'web-designing-software-developers', offer: 'prototype', title: 'Web Designing Software Developers', tagline: 'Drag. Drop. Done.', icon: 'palette',
       bullets: ['Custom site builders for your team', 'Block-based editor — no engineer needed', 'White-label for your agency or client base'] },
-    { slug: 'user-experience-developers', title: 'User Experience Developers', tagline: 'Design. Engineer. Ship.', icon: 'code',
+    { slug: 'user-experience-developers', offer: 'prototype', title: 'User Experience Developers', tagline: 'Design. Engineer. Ship.', icon: 'code',
       bullets: ['Pixel-perfect implementation from Figma', 'Accessible — WCAG AA, keyboard-first', 'Performance budgets, Lighthouse 95+'] },
-    { slug: 'ecommerce-website-designers', title: 'E-Commerce Website Designers', tagline: 'Browse. Add. Buy.', icon: 'cart',
+    { slug: 'ecommerce-website-designers', offer: 'mockup', title: 'E-Commerce Website Designers', tagline: 'Browse. Add. Buy.', icon: 'cart',
       bullets: ['Shopify, WooCommerce, Magento, custom', 'Conversion-tuned — cart, checkout, upsells', 'Payments: Razorpay, PayU, Stripe, COD'] },
-    { slug: 'user-interface-developers', title: 'User Interface Developers', tagline: 'Components. Consistency. Craft.', icon: 'layout',
+    { slug: 'user-interface-developers', offer: 'prototype', title: 'User Interface Developers', tagline: 'Components. Consistency. Craft.', icon: 'layout',
       bullets: ['Design systems in React + Tailwind', 'Storybook-documented, type-safe components', 'Theming, dark-mode, RTL — out of the box'] },
-    { slug: 'erp-software-developers', title: 'ERP Computer Software Developers', tagline: 'Unify. Automate. Report.', icon: 'layers',
+    { slug: 'erp-software-developers', offer: 'prototype', title: 'ERP Computer Software Developers', tagline: 'Unify. Automate. Report.', icon: 'layers',
       bullets: ['Multi-tenant ERPs with per-customer branding', 'Sales, inventory, accounts, HR — modular', 'GST-compliant, e-invoice, e-way bill ready'] },
-    { slug: 'elearning-solution-developers', title: 'E-Learning Solution Developers', tagline: 'Teach. Track. Certify.', icon: 'book',
+    { slug: 'elearning-solution-developers', offer: 'prototype', title: 'E-Learning Solution Developers', tagline: 'Teach. Track. Certify.', icon: 'book',
       bullets: ['LMS — courses, quizzes, certificates', 'Live classes, recordings, doubt-clearing', 'Mobile-first, offline-mode, low-bandwidth'] },
-    { slug: 'seo-consultants', title: 'SEO Consultants', tagline: 'Audit. Optimise. Rank.', icon: 'search',
+    { slug: 'seo-consultants', offer: 'audit', title: 'SEO Consultants', tagline: 'Audit. Optimise. Rank.', icon: 'search',
       bullets: ['Technical audit — Core Web Vitals, schema', 'Keyword strategy mapped to buyer intent', 'Link-building & content briefs that rank'] },
-    { slug: 'web-application-developers', title: 'Web Application Developers', tagline: 'Plan. Build. Deploy.', icon: 'monitor',
+    { slug: 'web-application-developers', offer: 'prototype', title: 'Web Application Developers', tagline: 'Plan. Build. Deploy.', icon: 'monitor',
       bullets: ['SPAs & dashboards on React, Next.js, Vue', 'Auth, payments, file upload, real-time', 'CI/CD to Vercel, AWS, Cloudflare — your cloud'] },
-    { slug: 'cloud-hosting-services', title: 'Cloud Hosting Services', tagline: 'Deploy. Scale. Sleep.', icon: 'cloud',
+    { slug: 'cloud-hosting-services', offer: 'trial', title: 'Cloud Hosting Services', tagline: 'Deploy. Scale. Sleep.', icon: 'cloud',
       bullets: ['AWS, GCP, Azure, Vercel — deploy to yours', 'Auto-scaling, CDN, load-balanced by default', 'Uptime monitoring + alerting pre-launch'] },
-    { slug: 'application-service-providers', title: 'Application Service Providers', tagline: 'Subscribe. Sign-in. Go.', icon: 'briefcase',
+    { slug: 'application-service-providers', offer: 'trial', title: 'Application Service Providers', tagline: 'Subscribe. Sign-in. Go.', icon: 'briefcase',
       bullets: ['Hosted SaaS — we run the infra, you use it', 'Multi-tenant, role-based, SSO-ready', 'SLA-backed uptime, automated backups'] },
-    { slug: 'erp-real-estate', title: 'ERP for Real Estate', tagline: 'Plot. Sell. Collect.', icon: 'house',
+    { slug: 'erp-real-estate', offer: 'prototype', title: 'ERP for Real Estate', tagline: 'Plot. Sell. Collect.', icon: 'house',
       bullets: ['Inventory, bookings, EMI schedules, dues', 'Builder, broker, channel-partner workflows', 'RERA-aware reporting, GST e-invoice ready'] },
-    { slug: 'tally-integration-services', title: 'Tally Integration Services', tagline: 'Sync. Reconcile. Done.', icon: 'calculator',
+    { slug: 'tally-integration-services', offer: 'call', title: 'Tally Integration Services', tagline: 'Sync. Reconcile. Done.', icon: 'calculator',
       bullets: ['Two-way sync — ERP / CRM ↔ Tally', 'Invoices, ledgers, GST — zero double entry', 'On-prem Tally bridge + cloud connector'] },
-    { slug: 'cybersecurity-software-developers', title: 'Cybersecurity Software Developers', tagline: 'Detect. Defend. Recover.', icon: 'shield',
+    { slug: 'cybersecurity-software-developers', offer: 'audit', title: 'Cybersecurity Software Developers', tagline: 'Detect. Defend. Recover.', icon: 'shield',
       bullets: ['Pen-testing, SAST, dependency scanning', 'Incident response & forensics playbooks', 'Zero-trust auth, audit logs, SOC-ready'] },
-    { slug: 'embedded-software-developers', title: 'Embedded System Software Developers', tagline: 'Sense. Compute. Act.', icon: 'chip',
+    { slug: 'embedded-software-developers', offer: 'prototype', title: 'Embedded System Software Developers', tagline: 'Sense. Compute. Act.', icon: 'chip',
       bullets: ['Firmware in C / Rust on STM32, ESP32, NXP', 'IoT — MQTT, BLE, LoRa, cellular telemetry', 'OTA updates, secure boot, low-power design'] },
-    { slug: 'matrimonial-portal-developers', title: 'Matrimonial Portal Development Services', tagline: 'Match. Meet. Marry.', icon: 'heart',
+    { slug: 'matrimonial-portal-developers', offer: 'prototype', title: 'Matrimonial Portal Development Services', tagline: 'Match. Meet. Marry.', icon: 'heart',
       bullets: ['Profile, search, match algorithms', 'KYC, photo moderation, chat & video call', 'Subscription tiers, payment gateway built-in'] },
-    { slug: 'cloud-application-developers', title: 'Cloud Application Software Developers', tagline: 'Build. Deploy. Iterate.', icon: 'cloud',
+    { slug: 'cloud-application-developers', offer: 'prototype', title: 'Cloud Application Software Developers', tagline: 'Build. Deploy. Iterate.', icon: 'cloud',
       bullets: ['Cloud-native — serverless, containers, edge', 'Stateless services, queues, event-driven', 'Cost-aware architecture — pay for what runs'] },
-    { slug: 'product-designers', title: 'Product Designers', tagline: 'Discover. Design. Deliver.', icon: 'cube',
+    { slug: 'product-designers', offer: 'mockup', title: 'Product Designers', tagline: 'Discover. Design. Deliver.', icon: 'cube',
       bullets: ['End-to-end product design — research to spec', 'High-fidelity prototypes in Figma', 'Design QA all the way to production'] },
-    { slug: 'graphic-designers', title: 'Computer Graphic Designers', tagline: 'Sketch. Style. Ship.', icon: 'palette',
+    { slug: 'graphic-designers', offer: 'mockup', title: 'Computer Graphic Designers', tagline: 'Sketch. Style. Ship.', icon: 'palette',
       bullets: ['Logos, brand kits, social creatives, decks', 'Print-ready — flyers, packaging, hoardings', 'Illustration, icon sets, motion graphics'] },
-    { slug: 'ios-app-developers', title: 'iOS Mobile Application Developers', tagline: 'Native. Smooth. Beautiful.', icon: 'mobile',
+    { slug: 'ios-app-developers', offer: 'prototype', title: 'iOS Mobile Application Developers', tagline: 'Native. Smooth. Beautiful.', icon: 'mobile',
       bullets: ['Swift / SwiftUI — iOS 16+ targeted', 'Apple HIG-compliant, App Store ready', 'TestFlight, App Store Connect handled'] },
-    { slug: 'martech-software-developers', title: 'Digital Marketing Software Developers', tagline: 'Build. Automate. Measure.', icon: 'megaphone',
+    { slug: 'martech-software-developers', offer: 'prototype', title: 'Digital Marketing Software Developers', tagline: 'Build. Automate. Measure.', icon: 'megaphone',
       bullets: ['MarTech — campaigns, attribution, CRM sync', 'Integrations: GA4, Meta, GTM, HubSpot', 'White-label dashboards for agencies'] },
-    { slug: 'api-service-providers', title: 'API Service Providers', tagline: 'Design. Document. Deliver.', icon: 'api',
+    { slug: 'api-service-providers', offer: 'call', title: 'API Service Providers', tagline: 'Design. Document. Deliver.', icon: 'api',
       bullets: ['REST & GraphQL — versioned, typed, tested', 'OpenAPI docs, SDKs, sandbox keys', 'Rate limits, auth (OAuth, JWT, API keys)'] },
-    { slug: 'crm-software-developers', title: 'CRM Computer Software Developers', tagline: 'Capture. Nurture. Close.', icon: 'users',
+    { slug: 'crm-software-developers', offer: 'prototype', title: 'CRM Computer Software Developers', tagline: 'Capture. Nurture. Close.', icon: 'users',
       bullets: ['Custom CRMs around your sales process', 'WhatsApp + email automation, lead scoring', 'Integrates with your existing tools & data'] },
-    { slug: 'website-hosting-services', title: 'Website Hosting Services', tagline: 'Fast. Secure. Always-on.', icon: 'server',
+    { slug: 'website-hosting-services', offer: 'trial', title: 'Website Hosting Services', tagline: 'Fast. Secure. Always-on.', icon: 'server',
       bullets: ['Managed hosting — Vercel, Netlify, Cloudways', 'SSL, CDN, daily backups, malware scanning', '24/7 monitoring + WhatsApp incident alerts'] },
-    { slug: 'it-infrastructure-providers', title: 'IT Infrastructure Solution Providers', tagline: 'Design. Deploy. Defend.', icon: 'network',
+    { slug: 'it-infrastructure-providers', offer: 'call', title: 'IT Infrastructure Solution Providers', tagline: 'Design. Deploy. Defend.', icon: 'network',
       bullets: ['Networks, servers, storage, virtualisation', 'On-prem to cloud migration, DR planning', 'Endpoint management, SSO, MDM, patching'] },
-    { slug: 'it-consultants', title: 'IT Consultants', tagline: 'Audit. Advise. Execute.', icon: 'briefcase',
+    { slug: 'it-consultants', offer: 'call', title: 'IT Consultants', tagline: 'Audit. Advise. Execute.', icon: 'briefcase',
       bullets: ['Tech-stack audits, vendor selection, RFPs', 'Architecture reviews, cost optimisation', 'Roadmaps tied to business outcomes'] },
-    { slug: 'ecommerce-development-services', title: 'E-Commerce Website Development Services', tagline: 'Build. Sell. Grow.', icon: 'cart',
+    { slug: 'ecommerce-development-services', offer: 'prototype', title: 'E-Commerce Website Development Services', tagline: 'Build. Sell. Grow.', icon: 'cart',
       bullets: ['Shopify, WooCommerce, Magento, headless', 'Payments, shipping, ERP & inventory sync', 'SEO-ready, fast, conversion-tuned'] },
-    { slug: 'cms-software-developers', title: 'CMS Software Developers', tagline: 'Author. Publish. Localise.', icon: 'layers',
+    { slug: 'cms-software-developers', offer: 'prototype', title: 'CMS Software Developers', tagline: 'Author. Publish. Localise.', icon: 'layers',
       bullets: ['Headless CMS — Sanity, Strapi, Payload', 'WordPress, Drupal — themed & extended', 'Roles, drafts, scheduling, multi-language'] },
-    { slug: 'ai-software-developers', title: 'Artificial Intelligence Software Developers', tagline: 'Automate. Predict. Win.', icon: 'brain',
+    { slug: 'ai-software-developers', offer: 'prototype', title: 'Artificial Intelligence Software Developers', tagline: 'Automate. Predict. Win.', icon: 'brain',
       bullets: ['LLM agents, RAG, document OCR pipelines', 'Computer vision, recommendation engines', 'Production-grade — eval, monitoring, fallback'] },
   ];
 
@@ -347,7 +361,7 @@
       </div>
       <div class="usp">
         <span class="dot"></span>
-        <span>Sign Up Today · Prototype in <span class="h">24h</span></span>
+        <span>Sign Up Today · <span class="h">${OFFERS[cat.offer].pill}</span></span>
       </div>
 
       <div class="icon-wrap">${svg}</div>
@@ -357,7 +371,7 @@
       <div class="bullets">${bullets}
       </div>
 
-      <div class="cta">Get Your Prototype In 24h <span class="arrow">→</span></div>
+      <div class="cta">${OFFERS[cat.offer].cta} <span class="arrow">→</span></div>
 
       <div class="contact-strip">
         <div class="col">
