@@ -147,14 +147,13 @@
       color: var(--ink-900);
       text-transform: uppercase;
     }
-    /* Gradient text on the first word. html2canvas may flatten the
-       gradient — the fallback solid violet stays on-brand. */
+    /* First word in the title — solid violet, no background-clip text
+       technique. html2canvas doesn't honour background-clip: text;
+       leaving it in caused the gradient to render as a violet
+       RECTANGLE behind violet TEXT — invisible. Solid colour reads
+       cleanly in the captured PNG and still pops on the light card. */
     .title .grad {
-      background: linear-gradient(135deg, var(--violet-500) 0%, var(--indigo-700) 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: var(--violet-700);
+      color: var(--violet-600);
     }
     .three-word {
       position: absolute; top: 285px; left: 28px; z-index: 3;
