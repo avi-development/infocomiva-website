@@ -194,6 +194,23 @@
       font-size: 9px; color: var(--ink-500); line-height: 1.3;
       font-weight: 500;
     }
+    /* Stat card variant — replaces one feature pill on cards where
+       cat.stat is set (e.g. Marketing: "4-5X ROI"). Bigger violet
+       number on a violet-tinted card so it pops next to the other
+       two pills. */
+    .features .feat.stat {
+      background: linear-gradient(135deg, var(--violet-600) 0%, var(--indigo-700) 100%);
+      border-radius: 14px; padding: 10px 6px 8px;
+      box-shadow: 0 10px 22px rgba(76,29,149,0.30);
+    }
+    .features .feat.stat .num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 26px; font-weight: 900; color: #fff;
+      line-height: 1; letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .features .feat.stat .lab { color: #fff; }
+    .features .feat.stat .sub { color: rgba(255,255,255,0.85); }
 
     /* ─── CSS phone mockup on the right ──────────────────────────── */
     .mockup {
@@ -236,6 +253,30 @@
       margin-bottom: 10px;
     }
     .mockup .phone .screen .big-icon svg { width: 78px; height: 78px; color: rgba(255,255,255,0.95); }
+    /* Real-life photo variant — replaces .big-icon on cards where
+       cat.image is set. Fills the phone-screen hero panel. Object-fit
+       cover keeps the photo nicely cropped at portrait-ish ratios. */
+    .mockup .phone .screen .big-photo {
+      flex: 1; border-radius: 14px; overflow: hidden; position: relative;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+    }
+    .mockup .phone .screen .big-photo img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    /* Optional overlay stat (e.g. "↑ +127%") on the photo. */
+    .mockup .phone .screen .big-photo .stat-overlay {
+      position: absolute; bottom: 6px; left: 6px; right: 6px;
+      background: rgba(255,255,255,0.94); color: var(--violet-700);
+      border-radius: 8px; padding: 5px 8px;
+      font-size: 9px; font-weight: 800;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 4px 10px rgba(76,29,149,0.18);
+    }
+    .mockup .phone .screen .big-photo .stat-overlay .v {
+      font-size: 12px; color: var(--ink-900);
+    }
     .mockup .phone .screen .cards {
       display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
     }
@@ -371,7 +412,10 @@
   //        bullets (3 short value props, becoming the 3 feature pills) }.
   const CATEGORIES = [
     { slug: 'digital-marketing-services', offer: 'audit', title: 'Digital Marketing Services', tagline: 'Reach. Engage. Convert.', icon: 'megaphone',
-      bullets: ['Performance Ads — Meta & Google', 'SEO ranks for buyers, not bots', 'ROI tracking, not vanity metrics'] },
+      stat: { num: '4-5X', lab: 'ROI', sub: 'For clients' },
+      overlay: { l: 'ROI', v: '4-5X' },
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=440&h=560&q=80',
+      bullets: ['STAT', 'Lead Generation — 250+ qualified/mo', 'Weekly ROAS — not vanity metrics'] },
     { slug: 'website-developers', offer: 'prototype', title: 'Internet Website Developers', tagline: 'Build. Ship. Scale.', icon: 'monitor',
       bullets: ['Fast, responsive, conversion-tuned', 'Modern stack — Next.js, React', 'SEO + analytics wired pre-launch'] },
     { slug: 'mobile-app-developers', offer: 'prototype', title: 'Mobile Application Developers', tagline: 'Native. Cross-platform. Fast.', icon: 'mobile',
@@ -379,7 +423,10 @@
     { slug: 'website-designers', offer: 'mockup', title: 'Internet Website Designers', tagline: 'Design. Test. Delight.', icon: 'palette',
       bullets: ['Brand-aligned, mobile-first layouts', 'Conversion-optimised buttons', 'Design systems that scale'] },
     { slug: 'social-media-marketing-agencies', offer: 'audit', title: 'Social Media Marketing Agencies', tagline: 'Plan. Post. Perform.', icon: 'share',
-      bullets: ['Calendars across IG, FB, LinkedIn', 'Paid amplification — weekly ROAS', 'Community DMs and moderation'] },
+      stat: { num: '4-5X', lab: 'ROI', sub: 'On ad spend' },
+      overlay: { l: 'Engagement', v: '+312%' },
+      image: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&w=440&h=560&q=80',
+      bullets: ['STAT', 'Lead Generation — IG, FB, LinkedIn', 'Community DMs + comment moderation'] },
     { slug: 'computer-software-developers', offer: 'prototype', title: 'Computer Software Developers', tagline: 'Architect. Build. Maintain.', icon: 'code',
       bullets: ['Full-stack — frontend + backend', 'Type-safe, observability built-in', 'Same team before and after launch'] },
     { slug: 'database-management-software-developers', offer: 'prototype', title: 'Database Management Software', tagline: 'Store. Query. Scale.', icon: 'database',
@@ -391,7 +438,10 @@
     { slug: 'wordpress-hosting-services', offer: 'trial', title: 'WordPress Hosting Services', tagline: 'Fast. Secure. Managed.', icon: 'server',
       bullets: ['Managed WP — Cloudways, Kinsta', 'Daily backups + 1-click restore', 'CDN + image opt + malware scans'] },
     { slug: 'social-media-optimization-services', offer: 'audit', title: 'Social Media Optimization', tagline: 'Profile. Position. Pop.', icon: 'share',
-      bullets: ['Profile audits — every platform', 'Hashtag, bio, pillar strategy', 'Monthly growth + reach insights'] },
+      stat: { num: '4-5X', lab: 'Reach', sub: 'In 60 days' },
+      overlay: { l: 'Followers', v: '+18.2K' },
+      image: 'https://images.unsplash.com/photo-1611926653458-09294b3142bf?auto=format&fit=crop&w=440&h=560&q=80',
+      bullets: ['STAT', 'Lead Generation — DM funnels', 'Monthly growth + reach insights'] },
     { slug: 'business-intelligence-software-developers', offer: 'prototype', title: 'Business Intelligence Software', tagline: 'Collect. Connect. Decide.', icon: 'chart',
       bullets: ['Dashboards over Postgres + Sheets', 'Metabase or custom React — your call', 'Cohorts, funnels, auto-email alerts'] },
     { slug: 'augmented-reality-software-developers', offer: 'prototype', title: 'Augmented Reality Software', tagline: 'Visualise. Try. Buy.', icon: 'cube',
@@ -421,7 +471,10 @@
     { slug: 'elearning-solution-developers', offer: 'prototype', title: 'E-Learning Solution Developers', tagline: 'Teach. Track. Certify.', icon: 'book',
       bullets: ['LMS — courses, quizzes, certificates', 'Live classes, recordings, doubts', 'Mobile, offline, low-bandwidth'] },
     { slug: 'seo-consultants', offer: 'audit', title: 'SEO Consultants', tagline: 'Audit. Optimise. Rank.', icon: 'search',
-      bullets: ['Technical audit — CWV + schema', 'Keyword strategy for buyer intent', 'Link-building + content briefs'] },
+      stat: { num: '4-5X', lab: 'Organic', sub: 'Traffic lift' },
+      overlay: { l: 'Top-10 keys', v: '+127' },
+      image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&w=440&h=560&q=80',
+      bullets: ['STAT', 'Lead Generation — buyer-intent keywords', 'Link-building + content briefs'] },
     { slug: 'web-application-developers', offer: 'prototype', title: 'Web Application Developers', tagline: 'Plan. Build. Deploy.', icon: 'monitor',
       bullets: ['SPAs on React, Next.js, Vue', 'Auth, payments, uploads, realtime', 'CI/CD to your AWS or Vercel'] },
     { slug: 'cloud-hosting-services', offer: 'trial', title: 'Cloud Hosting Services', tagline: 'Deploy. Scale. Sleep.', icon: 'cloud',
@@ -487,9 +540,20 @@
     // Three feature pills derived from bullets. Each: icon + 2-word
     // uppercase label (taken from the bullet's first 2 words) + rest
     // of the bullet as the sub-line. Icon cycles through a small set
-    // so the three pills are visually distinct.
+    // so the three pills are visually distinct. A bullet literal
+    // 'STAT' is the slot marker for the cat.stat tile (e.g. "4-5X
+    // ROI" on Marketing cards) — renders the violet stat card in
+    // place of a regular feature pill.
     const pillIcons = ['gear', 'cube', 'shield', 'chart', 'cloud', 'users'];
     const featuresHtml = cat.bullets.slice(0, 3).map((b, i) => {
+      if (b === 'STAT' && cat.stat) {
+        return `
+        <div class="feat stat">
+          <div class="num">${cat.stat.num}</div>
+          <div class="lab">${cat.stat.lab}</div>
+          <div class="sub">${cat.stat.sub || '&nbsp;'}</div>
+        </div>`;
+      }
       const iconKey = pillIcons[(idx * 3 + i) % pillIcons.length];
       const featSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[iconKey]}</svg>`;
       const words = b.split(' ');
@@ -502,6 +566,18 @@
           <div class="sub">${sub || '&nbsp;'}</div>
         </div>`;
     }).join('');
+
+    // Phone hero panel — either the category icon (default) OR a
+    // real-life photo when cat.image is set. The photo carries an
+    // optional bottom overlay tag from cat.overlay (e.g. "ROI · 4-5X")
+    // so the captured PNG always tells a metric story even at thumb-
+    // nail size.
+    const heroHtml = cat.image
+      ? `<div class="big-photo">
+              <img data-bg crossorigin="anonymous" src="${cat.image}" alt="">
+              ${cat.overlay ? `<div class="stat-overlay"><span>${cat.overlay.l}</span><span class="v">${cat.overlay.v}</span></div>` : ''}
+            </div>`
+      : `<div class="big-icon">${svg}</div>`;
 
     return `
   <div class="card-shell">
@@ -546,7 +622,7 @@
               <span>9:41</span>
               <span>${cat.tagline.split(' ')[0]}</span>
             </div>
-            <div class="big-icon">${svg}</div>
+            ${heroHtml}
             <div class="cards">
               <div class="c"></div><div class="c"></div>
               <div class="c"></div><div class="c"></div>
@@ -614,6 +690,26 @@
       r.onerror = reject;
       r.readAsDataURL(blob);
     });
+  }
+
+  // Pre-bake every <img data-bg> (the Unsplash photos in the marketing
+  // phone mockups) to a data URL. html2canvas would otherwise refuse
+  // to paint a remote CORS image onto the canvas even with useCORS:true.
+  // Fetches run in parallel; individual failures log but don't block.
+  async function loadBackgrounds() {
+    const imgs = Array.from(document.querySelectorAll('[data-bg]'));
+    if (!imgs.length) return;
+    const results = await Promise.allSettled(imgs.map(async (img) => {
+      const original = img.src;
+      try {
+        const dataUrl = await urlToDataUrl(original);
+        img.src = dataUrl;
+      } catch (err) {
+        console.warn('[category-banners] bg image failed:', original, err);
+      }
+    }));
+    const ok = results.filter(r => r.status === 'fulfilled').length;
+    console.info(`[category-banners] backgrounds: ${ok}/${imgs.length} pre-baked`);
   }
 
   async function loadEagle() {
@@ -691,8 +787,8 @@
   // ─── Boot ───────────────────────────────────────────────────────
   const status = document.getElementById('status');
   const dlAll = document.getElementById('dl-all');
-  status.textContent = 'Loading eagle logo…';
-  await loadEagle();
+  status.textContent = 'Loading eagle logo + marketing photos…';
+  await Promise.all([loadEagle(), loadBackgrounds()]);
   status.textContent = `Images ready ✓ ${CATEGORIES.length} banners loaded — click Download to save PNGs.`;
   status.style.color = '#10b981';
   dlAll.disabled = false;
