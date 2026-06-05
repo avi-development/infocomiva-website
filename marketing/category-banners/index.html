@@ -16,157 +16,285 @@
 
   <style>
     :root {
-      --ink-900: #0a0a0a;
-      --ink-700: #2d2d31;
-      --azure-300: #93c5fd;
-      --azure-400: #60a5fa;
-      --azure-500: #2563eb;
-      --azure-700: #1e3a8a;
-      --indigo-900: #1e1b4b;
+      --bg-1: #fbfaff;
+      --bg-2: #f1ebfb;
+      --bg-3: #e7defa;
+      --violet-100: #ede9fe;
+      --violet-300: #c4b5fd;
+      --violet-500: #8b5cf6;
+      --violet-600: #7c3aed;
+      --violet-700: #6d28d9;
+      --violet-900: #4c1d95;
+      --indigo-700: #4338ca;
+      --indigo-900: #312e81;
+      --ink-900: #1a1530;
+      --ink-700: #312e54;
+      --ink-500: #4b4570;
     }
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: #0a0a0a; color: #fff; font-family: Inter, system-ui, sans-serif; }
+    html, body { margin: 0; padding: 0; background: #18181b; color: #fff; font-family: Inter, system-ui, sans-serif; }
     .display { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-    .page-header { padding: 32px 24px; background: linear-gradient(135deg, #0a0a0a 0%, #1e3a8a 100%); }
+    .page-header { padding: 32px 24px; background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%); }
     .page-header h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 22px; margin: 0; }
-    .page-header p { font-size: 13px; opacity: .8; margin: 8px 0 0; line-height: 1.5; max-width: 760px; }
+    .page-header p { font-size: 13px; opacity: .9; margin: 8px 0 0; line-height: 1.5; max-width: 760px; }
     .page-header .actions { margin-top: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .download-all { background: var(--azure-500); color: #fff; font-weight: 700; border: none; padding: 11px 20px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-    .download-all:hover { background: var(--azure-700); }
-    .download-all:disabled { background: #4b5563; cursor: not-allowed; }
-    .status { font-size: 12px; color: #93c5fd; }
+    .download-all { background: #fff; color: var(--violet-700); font-weight: 800; border: none; padding: 11px 20px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    .download-all:hover { background: var(--violet-100); }
+    .download-all:disabled { background: #d1d5db; color: #6b7280; cursor: not-allowed; }
+    .status { font-size: 12px; color: #ede9fe; }
 
-    .grid-wrapper { padding: 24px 16px; background: #18181b; display: grid; grid-template-columns: repeat(auto-fit, minmax(620px, 1fr)); gap: 24px; justify-items: center; }
+    .grid-wrapper { padding: 24px 16px; background: #1f1b2e; display: grid; grid-template-columns: repeat(auto-fit, minmax(620px, 1fr)); gap: 24px; justify-items: center; }
     @media (max-width: 720px) { .grid-wrapper { grid-template-columns: 1fr; } }
 
-    .card-shell { position: relative; box-shadow: 0 16px 40px rgba(0,0,0,.5); border-radius: 16px; }
+    .card-shell { position: relative; box-shadow: 0 16px 40px rgba(0,0,0,.5); border-radius: 18px; }
     .card-shell .download-btn {
       position: absolute; top: 10px; right: 10px; z-index: 100;
-      background: rgba(255,255,255,0.95); color: var(--ink-900);
+      background: var(--violet-600); color: #fff;
       border: none; padding: 8px 12px; border-radius: 6px;
       font-weight: 700; font-size: 11px; cursor: pointer; font-family: Inter, sans-serif;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    .card-shell .download-btn:hover { background: #fff; transform: translateY(-1px); }
+    .card-shell .download-btn:hover { background: var(--violet-700); transform: translateY(-1px); }
 
-    /* The actual capture target — exactly 620×620 px. */
+    /* ─── 620×620 capture target ─────────────────────────────────── */
     .card {
       width: 620px; height: 620px; position: relative; overflow: hidden;
-      color: #fff; border-radius: 16px;
+      color: var(--ink-900); border-radius: 18px;
       background:
-        radial-gradient(circle at 85% 15%, rgba(96,165,250,0.22) 0%, transparent 45%),
-        radial-gradient(circle at 15% 90%, rgba(124,58,237,0.18) 0%, transparent 50%),
-        linear-gradient(135deg, #0a0a0a 0%, #1e1b4b 55%, #1e3a8a 100%);
+        radial-gradient(circle at 95% 5%, rgba(124,58,237,0.22) 0%, transparent 35%),
+        radial-gradient(circle at 100% 105%, rgba(99,102,241,0.18) 0%, transparent 45%),
+        linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-3) 100%);
       transform-origin: top center;
+      font-family: Inter, system-ui, sans-serif;
     }
-    /* Responsive scale-down so the 620 card fits narrow screens cleanly. */
     @media (max-width: 660px) {
       .card { transform: scale(calc((100vw - 32px) / 620)); }
       .card-shell { height: calc(100vw - 32px); width: calc(100vw - 32px); }
     }
 
-    /* Decorative dots top-right — purely visual texture. */
-    .card::before {
-      content: ''; position: absolute;
-      top: 70px; right: 60px; width: 60px; height: 60px;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.18) 1.2px, transparent 1.4px);
-      background-size: 10px 10px;
+    /* Decorative purple curve sweeping in from the top-right — the
+       reference's signature "rolling" silhouette. */
+    .card .deco-curve {
+      position: absolute; top: -180px; right: -180px;
+      width: 480px; height: 480px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet-600) 0%, var(--violet-900) 100%);
+      opacity: .92;
       z-index: 1;
     }
+    .card .deco-curve-2 {
+      position: absolute; top: 280px; right: -260px;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet-700) 0%, var(--indigo-900) 100%);
+      opacity: .55;
+      z-index: 1;
+    }
+    /* Decorative dot pattern — top, between brand and curve. */
+    .card .deco-dots {
+      position: absolute; top: 90px; right: 218px;
+      width: 70px; height: 40px;
+      background-image: radial-gradient(circle, rgba(124,58,237,0.45) 1.4px, transparent 1.6px);
+      background-size: 9px 9px;
+      z-index: 2;
+    }
 
-    /* Brand block — top-left. */
-    .brand { position: absolute; top: 28px; left: 32px; display: flex; align-items: center; gap: 12px; z-index: 3; }
-    .brand .eagle { width: 44px; height: 44px; object-fit: contain; display: block; }
+    /* ─── Brand block — top-left ──────────────────────────────────── */
+    .brand { position: absolute; top: 26px; left: 28px; display: flex; align-items: center; gap: 12px; z-index: 4; }
+    .brand .eagle-wrap {
+      width: 56px; height: 56px;
+      background: #fff; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px rgba(76,29,149,0.18);
+      border: 1.5px solid rgba(124,58,237,0.18);
+      padding: 4px;
+    }
+    .brand .eagle { width: 100%; height: 100%; object-fit: contain; display: block; }
     .brand .eagle-fallback {
-      width: 44px; height: 44px; border-radius: 10px;
-      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.22);
+      width: 100%; height: 100%; border-radius: 6px;
+      background: var(--ink-900); color: #fff;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 11px; letter-spacing: 0.08em; color: #fff;
+      font-weight: 900; font-size: 13px; letter-spacing: 0.08em;
     }
-    .brand .name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 17px; line-height: 1.1; letter-spacing: -0.01em; }
-    .brand .name .ti { color: var(--azure-400); display: block; }
-    .brand .tag { font-size: 9px; color: rgba(255,255,255,0.6); font-style: italic; font-weight: 500; margin-top: 2px; }
+    .brand .stack { line-height: 1.05; }
+    .brand .stack .n  { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 18px; color: var(--ink-900); display: block; }
+    .brand .stack .n2 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 18px; color: var(--ink-900); display: block; }
+    .brand .stack .tag {
+      font-size: 10px; font-style: italic; font-weight: 500;
+      color: var(--violet-700); margin-top: 3px;
+      border-bottom: 1.5px solid var(--violet-500); padding-bottom: 1px;
+      display: inline-block;
+    }
 
-    /* USP pill — top-right. */
-    .usp {
-      position: absolute; top: 36px; right: 32px; z-index: 3;
-      display: inline-flex; align-items: center; gap: 8px;
+    /* ─── Offer badge — top-right, sits on the purple curve ──────── */
+    .offer-badge {
+      position: absolute; top: 38px; right: 22px; z-index: 3;
       padding: 7px 14px;
-      background: linear-gradient(135deg, rgba(37,99,235,0.32) 0%, rgba(124,58,237,0.32) 100%);
-      border: 1px solid rgba(96,165,250,0.55);
+      background: rgba(255,255,255,0.96);
       border-radius: 999px;
-      font-size: 11px; font-weight: 700;
-      backdrop-filter: blur(6px);
+      font-size: 10.5px; font-weight: 800; color: var(--violet-700);
+      letter-spacing: 0.05em; text-transform: uppercase;
+      box-shadow: 0 6px 18px rgba(76,29,149,0.25);
     }
-    .usp .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--azure-400); box-shadow: 0 0 0 4px rgba(96,165,250,0.25); }
-    .usp .h { color: var(--azure-300); }
+    .offer-badge .h { color: var(--ink-900); }
 
-    /* Icon — sits beside the title block. */
-    .icon-wrap {
-      position: absolute; top: 132px; left: 32px; z-index: 3;
-      width: 68px; height: 68px; border-radius: 14px;
-      background: linear-gradient(135deg, var(--azure-500) 0%, var(--azure-700) 100%);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 10px 26px rgba(37,99,235,0.45);
-    }
-    .icon-wrap svg { width: 38px; height: 38px; color: #fff; }
-
-    /* Tagline — small uppercase eyebrow above title. */
-    .tagline {
-      position: absolute; top: 142px; left: 120px; right: 32px; z-index: 3;
-      font-size: 11px; font-weight: 800; color: var(--azure-300);
-      letter-spacing: 0.18em; text-transform: uppercase;
-    }
-
-    /* Title — big and bold. Auto-fits up to ~3 lines. */
+    /* ─── Title + tagline + description ──────────────────────────── */
     .title {
-      position: absolute; top: 168px; left: 120px; right: 32px; z-index: 3;
+      position: absolute; top: 122px; left: 28px; right: 260px; z-index: 3;
       font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
-      font-size: 34px; line-height: 1.05; letter-spacing: -0.025em;
+      font-size: 34px; line-height: 1.0; letter-spacing: -0.025em;
+      color: var(--ink-900);
+      text-transform: uppercase;
     }
-    .title .em { color: var(--azure-300); }
+    /* Gradient text on the first word. html2canvas may flatten the
+       gradient — the fallback solid violet stays on-brand. */
+    .title .grad {
+      background: linear-gradient(135deg, var(--violet-500) 0%, var(--indigo-700) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: var(--violet-700);
+    }
+    .three-word {
+      position: absolute; top: 285px; left: 28px; z-index: 3;
+      font-size: 12px; font-weight: 900;
+      color: var(--violet-700);
+      letter-spacing: 0.18em; text-transform: uppercase;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--violet-500);
+    }
+    .description {
+      position: absolute; top: 322px; left: 28px; right: 260px; z-index: 3;
+      font-size: 12.5px; line-height: 1.5; color: var(--ink-700);
+      font-weight: 500;
+    }
 
-    /* Bullets — three short value props. */
-    .bullets {
-      position: absolute; top: 350px; left: 32px; right: 32px; z-index: 3;
-      font-size: 14px; line-height: 1.4; color: rgba(255,255,255,0.92);
+    /* ─── Feature pills row — 3 features, icon + label + sub ─────── */
+    .features {
+      position: absolute; top: 440px; left: 28px; right: 260px; z-index: 3;
+      display: flex; gap: 12px;
     }
-    .bullets .row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
-    .bullets .row .tick {
-      flex-shrink: 0; width: 22px; height: 22px; border-radius: 999px;
-      background: linear-gradient(135deg, var(--azure-400) 0%, var(--azure-700) 100%);
-      color: #fff; display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 12px; margin-top: 1px;
-      box-shadow: 0 3px 10px rgba(37,99,235,0.45);
+    .features .feat { flex: 1; text-align: center; }
+    .features .feat .ic-circle {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: #fff;
+      border: 1.5px solid var(--violet-300);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 6px;
+      box-shadow: 0 4px 12px rgba(76,29,149,0.12);
     }
-    .bullets .row .txt strong { color: #fff; font-weight: 700; }
+    .features .feat .ic-circle svg { width: 22px; height: 22px; color: var(--violet-700); }
+    .features .feat .lab {
+      font-size: 9.5px; font-weight: 800; color: var(--ink-900);
+      text-transform: uppercase; letter-spacing: 0.04em;
+      line-height: 1.15; margin-bottom: 3px;
+    }
+    .features .feat .sub {
+      font-size: 9px; color: var(--ink-500); line-height: 1.3;
+      font-weight: 500;
+    }
 
-    /* CTA button — bottom-left, above contact strip. */
-    .cta {
-      position: absolute; bottom: 78px; left: 32px; z-index: 3;
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 12px 22px;
-      background: linear-gradient(135deg, var(--azure-500) 0%, var(--azure-700) 100%);
-      border-radius: 10px;
-      font-weight: 800; font-size: 14px; color: #fff;
-      box-shadow: 0 10px 26px rgba(37,99,235,0.45);
+    /* ─── CSS phone mockup on the right ──────────────────────────── */
+    .mockup {
+      position: absolute; top: 122px; right: 36px; z-index: 3;
+      width: 210px; height: 380px;
     }
-    .cta .arrow { font-size: 16px; }
-
-    /* Contact strip — bottom edge, full width. */
-    .contact-strip {
-      position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
-      padding: 14px 32px;
-      background: rgba(10,10,10,0.82);
-      border-top: 1px solid rgba(255,255,255,0.08);
+    .mockup .phone {
+      position: relative; width: 100%; height: 100%;
+      background: linear-gradient(160deg, #1a1530 0%, #0a0a0a 100%);
+      border-radius: 32px;
+      padding: 12px;
+      box-shadow:
+        0 24px 60px rgba(76,29,149,0.45),
+        inset 0 0 0 2px rgba(255,255,255,0.06);
+    }
+    .mockup .phone .notch {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      width: 86px; height: 18px;
+      background: #0a0a0a;
+      border-radius: 0 0 12px 12px;
+      z-index: 5;
+    }
+    .mockup .phone .screen {
+      width: 100%; height: 100%; border-radius: 22px;
+      background: linear-gradient(160deg, var(--violet-600) 0%, var(--indigo-700) 100%);
+      overflow: hidden; position: relative;
+      display: flex; flex-direction: column;
+      padding: 32px 14px 14px;
+    }
+    .mockup .phone .screen .top {
       display: flex; justify-content: space-between; align-items: center;
-      font-size: 11px; font-weight: 700;
-      gap: 12px;
+      color: rgba(255,255,255,0.85); font-size: 9px; font-weight: 700;
+      margin-bottom: 12px; padding: 0 4px;
     }
-    .contact-strip .col { display: flex; flex-direction: column; gap: 3px; }
-    .contact-strip .ic { color: var(--azure-400); margin-right: 5px; }
-    .contact-strip .web { color: var(--azure-300); font-weight: 800; font-size: 12px; }
+    .mockup .phone .screen .big-icon {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.10);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      margin-bottom: 10px;
+    }
+    .mockup .phone .screen .big-icon svg { width: 78px; height: 78px; color: rgba(255,255,255,0.95); }
+    .mockup .phone .screen .cards {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+    }
+    .mockup .phone .screen .cards .c {
+      height: 38px; border-radius: 8px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%);
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+    .mockup .phone .screen .cards .c:nth-child(1) { background: linear-gradient(135deg, rgba(255,255,255,0.28), rgba(196,181,253,0.18)); }
+    .mockup .phone .screen .cards .c:nth-child(3) { background: linear-gradient(135deg, rgba(196,181,253,0.22), rgba(255,255,255,0.08)); }
+
+    /* Floating mini badges on the far right of the phone — echoes the
+       reference's "Cart / Secure Payments / Fast Delivery / 24/7" stack. */
+    .mockup .side-badges {
+      position: absolute; top: 20px; right: -28px;
+      display: flex; flex-direction: column; gap: 10px; z-index: 4;
+    }
+    .mockup .side-badges .b {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(76,29,149,0.25);
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(124,58,237,0.15);
+    }
+    .mockup .side-badges .b svg { width: 18px; height: 18px; color: var(--violet-700); }
+
+    /* ─── Footer bar — purple gradient, contact info ──────────────── */
+    .footer-bar {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+      height: 96px;
+      background: linear-gradient(135deg, var(--violet-700) 0%, var(--indigo-900) 100%);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      color: #fff;
+    }
+    .footer-bar .fbox { display: flex; align-items: center; gap: 12px; }
+    .footer-bar .fcircle {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.97);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--violet-700); flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+    .footer-bar .fcircle svg { width: 18px; height: 18px; }
+    .footer-bar .ftxt { line-height: 1.25; }
+    .footer-bar .flab {
+      font-size: 9px; font-weight: 700; opacity: 0.85;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .footer-bar .fval { font-size: 13px; font-weight: 800; }
+    .footer-bar .fval-small { font-size: 12px; font-weight: 700; opacity: 0.95; }
+    /* Decorative dot column on the very right of the footer. */
+    .footer-bar::after {
+      content: ''; position: absolute;
+      right: 12px; top: 18px; width: 32px; height: 60px;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.45) 1.4px, transparent 1.6px);
+      background-size: 8px 8px;
+    }
   </style>
 </head>
 <body>
@@ -174,9 +302,11 @@
 <div class="page-header">
   <h1>Infocomiva — category banner kit (620 × 620)</h1>
   <p>
-    47 service-category banners. Each carries the eagle logo, "Sign Up Today · Prototype in 24h" USP,
-    a CTA, both phone numbers and infocomiva.live. Wait for the <strong>"Images ready"</strong>
-    status before downloading.
+    47 service-category banners modelled on the e-commerce reference: light cream + violet
+    palette, eagle + stacked brand name, big uppercase title with a gradient on the first
+    word, "BUILD. SELL. GROW." style underlined three-word promise, three feature pills,
+    CSS-drawn phone mockup with side badges, and the violet contact footer carrying both
+    phone numbers + www.infocomiva.live. Wait for <strong>"Images ready"</strong> before downloading.
   </p>
   <div class="actions">
     <button class="download-all" id="dl-all" onclick="downloadAll()" disabled>Download all 47 as PNG</button>
@@ -190,9 +320,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
   import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-  // ─── Icon library ───────────────────────────────────────────────
-  // Compact lucide-style SVG paths. The renderer wraps each in a
-  // <svg viewBox="0 0 24 24" ...> with the brand stroke styling.
+  // ─── Icon library — lucide-style 24×24 stroke icons ─────────────
   const ICONS = {
     megaphone: '<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
     monitor:   '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
@@ -223,182 +351,249 @@
     layers:    '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
     building:  '<rect x="4" y="2" width="16" height="20" rx="1"/><line x1="9" y1="6" x2="9.01" y2="6"/><line x1="15" y1="6" x2="15.01" y2="6"/><line x1="9" y1="10" x2="9.01" y2="10"/><line x1="15" y1="10" x2="15.01" y2="10"/><line x1="9" y1="14" x2="9.01" y2="14"/><line x1="15" y1="14" x2="15.01" y2="14"/><path d="M10 22v-4h4v4"/>',
     house:     '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+    phone:     '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    globe:     '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
   };
 
   // ─── Offer types ────────────────────────────────────────────────
-  // Different services warrant different "free first-step" offers.
-  // A marketing engagement can't ship a "prototype" — it ships an
-  // audit. Hosting ships a free migration / trial. Consulting ships
-  // a strategy call. Each category picks one via its `offer` field;
-  // the USP pill and CTA button text both pull from here.
+  // Picks the "free first-step" the visitor can claim. Drives the
+  // small pill that sits on top of the purple curve top-right.
   const OFFERS = {
-    prototype: { pill: 'Prototype in 24h',     cta: 'Get Your Prototype In 24h' },
-    audit:     { pill: 'Free Audit in 24h',    cta: 'Get a Free Audit'          },
-    mockup:    { pill: 'Free Mockup in 24h',   cta: 'See a Sample Mockup'       },
-    call:      { pill: 'Free Strategy Call',   cta: 'Book a Strategy Call'      },
-    trial:     { pill: 'Free Migration',       cta: 'Start a Free Migration'    },
+    prototype: { pill: 'Prototype in 24h'    },
+    audit:     { pill: 'Free Audit in 24h'   },
+    mockup:    { pill: 'Free Mockup in 24h'  },
+    call:      { pill: 'Free Strategy Call'  },
+    trial:     { pill: 'Free Migration'      },
   };
 
   // ─── Category data ──────────────────────────────────────────────
-  // 47 banners. Each: { slug, title, tagline (3-word brand promise),
-  // icon (key in ICONS), bullets (exactly 3 short strings, ≤55 chars
-  // each so they fit one line) }.
+  // Each: { slug, offer, title, tagline (3-word promise), icon,
+  //        bullets (3 short value props, becoming the 3 feature pills) }.
   const CATEGORIES = [
     { slug: 'digital-marketing-services', offer: 'audit', title: 'Digital Marketing Services', tagline: 'Reach. Engage. Convert.', icon: 'megaphone',
-      bullets: ['Performance ads on Meta & Google', 'SEO that ranks for buyers, not bots', 'ROI tracking, not vanity metrics'] },
+      bullets: ['Performance Ads — Meta & Google', 'SEO ranks for buyers, not bots', 'ROI tracking, not vanity metrics'] },
     { slug: 'website-developers', offer: 'prototype', title: 'Internet Website Developers', tagline: 'Build. Ship. Scale.', icon: 'monitor',
-      bullets: ['Fast, responsive sites that convert', 'Modern stack — Next.js, React, Tailwind', 'CMS-ready · SEO-ready · analytics-ready'] },
+      bullets: ['Fast, responsive, conversion-tuned', 'Modern stack — Next.js, React', 'SEO + analytics wired pre-launch'] },
     { slug: 'mobile-app-developers', offer: 'prototype', title: 'Mobile Application Developers', tagline: 'Native. Cross-platform. Fast.', icon: 'mobile',
-      bullets: ['iOS + Android — React Native or native', 'Offline-first patterns for field staff', 'Play Store & App Store submission handled'] },
+      bullets: ['iOS + Android — native or RN', 'Offline-first for field staff', 'Store submission handled end-to-end'] },
     { slug: 'website-designers', offer: 'mockup', title: 'Internet Website Designers', tagline: 'Design. Test. Delight.', icon: 'palette',
-      bullets: ['Brand-aligned, mobile-first layouts', 'Conversion-optimised — buttons that earn clicks', 'Design systems that scale across pages'] },
+      bullets: ['Brand-aligned, mobile-first layouts', 'Conversion-optimised buttons', 'Design systems that scale'] },
     { slug: 'social-media-marketing-agencies', offer: 'audit', title: 'Social Media Marketing Agencies', tagline: 'Plan. Post. Perform.', icon: 'share',
-      bullets: ['Content calendars across IG, FB, LinkedIn', 'Paid amplification with weekly ROAS reports', 'Community DMs & comment moderation'] },
+      bullets: ['Calendars across IG, FB, LinkedIn', 'Paid amplification — weekly ROAS', 'Community DMs and moderation'] },
     { slug: 'computer-software-developers', offer: 'prototype', title: 'Computer Software Developers', tagline: 'Architect. Build. Maintain.', icon: 'code',
-      bullets: ['Full-stack engineering — frontend + backend', 'Type-safe codebase, production observability', 'Same team before and after launch'] },
-    { slug: 'database-management-software-developers', offer: 'prototype', title: 'Database Management Software Developers', tagline: 'Store. Query. Scale.', icon: 'database',
-      bullets: ['Postgres, MySQL, Mongo — picked for fit', 'Indexed queries, automated backups', 'Replication, sharding & read-replicas'] },
+      bullets: ['Full-stack — frontend + backend', 'Type-safe, observability built-in', 'Same team before and after launch'] },
+    { slug: 'database-management-software-developers', offer: 'prototype', title: 'Database Management Software', tagline: 'Store. Query. Scale.', icon: 'database',
+      bullets: ['Postgres, MySQL, Mongo — fit for use', 'Indexed queries, automated backups', 'Replication, sharding, read-replicas'] },
     { slug: 'facebook-page-designers', offer: 'mockup', title: 'Facebook Page Designers', tagline: 'Brand. Boost. Grow.', icon: 'facebook',
-      bullets: ['Cover, profile & post templates aligned', 'Ad-ready creatives sized for every placement', 'Page setup, pixel & insights wired in'] },
-    { slug: 'android-app-developers', offer: 'prototype', title: 'Computer Software Developers For Android Phone', tagline: 'Native. Smooth. Tested.', icon: 'mobile',
-      bullets: ['Kotlin-native — Material 3 components', 'Play Store policy compliance built in', 'Crashlytics, Play Console release pipeline'] },
-    { slug: 'wordpress-hosting-services', offer: 'trial', title: 'WordPress Website Hosting Services', tagline: 'Fast. Secure. Managed.', icon: 'server',
-      bullets: ['Managed WP on Vercel / Cloudways / Kinsta', 'Automated daily backups + 1-click restore', 'CDN, image optimisation, malware scanning'] },
-    { slug: 'social-media-optimization-services', offer: 'audit', title: 'Social Media Optimization Services', tagline: 'Profile. Position. Pop.', icon: 'share',
-      bullets: ['Profile audits across every platform', 'Hashtag, bio & content-pillar strategy', 'Monthly insights — growth, reach, engagement'] },
-    { slug: 'business-intelligence-software-developers', offer: 'prototype', title: 'Business Intelligence Software Developers', tagline: 'Collect. Connect. Decide.', icon: 'chart',
-      bullets: ['Dashboards over Postgres, Sheets, ERP exports', 'Metabase / custom React — your call', 'Cohorts, funnels, alerts — auto-emailed'] },
-    { slug: 'augmented-reality-software-developers', offer: 'prototype', title: 'Augmented Reality Software Developers', tagline: 'Visualise. Try. Buy.', icon: 'cube',
-      bullets: ['WebAR & native — Unity, ARKit, ARCore', 'Try-before-buy for furniture, fashion, retail', '3D model pipeline from your CAD or photos'] },
+      bullets: ['Cover, profile, post templates', 'Ad-ready creatives, every placement', 'Pixel and insights wired in'] },
+    { slug: 'android-app-developers', offer: 'prototype', title: 'Android Software Developers', tagline: 'Native. Smooth. Tested.', icon: 'mobile',
+      bullets: ['Kotlin-native, Material 3 UI', 'Play Store policy compliance', 'Crashlytics + release pipeline'] },
+    { slug: 'wordpress-hosting-services', offer: 'trial', title: 'WordPress Hosting Services', tagline: 'Fast. Secure. Managed.', icon: 'server',
+      bullets: ['Managed WP — Cloudways, Kinsta', 'Daily backups + 1-click restore', 'CDN + image opt + malware scans'] },
+    { slug: 'social-media-optimization-services', offer: 'audit', title: 'Social Media Optimization', tagline: 'Profile. Position. Pop.', icon: 'share',
+      bullets: ['Profile audits — every platform', 'Hashtag, bio, pillar strategy', 'Monthly growth + reach insights'] },
+    { slug: 'business-intelligence-software-developers', offer: 'prototype', title: 'Business Intelligence Software', tagline: 'Collect. Connect. Decide.', icon: 'chart',
+      bullets: ['Dashboards over Postgres + Sheets', 'Metabase or custom React — your call', 'Cohorts, funnels, auto-email alerts'] },
+    { slug: 'augmented-reality-software-developers', offer: 'prototype', title: 'Augmented Reality Software', tagline: 'Visualise. Try. Buy.', icon: 'cube',
+      bullets: ['WebAR + native — Unity, ARKit', 'Try-before-buy for retail + fashion', '3D pipeline from CAD or photos'] },
     { slug: 'user-experience-designers', offer: 'mockup', title: 'User Experience Designers', tagline: 'Research. Design. Validate.', icon: 'users',
-      bullets: ['User interviews, journey maps, IA audits', 'Interactive Figma prototypes in 1 week', 'Usability testing with real users'] },
+      bullets: ['Interviews, journey maps, IA audits', 'Figma prototypes in 1 week', 'Usability tests with real users'] },
     { slug: 'it-solution-providers', offer: 'call', title: 'IT Solution Providers', tagline: 'Plan. Build. Run.', icon: 'briefcase',
-      bullets: ['End-to-end IT — strategy to support', 'Software, networks, devices, cloud, security', 'One accountable team, one invoice'] },
-    { slug: 'employee-self-service-software-developers', offer: 'prototype', title: 'Employee Self Service Software Developers', tagline: 'Self-serve. Anywhere. Anytime.', icon: 'users',
-      bullets: ['Leave, payroll, attendance, reimbursements', 'Mobile-first portal — works on any phone', 'HR approvals workflows + audit trail'] },
-    { slug: 'hotel-management-software-developers', offer: 'prototype', title: 'Hotel Management Software Developers', tagline: 'Book. Check-in. Bill.', icon: 'building',
-      bullets: ['PMS — bookings, rooms, housekeeping, F&B', 'Channel manager + OTA sync (Booking, MMT)', 'GST invoices, tally-ready, GSTR-1 export'] },
-    { slug: 'customised-software-developers', offer: 'prototype', title: 'Customised Computer Software Developers', tagline: 'Yours. Bespoke. Built.', icon: 'gear',
-      bullets: ['Bespoke business apps — not generic SaaS', 'Built around your ops, not template flows', 'You own the code, not a per-seat licence'] },
-    { slug: 'hr-management-software-developers', offer: 'prototype', title: 'HR Management Software Developers', tagline: 'Hire. Manage. Pay.', icon: 'users',
-      bullets: ['Recruitment, onboarding, payroll, exit', 'India-ready — PF, ESI, TDS, PT compliant', 'Self-serve dashboards for employees & HR'] },
-    { slug: 'web-designing-software-developers', offer: 'prototype', title: 'Web Designing Software Developers', tagline: 'Drag. Drop. Done.', icon: 'palette',
-      bullets: ['Custom site builders for your team', 'Block-based editor — no engineer needed', 'White-label for your agency or client base'] },
+      bullets: ['End-to-end — strategy to support', 'Software, network, cloud, security', 'One accountable team, one invoice'] },
+    { slug: 'employee-self-service-software-developers', offer: 'prototype', title: 'Employee Self Service Software', tagline: 'Self-serve. Anywhere. Anytime.', icon: 'users',
+      bullets: ['Leave, payroll, attendance, claims', 'Mobile-first — works on any phone', 'HR approvals + audit trail'] },
+    { slug: 'hotel-management-software-developers', offer: 'prototype', title: 'Hotel Management Software', tagline: 'Book. Check-in. Bill.', icon: 'building',
+      bullets: ['PMS — rooms, housekeeping, F&B', 'Channel manager + OTA sync', 'GST invoices, Tally-ready'] },
+    { slug: 'customised-software-developers', offer: 'prototype', title: 'Customised Software Developers', tagline: 'Yours. Bespoke. Built.', icon: 'gear',
+      bullets: ['Bespoke business apps — not SaaS', 'Built around your ops, not templates', 'You own the code, not a licence'] },
+    { slug: 'hr-management-software-developers', offer: 'prototype', title: 'HR Management Software', tagline: 'Hire. Manage. Pay.', icon: 'users',
+      bullets: ['Recruitment to exit — full lifecycle', 'PF, ESI, TDS, PT — India-compliant', 'Self-serve for employees + HR'] },
+    { slug: 'web-designing-software-developers', offer: 'prototype', title: 'Web Designing Software', tagline: 'Drag. Drop. Done.', icon: 'palette',
+      bullets: ['Custom site builders for your team', 'Block editor — no engineer needed', 'White-label for agencies'] },
     { slug: 'user-experience-developers', offer: 'prototype', title: 'User Experience Developers', tagline: 'Design. Engineer. Ship.', icon: 'code',
-      bullets: ['Pixel-perfect implementation from Figma', 'Accessible — WCAG AA, keyboard-first', 'Performance budgets, Lighthouse 95+'] },
+      bullets: ['Pixel-perfect from Figma', 'WCAG AA accessible, keyboard-first', 'Lighthouse 95+ performance'] },
     { slug: 'ecommerce-website-designers', offer: 'mockup', title: 'E-Commerce Website Designers', tagline: 'Browse. Add. Buy.', icon: 'cart',
-      bullets: ['Shopify, WooCommerce, Magento, custom', 'Conversion-tuned — cart, checkout, upsells', 'Payments: Razorpay, PayU, Stripe, COD'] },
+      bullets: ['Shopify, WooCommerce, custom', 'Conversion-tuned cart and checkout', 'Razorpay, PayU, Stripe, COD'] },
     { slug: 'user-interface-developers', offer: 'prototype', title: 'User Interface Developers', tagline: 'Components. Consistency. Craft.', icon: 'layout',
-      bullets: ['Design systems in React + Tailwind', 'Storybook-documented, type-safe components', 'Theming, dark-mode, RTL — out of the box'] },
-    { slug: 'erp-software-developers', offer: 'prototype', title: 'ERP Computer Software Developers', tagline: 'Unify. Automate. Report.', icon: 'layers',
-      bullets: ['Multi-tenant ERPs with per-customer branding', 'Sales, inventory, accounts, HR — modular', 'GST-compliant, e-invoice, e-way bill ready'] },
+      bullets: ['Design systems in React + Tailwind', 'Storybook-documented components', 'Theming, dark-mode, RTL ready'] },
+    { slug: 'erp-software-developers', offer: 'prototype', title: 'ERP Software Developers', tagline: 'Unify. Automate. Report.', icon: 'layers',
+      bullets: ['Multi-tenant ERPs, per-customer brand', 'Sales, inventory, accounts, HR', 'GST e-invoice + e-way bill ready'] },
     { slug: 'elearning-solution-developers', offer: 'prototype', title: 'E-Learning Solution Developers', tagline: 'Teach. Track. Certify.', icon: 'book',
-      bullets: ['LMS — courses, quizzes, certificates', 'Live classes, recordings, doubt-clearing', 'Mobile-first, offline-mode, low-bandwidth'] },
+      bullets: ['LMS — courses, quizzes, certificates', 'Live classes, recordings, doubts', 'Mobile, offline, low-bandwidth'] },
     { slug: 'seo-consultants', offer: 'audit', title: 'SEO Consultants', tagline: 'Audit. Optimise. Rank.', icon: 'search',
-      bullets: ['Technical audit — Core Web Vitals, schema', 'Keyword strategy mapped to buyer intent', 'Link-building & content briefs that rank'] },
+      bullets: ['Technical audit — CWV + schema', 'Keyword strategy for buyer intent', 'Link-building + content briefs'] },
     { slug: 'web-application-developers', offer: 'prototype', title: 'Web Application Developers', tagline: 'Plan. Build. Deploy.', icon: 'monitor',
-      bullets: ['SPAs & dashboards on React, Next.js, Vue', 'Auth, payments, file upload, real-time', 'CI/CD to Vercel, AWS, Cloudflare — your cloud'] },
+      bullets: ['SPAs on React, Next.js, Vue', 'Auth, payments, uploads, realtime', 'CI/CD to your AWS or Vercel'] },
     { slug: 'cloud-hosting-services', offer: 'trial', title: 'Cloud Hosting Services', tagline: 'Deploy. Scale. Sleep.', icon: 'cloud',
-      bullets: ['AWS, GCP, Azure, Vercel — deploy to yours', 'Auto-scaling, CDN, load-balanced by default', 'Uptime monitoring + alerting pre-launch'] },
+      bullets: ['AWS, GCP, Azure, Vercel — yours', 'Auto-scaling + CDN by default', 'Uptime + alerting pre-launch'] },
     { slug: 'application-service-providers', offer: 'trial', title: 'Application Service Providers', tagline: 'Subscribe. Sign-in. Go.', icon: 'briefcase',
-      bullets: ['Hosted SaaS — we run the infra, you use it', 'Multi-tenant, role-based, SSO-ready', 'SLA-backed uptime, automated backups'] },
+      bullets: ['Hosted SaaS — we run, you use', 'Multi-tenant, role-based, SSO', 'SLA uptime + automated backups'] },
     { slug: 'erp-real-estate', offer: 'prototype', title: 'ERP for Real Estate', tagline: 'Plot. Sell. Collect.', icon: 'house',
-      bullets: ['Inventory, bookings, EMI schedules, dues', 'Builder, broker, channel-partner workflows', 'RERA-aware reporting, GST e-invoice ready'] },
+      bullets: ['Inventory, bookings, EMI, dues', 'Builder, broker, channel workflows', 'RERA-aware + GST e-invoice ready'] },
     { slug: 'tally-integration-services', offer: 'call', title: 'Tally Integration Services', tagline: 'Sync. Reconcile. Done.', icon: 'calculator',
-      bullets: ['Two-way sync — ERP / CRM ↔ Tally', 'Invoices, ledgers, GST — zero double entry', 'On-prem Tally bridge + cloud connector'] },
-    { slug: 'cybersecurity-software-developers', offer: 'audit', title: 'Cybersecurity Software Developers', tagline: 'Detect. Defend. Recover.', icon: 'shield',
-      bullets: ['Pen-testing, SAST, dependency scanning', 'Incident response & forensics playbooks', 'Zero-trust auth, audit logs, SOC-ready'] },
-    { slug: 'embedded-software-developers', offer: 'prototype', title: 'Embedded System Software Developers', tagline: 'Sense. Compute. Act.', icon: 'chip',
-      bullets: ['Firmware in C / Rust on STM32, ESP32, NXP', 'IoT — MQTT, BLE, LoRa, cellular telemetry', 'OTA updates, secure boot, low-power design'] },
-    { slug: 'matrimonial-portal-developers', offer: 'prototype', title: 'Matrimonial Portal Development Services', tagline: 'Match. Meet. Marry.', icon: 'heart',
-      bullets: ['Profile, search, match algorithms', 'KYC, photo moderation, chat & video call', 'Subscription tiers, payment gateway built-in'] },
-    { slug: 'cloud-application-developers', offer: 'prototype', title: 'Cloud Application Software Developers', tagline: 'Build. Deploy. Iterate.', icon: 'cloud',
-      bullets: ['Cloud-native — serverless, containers, edge', 'Stateless services, queues, event-driven', 'Cost-aware architecture — pay for what runs'] },
+      bullets: ['Two-way — ERP/CRM ↔ Tally', 'Invoices, ledgers, GST — no dup entry', 'On-prem bridge + cloud connector'] },
+    { slug: 'cybersecurity-software-developers', offer: 'audit', title: 'Cybersecurity Software', tagline: 'Detect. Defend. Recover.', icon: 'shield',
+      bullets: ['Pen-test, SAST, dependency scans', 'Incident response playbooks', 'Zero-trust auth + audit logs'] },
+    { slug: 'embedded-software-developers', offer: 'prototype', title: 'Embedded System Software', tagline: 'Sense. Compute. Act.', icon: 'chip',
+      bullets: ['Firmware C/Rust — STM32, ESP32', 'IoT — MQTT, BLE, LoRa, cellular', 'OTA updates + secure boot'] },
+    { slug: 'matrimonial-portal-developers', offer: 'prototype', title: 'Matrimonial Portal Development', tagline: 'Match. Meet. Marry.', icon: 'heart',
+      bullets: ['Profile, search, match algorithms', 'KYC, photo mod, chat + video', 'Subscriptions + payment gateway'] },
+    { slug: 'cloud-application-developers', offer: 'prototype', title: 'Cloud Application Software', tagline: 'Build. Deploy. Iterate.', icon: 'cloud',
+      bullets: ['Serverless, containers, edge', 'Stateless services + queues', 'Cost-aware — pay for what runs'] },
     { slug: 'product-designers', offer: 'mockup', title: 'Product Designers', tagline: 'Discover. Design. Deliver.', icon: 'cube',
-      bullets: ['End-to-end product design — research to spec', 'High-fidelity prototypes in Figma', 'Design QA all the way to production'] },
+      bullets: ['End-to-end — research to spec', 'High-fidelity Figma prototypes', 'Design QA all the way to prod'] },
     { slug: 'graphic-designers', offer: 'mockup', title: 'Computer Graphic Designers', tagline: 'Sketch. Style. Ship.', icon: 'palette',
-      bullets: ['Logos, brand kits, social creatives, decks', 'Print-ready — flyers, packaging, hoardings', 'Illustration, icon sets, motion graphics'] },
+      bullets: ['Logos, brand kits, decks, social', 'Print — flyers, packaging, hoardings', 'Illustration, icons, motion'] },
     { slug: 'ios-app-developers', offer: 'prototype', title: 'iOS Mobile Application Developers', tagline: 'Native. Smooth. Beautiful.', icon: 'mobile',
-      bullets: ['Swift / SwiftUI — iOS 16+ targeted', 'Apple HIG-compliant, App Store ready', 'TestFlight, App Store Connect handled'] },
-    { slug: 'martech-software-developers', offer: 'prototype', title: 'Digital Marketing Software Developers', tagline: 'Build. Automate. Measure.', icon: 'megaphone',
-      bullets: ['MarTech — campaigns, attribution, CRM sync', 'Integrations: GA4, Meta, GTM, HubSpot', 'White-label dashboards for agencies'] },
+      bullets: ['Swift / SwiftUI, iOS 16+', 'Apple HIG-compliant, App Store ready', 'TestFlight + App Store Connect'] },
+    { slug: 'martech-software-developers', offer: 'prototype', title: 'Digital Marketing Software', tagline: 'Build. Automate. Measure.', icon: 'megaphone',
+      bullets: ['MarTech — campaigns + attribution', 'GA4, Meta, GTM, HubSpot ready', 'White-label for agencies'] },
     { slug: 'api-service-providers', offer: 'call', title: 'API Service Providers', tagline: 'Design. Document. Deliver.', icon: 'api',
-      bullets: ['REST & GraphQL — versioned, typed, tested', 'OpenAPI docs, SDKs, sandbox keys', 'Rate limits, auth (OAuth, JWT, API keys)'] },
-    { slug: 'crm-software-developers', offer: 'prototype', title: 'CRM Computer Software Developers', tagline: 'Capture. Nurture. Close.', icon: 'users',
-      bullets: ['Custom CRMs around your sales process', 'WhatsApp + email automation, lead scoring', 'Integrates with your existing tools & data'] },
+      bullets: ['REST + GraphQL — typed, tested', 'OpenAPI docs, SDKs, sandboxes', 'Rate limits + OAuth / JWT auth'] },
+    { slug: 'crm-software-developers', offer: 'prototype', title: 'CRM Computer Software', tagline: 'Capture. Nurture. Close.', icon: 'users',
+      bullets: ['Custom CRMs — your sales process', 'WhatsApp + email automation', 'Plugs into your existing tools'] },
     { slug: 'website-hosting-services', offer: 'trial', title: 'Website Hosting Services', tagline: 'Fast. Secure. Always-on.', icon: 'server',
-      bullets: ['Managed hosting — Vercel, Netlify, Cloudways', 'SSL, CDN, daily backups, malware scanning', '24/7 monitoring + WhatsApp incident alerts'] },
-    { slug: 'it-infrastructure-providers', offer: 'call', title: 'IT Infrastructure Solution Providers', tagline: 'Design. Deploy. Defend.', icon: 'network',
-      bullets: ['Networks, servers, storage, virtualisation', 'On-prem to cloud migration, DR planning', 'Endpoint management, SSO, MDM, patching'] },
+      bullets: ['Managed on Vercel + Cloudways', 'SSL + CDN + daily backups', '24/7 monitoring + WhatsApp alerts'] },
+    { slug: 'it-infrastructure-providers', offer: 'call', title: 'IT Infrastructure Solutions', tagline: 'Design. Deploy. Defend.', icon: 'network',
+      bullets: ['Networks, servers, virtualisation', 'On-prem to cloud + DR planning', 'Endpoint, SSO, MDM, patching'] },
     { slug: 'it-consultants', offer: 'call', title: 'IT Consultants', tagline: 'Audit. Advise. Execute.', icon: 'briefcase',
-      bullets: ['Tech-stack audits, vendor selection, RFPs', 'Architecture reviews, cost optimisation', 'Roadmaps tied to business outcomes'] },
-    { slug: 'ecommerce-development-services', offer: 'prototype', title: 'E-Commerce Website Development Services', tagline: 'Build. Sell. Grow.', icon: 'cart',
-      bullets: ['Shopify, WooCommerce, Magento, headless', 'Payments, shipping, ERP & inventory sync', 'SEO-ready, fast, conversion-tuned'] },
+      bullets: ['Stack audits, vendor selection', 'Architecture review + cost-cutting', 'Roadmaps tied to outcomes'] },
+    { slug: 'ecommerce-development-services', offer: 'prototype', title: 'E-Commerce Website Development', tagline: 'Build. Sell. Grow.', icon: 'cart',
+      bullets: ['Shopify, Woo, Magento, headless', 'Payments, shipping, ERP sync', 'SEO-ready + conversion-tuned'] },
     { slug: 'cms-software-developers', offer: 'prototype', title: 'CMS Software Developers', tagline: 'Author. Publish. Localise.', icon: 'layers',
-      bullets: ['Headless CMS — Sanity, Strapi, Payload', 'WordPress, Drupal — themed & extended', 'Roles, drafts, scheduling, multi-language'] },
-    { slug: 'ai-software-developers', offer: 'prototype', title: 'Artificial Intelligence Software Developers', tagline: 'Automate. Predict. Win.', icon: 'brain',
-      bullets: ['LLM agents, RAG, document OCR pipelines', 'Computer vision, recommendation engines', 'Production-grade — eval, monitoring, fallback'] },
+      bullets: ['Headless — Sanity, Strapi, Payload', 'WordPress, Drupal — themed', 'Roles, drafts, scheduling, i18n'] },
+    { slug: 'ai-software-developers', offer: 'prototype', title: 'Artificial Intelligence Software', tagline: 'Automate. Predict. Win.', icon: 'brain',
+      bullets: ['LLM agents, RAG, document OCR', 'Vision + recommendation engines', 'Eval, monitoring, fallback — prod-grade'] },
   ];
 
   // ─── Template ───────────────────────────────────────────────────
+  // Split title into first word (gradient) + rest, like the
+  // reference's "E-COMMERCE WEB & APP SOLUTIONS" first-word treatment.
+  function splitTitle(t) {
+    const words = t.split(' ');
+    const first = words.shift();
+    return { first, rest: words.join(' ') };
+  }
+
   function renderCard(cat, idx) {
     const cardId = 'card-' + idx;
     const filename = String(idx + 1).padStart(2, '0') + '-' + cat.slug;
     const svg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[cat.icon] || ICONS.code}</svg>`;
-    const bullets = cat.bullets.map(b => `
-        <div class="row"><div class="tick">✓</div><div class="txt">${b}</div></div>`).join('');
+    const sideSvgs = ['cart', 'shield', 'chart', 'cloud'].map(k =>
+      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>`);
+    const { first, rest } = splitTitle(cat.title);
+    const offer = OFFERS[cat.offer] || OFFERS.prototype;
+
+    // Three feature pills derived from bullets. Each: icon + 2-word
+    // uppercase label (taken from the bullet's first 2 words) + rest
+    // of the bullet as the sub-line. Icon cycles through a small set
+    // so the three pills are visually distinct.
+    const pillIcons = ['gear', 'cube', 'shield', 'chart', 'cloud', 'users'];
+    const featuresHtml = cat.bullets.slice(0, 3).map((b, i) => {
+      const iconKey = pillIcons[(idx * 3 + i) % pillIcons.length];
+      const featSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[iconKey]}</svg>`;
+      const words = b.split(' ');
+      const lab = words.slice(0, 2).join(' ').toUpperCase();
+      const sub = words.slice(2).join(' ');
+      return `
+        <div class="feat">
+          <div class="ic-circle">${featSvg}</div>
+          <div class="lab">${lab}</div>
+          <div class="sub">${sub || '&nbsp;'}</div>
+        </div>`;
+    }).join('');
+
     return `
   <div class="card-shell">
     <button class="download-btn" data-card="${cardId}" data-name="infocomiva-${filename}">⬇ Download</button>
     <section class="card" id="${cardId}">
+      <div class="deco-curve"></div>
+      <div class="deco-curve-2"></div>
+      <div class="deco-dots"></div>
+
       <div class="brand">
-        <img class="eagle" data-eagle crossorigin="anonymous" src="" alt="" style="display:none">
-        <span class="eagle-fallback" data-eagle-fb>IT</span>
-        <div>
-          <div class="name">Infocomiva <span class="ti">Technologies</span></div>
-          <div class="tag">where you can rely upon!</div>
+        <div class="eagle-wrap">
+          <img class="eagle" data-eagle crossorigin="anonymous" src="" alt="" style="display:none">
+          <span class="eagle-fallback" data-eagle-fb>IT</span>
+        </div>
+        <div class="stack">
+          <span class="n">Infocomiva</span>
+          <span class="n2">Technologies</span>
+          <span class="tag">where you can rely upon!</span>
         </div>
       </div>
-      <div class="usp">
-        <span class="dot"></span>
-        <span>Sign Up Today · <span class="h">${OFFERS[cat.offer].pill}</span></span>
+
+      <div class="offer-badge"><span class="h">●</span> ${offer.pill}</div>
+
+      <div class="title">
+        <span class="grad">${first}</span>${rest ? ' ' + rest : ''}
       </div>
 
-      <div class="icon-wrap">${svg}</div>
-      <div class="tagline">${cat.tagline}</div>
-      <div class="title">${cat.title}</div>
+      <div class="three-word">${cat.tagline}</div>
 
-      <div class="bullets">${bullets}
+      <div class="description">
+        ${cat.bullets[0]}. ${cat.bullets[1]}.
       </div>
 
-      <div class="cta">${OFFERS[cat.offer].cta} <span class="arrow">→</span></div>
+      <div class="features">${featuresHtml}
+      </div>
 
-      <div class="contact-strip">
-        <div class="col">
-          <span><span class="ic">📞</span>+91 89188 97474</span>
-          <span><span class="ic">📞</span>+91 77185 69194</span>
+      <div class="mockup">
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="top">
+              <span>9:41</span>
+              <span>${cat.tagline.split(' ')[0]}</span>
+            </div>
+            <div class="big-icon">${svg}</div>
+            <div class="cards">
+              <div class="c"></div><div class="c"></div>
+              <div class="c"></div><div class="c"></div>
+            </div>
+          </div>
         </div>
-        <div class="col" style="align-items: flex-end;">
-          <span class="web">www.infocomiva.live</span>
-          <span><span class="ic">✉</span>hello@infocomiva.live</span>
+        <div class="side-badges">
+          <div class="b">${sideSvgs[0]}</div>
+          <div class="b">${sideSvgs[1]}</div>
+          <div class="b">${sideSvgs[2]}</div>
+          <div class="b">${sideSvgs[3]}</div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <div class="fbox">
+          <div class="fcircle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.phone}</svg>
+          </div>
+          <div class="ftxt">
+            <div class="flab">Call Us Now</div>
+            <div class="fval">+91 89188 97474</div>
+            <div class="fval-small">+91 77185 69194</div>
+          </div>
+        </div>
+        <div class="fbox">
+          <div class="fcircle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.globe}</svg>
+          </div>
+          <div class="ftxt">
+            <div class="flab">Visit Our Website</div>
+            <div class="fval">www.infocomiva.live</div>
+          </div>
         </div>
       </div>
     </section>
   </div>`;
   }
 
-  // ─── Mount all cards into the grid ──────────────────────────────
+  // ─── Mount all cards ────────────────────────────────────────────
   const cardsWrap = document.getElementById('cards');
   cardsWrap.innerHTML = CATEGORIES.map(renderCard).join('');
-
-  // Wire individual download buttons (avoids inline-onclick CSP woes).
   cardsWrap.querySelectorAll('.download-btn').forEach((btn) => {
     btn.addEventListener('click', () => window.dl(btn.dataset.card, btn.dataset.name));
   });
 
-  // ─── Eagle loader (same pattern as social-cards) ────────────────
-  // Fetch eagle URL from Firestore, convert to data URL so html2canvas
-  // never trips on cross-origin canvas-taint protection.
+  // ─── Eagle loader (data-URL inline for html2canvas safety) ──────
   const app = initializeApp({
     apiKey: "AIzaSyAmJKD3Saep17Ij4jWN2vgZSypk17VjuZg",
     authDomain: "cargologic-saas.firebaseapp.com",
@@ -433,7 +628,7 @@
         img.style.display = 'block';
       });
       document.querySelectorAll('[data-eagle-fb]').forEach((fb) => fb.remove());
-      console.info('[category-banners] eagle loaded and inlined');
+      console.info('[category-banners] eagle inlined');
     } catch (err) {
       console.warn('[category-banners] eagle loader failed — IT badge stays:', err);
     }
@@ -447,7 +642,7 @@
     el.style.transform = 'none';
     try {
       return await html2canvas(el, {
-        width: 620, height: 620, scale: 2,    // scale: 2 for sharper PNG
+        width: 620, height: 620, scale: 2,
         useCORS: true, allowTaint: false, backgroundColor: null,
         logging: false, imageTimeout: 15000,
       });
