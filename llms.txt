@@ -1,6 +1,6 @@
 # Infocomiva Technologies
 
-> Infocomiva Technologies is a builder-operator software agency headquartered in India. We design, build and operate production-grade software end-to-end — custom software, web and mobile apps, ERP and CRM platforms, AI products and digital marketing — for Indian businesses. Same team through discovery, launch and day-500 production support, no sub-contracting, no handoff after go-live.
+> Infocomiva Technologies is a founder-led automation and software team headquartered in India, started by operators from automation and business development who spent years helping clients excel through software, tech and automation. We design, build and operate production-grade systems end-to-end — custom software, web and mobile apps, ERP and CRM platforms, AI and workflow automation, and digital marketing — and we deliver them for a monthly fraction of what an in-house team or a big agency would cost. Same team through discovery, launch and day-500 production support, no sub-contracting, no handoff after go-live.
 
 ## Unique selling proposition
 
@@ -64,7 +64,7 @@ Indian businesses, primarily — SaaS founders, family-owned industrial operator
 - [Home](https://infocomiva.live/): Hero with the 24-hour-prototype USP, services overview, client carousel, case studies carousel, pricing categories, "when not to hire us", contact form. Sticky announcement bar + nav across every page.
 
 ### About
-- [About Infocomiva Technologies](https://infocomiva.live/about/): What Infocomiva does, builder-operator vs. consultant framing, how we work, what we don't take on, what clients own at the end, who Infocomiva is for. Includes FAQ section.
+- [About Infocomiva Technologies](https://infocomiva.live/about/): The founders' story (automation and business-development background), how we deliver enterprise-grade tech for a fraction of the cost, how we work, what we don't take on, what clients own at the end, who Infocomiva is for. Includes FAQ section.
 
 ### Blog
 - [Infocomiva Blog](https://infocomiva.live/blog/): Index of all blog posts. Practical writing on software development, SaaS architecture, agency engagement and engineering practice for Indian businesses.
