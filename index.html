@@ -122,6 +122,28 @@
     }
   </script>
 
+  <!-- ============================================================
+       Critical CSS — plain stylesheet, NOT compiled by the Tailwind
+       CDN. The scroll-reveal rules below set content to opacity:0, so
+       they MUST exist on first paint. Keeping them here (instead of in
+       the Tailwind <style> block) removes the cold-load race where the
+       CDN compiles late and sections stay invisible until a refresh.
+       ============================================================ -->
+  <style>
+    .fade-up {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+      will-change: opacity, transform;
+    }
+    .fade-up.is-visible { opacity: 1; transform: translateY(0); }
+    /* No-JS / reduced-motion: never hide content. */
+    @media (prefers-reduced-motion: reduce) {
+      .fade-up, .fade-up.is-visible { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
+  <noscript><style>.fade-up { opacity: 1 !important; transform: none !important; }</style></noscript>
+
   <style type="text/tailwindcss">
     @layer utilities {
       .grad-blue {
@@ -1407,10 +1429,20 @@
     (function () {
       var targets = document.querySelectorAll('[data-fade-up]');
       if (!targets.length) return;
-      if (typeof IntersectionObserver === 'undefined') {
+
+      function revealAll() {
         targets.forEach(function (el) { el.classList.add('fade-up', 'is-visible'); });
+      }
+
+      // No observer support, or the user prefers reduced motion → just
+      // show everything immediately. Content is never gated on animation.
+      var reduceMotion = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (typeof IntersectionObserver === 'undefined' || reduceMotion) {
+        revealAll();
         return;
       }
+
       targets.forEach(function (el) { el.classList.add('fade-up'); });
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
@@ -1421,6 +1453,25 @@
         });
       }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
       targets.forEach(function (el) { io.observe(el); });
+
+      // Failsafe: on a slow/cold first load the layout can settle after
+      // the observer's first pass, leaving above-the-fold sections stuck
+      // at opacity:0 until a manual refresh. After full load, force the
+      // observer to re-evaluate everything still in view so nothing can
+      // remain hidden — the very symptom this guards against.
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          var vh = window.innerHeight || document.documentElement.clientHeight;
+          targets.forEach(function (el) {
+            if (el.classList.contains('is-visible')) return;
+            var r = el.getBoundingClientRect();
+            if (r.top < vh && r.bottom > 0) {
+              el.classList.add('is-visible');
+              io.unobserve(el);
+            }
+          });
+        }, 200);
+      });
     })();
 
     // ─── Case-study carousel: prev/next button wiring ────────────────
