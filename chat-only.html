@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chat — Infocomiva</title>
+  <meta name="description" content="Live chat with Infocomiva — scope a custom build in a minute.">
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* Iframe-embed reset — strip the body padding/scroll quirks from
+       the marketing page so the chat panel fills the viewport cleanly. */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #fff;
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      color: #0a0a0a;
+    }
+
+    /* Hide the floating FAB + attention bubble — they only make sense
+       on the marketing page where the panel is overlaid on content.
+       Inside an iframe modal the panel IS the page, so no FAB needed. */
+    .chat-fab, .chat-bubble { display: none !important; }
+
+    /* The chat panel — make it fill the iframe viewport instead of
+       being a small floating card. Override the marketing-page styles
+       below so the panel becomes the entire page. */
+    .chat-panel {
+      position: fixed; inset: 0; z-index: 1;
+      width: 100%; max-width: 100%;
+      background: #fff;
+      box-shadow: none;
+      border-radius: 0;
+      overflow: hidden;
+      opacity: 1; transform: none; pointer-events: auto;
+      display: flex; flex-direction: column;
+    }
+    .chat-panel-header {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1e3a8a 100%);
+      color: #fff; padding: 18px 20px 16px; position: relative;
+      flex: 0 0 auto;
+    }
+    .chat-panel-header .usp {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 10px; background: rgba(37,99,235,.25);
+      border: 1px solid rgba(96,165,250,.4);
+      border-radius: 999px; font-size: 11px; font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .chat-panel-header .usp .dot { width: 7px; height: 7px; border-radius: 999px; background: #60a5fa; }
+    .chat-panel-header .title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 18px; line-height: 1.2; }
+    .chat-panel-header .sub { font-size: 12px; color: rgba(255,255,255,.72); margin-top: 4px; line-height: 1.5; }
+    /* The X is the parent modal's job, not ours — hide the in-panel close. */
+    .chat-panel-close { display: none; }
+
+    .chat-panel-body { padding: 10px; }
+
+    /* Wizard thread — fill the remaining space inside the iframe. */
+    .chat-thread {
+      padding: 16px;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto; background: #f7f7f8;
+      display: flex; flex-direction: column; gap: 10px;
+      scroll-behavior: smooth;
+    }
+    .chat-msg { display: flex; gap: 8px; max-width: 88%; }
+    .chat-msg.from-bot  { align-self: flex-start; }
+    .chat-msg.from-user { align-self: flex-end; flex-direction: row-reverse; }
+    .chat-msg .bubble {
+      padding: 10px 14px; border-radius: 16px;
+      font-size: 13.5px; line-height: 1.45;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    }
+    .chat-msg.from-bot  .bubble { background: #fff; color: #0a0a0a; border-top-left-radius: 4px; }
+    .chat-msg.from-user .bubble {
+      background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+      color: #fff; border-top-right-radius: 4px;
+    }
+    .chat-typing {
+      display: inline-flex; gap: 4px; padding: 12px 14px;
+      background: #fff; border-radius: 16px; border-top-left-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    }
+    .chat-typing span {
+      width: 6px; height: 6px; border-radius: 999px; background: #93c5fd;
+      animation: chat-typ 1.2s infinite;
+    }
+    .chat-typing span:nth-child(2) { animation-delay: .15s; }
+    .chat-typing span:nth-child(3) { animation-delay: .3s; }
+    @keyframes chat-typ {
+      0%, 60%, 100% { transform: translateY(0); opacity: .6; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+    .chat-input-bar {
+      display: flex; gap: 8px;
+      padding: 10px 12px;
+      border-top: 1px solid #ebebed;
+      background: #fff;
+      align-items: center;
+      flex: 0 0 auto;
+    }
+    .chat-input-bar input, .chat-input-bar textarea {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1.5px solid #ebebed;
+      border-radius: 10px;
+      font-family: inherit; font-size: 14px; color: #0a0a0a;
+      transition: border-color .15s;
+      resize: none; min-height: 40px;
+    }
+    .chat-input-bar input:focus, .chat-input-bar textarea:focus { outline: none; border-color: #2563eb; }
+    .chat-input-bar button {
+      min-width: 40px; height: 40px; flex-shrink: 0;
+      padding: 0 14px;
+      background: linear-gradient(135deg, #2563eb, #1e3a8a);
+      color: #fff; border: 0; border-radius: 10px;
+      cursor: pointer; font-size: 15px; font-weight: 700; font-family: inherit;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .15s, opacity .15s;
+      white-space: nowrap;
+    }
+    .chat-input-bar button:hover { transform: translateY(-1px); }
+    .chat-input-bar button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .chat-yesno {
+      display: flex; gap: 8px; padding: 0 12px 12px;
+      background: #fff;
+      flex: 0 0 auto;
+    }
+    .chat-yesno button {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-family: inherit; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all .15s;
+      border: 1.5px solid #ebebed; background: #fff; color: #0a0a0a;
+    }
+    .chat-yesno button.primary {
+      background: linear-gradient(135deg, #2563eb, #1e3a8a);
+      color: #fff; border-color: transparent;
+    }
+    .chat-yesno button:hover { transform: translateY(-1px); }
+
+    .chat-error {
+      display: none; padding: 8px 14px; background: #fef2f2; color: #b91c1c;
+      border-top: 1px solid #fecaca; font-size: 12px; line-height: 1.4;
+      flex: 0 0 auto;
+    }
+    .chat-error.is-shown { display: block; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .chat-typing span { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden but kept in DOM — the wizard JS expects #chat-fab to exist
+       (it gates initialization on it). It just never renders. -->
+  <button type="button" class="chat-fab" id="chat-fab" aria-hidden="true" tabindex="-1"></button>
+  <div class="chat-bubble" id="chat-bubble" aria-hidden="true">
+    <button type="button" class="chat-bubble-close" id="chat-bubble-close" tabindex="-1">×</button>
+  </div>
+
+  <div class="chat-panel is-wizard" id="chat-panel" role="dialog" aria-modal="false" aria-label="Chat with Infocomiva">
+    <div class="chat-panel-header">
+      <button type="button" class="chat-panel-close" id="chat-panel-close" aria-label="Close">×</button>
+      <div class="usp"><span class="dot"></span> Prototype in 24h</div>
+      <div class="title">Chat with us</div>
+      <div class="sub">Quick questions so we can scope it right &mdash; takes a minute.</div>
+    </div>
+
+    <div class="chat-thread" id="chat-thread" aria-live="polite"></div>
+
+    <div class="chat-input-bar" id="chat-input-bar">
+      <input type="text" id="chat-input" placeholder="" autocomplete="off">
+      <button type="button" id="chat-send" aria-label="Send">&rarr;</button>
+    </div>
+
+    <div class="chat-yesno" id="chat-yesno" style="display:none">
+      <button type="button" data-yn="no">No, just send my details</button>
+      <button type="button" class="primary" data-yn="yes">Yes, connect me now</button>
+    </div>
+
+    <div class="chat-error" id="chat-error" role="alert"></div>
+  </div>
+
+  <script>
+  // The wizard JS below is a verbatim copy of the chat block in
+  // estimator/index.html, with two embed-only tweaks:
+  //   1. The panel is auto-opened on load (so the iframe shows the
+  //      conversation immediately instead of a blank FAB-less page).
+  //   2. closePanel is a no-op — closing is the parent traxn.in
+  //      modal's job; we don't want the panel to disappear inside the
+  //      iframe and leave a white square.
+  // If the estimator wizard changes, manually port the diff into this
+  // file too.
+  (function () {
+    const fab         = document.getElementById('chat-fab');
+    const panel       = document.getElementById('chat-panel');
+    const panelClose  = document.getElementById('chat-panel-close');
+    const bubble      = document.getElementById('chat-bubble');
+    const bubbleClose = document.getElementById('chat-bubble-close');
+    const thread      = document.getElementById('chat-thread');
+    const inputBar    = document.getElementById('chat-input-bar');
+    const input       = document.getElementById('chat-input');
+    const sendBtn     = document.getElementById('chat-send');
+    const yesno       = document.getElementById('chat-yesno');
+    const errorBox    = document.getElementById('chat-error');
+
+    if (!fab || !panel) return;
+
+    function openPanel()  {
+      panel.classList.add('is-open');
+      if (!state.booted) { state.booted = true; advanceTo('email'); }
+      setTimeout(() => { const el = document.getElementById('chat-input'); if (el) el.focus(); }, 80);
+    }
+    // Closing is the parent traxn.in modal's job — never close the panel
+    // inside the iframe.
+    function closePanel() { /* no-op in embed */ }
+
+    const STORE_KEY = 'infocomiva-chat-session';
+    const THREAD_KEY = 'infocomiva-chat-thread';
+    function loadSession() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        if (!raw) return null;
+        const s = JSON.parse(raw);
+        if (!s || !s.sessionToken || !s.exp) return null;
+        if (Date.now() / 1000 > s.exp) { localStorage.removeItem(STORE_KEY); return null; }
+        return s;
+      } catch { return null; }
+    }
+    function saveSession(email, sessionToken, expiresIn) {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify({
+        email, sessionToken, exp: Math.floor(Date.now()/1000) + (expiresIn || 3600)
+      })); } catch {}
+    }
+    function loadThread() {
+      try {
+        const raw = localStorage.getItem(THREAD_KEY);
+        if (!raw) return null;
+        const t = JSON.parse(raw);
+        if (!t || !t.threadToken || !t.exp) return null;
+        if (Date.now() / 1000 > t.exp) { localStorage.removeItem(THREAD_KEY); return null; }
+        return t;
+      } catch { return null; }
+    }
+    function saveThread(threadToken, threadId, expiresIn) {
+      try { localStorage.setItem(THREAD_KEY, JSON.stringify({
+        threadToken, threadId,
+        exp: Math.floor(Date.now()/1000) + (expiresIn || 24*3600)
+      })); } catch {}
+    }
+    function clearThread() { try { localStorage.removeItem(THREAD_KEY); } catch {} }
+
+    const state = {
+      booted: false,
+      step: null,
+      email: '',
+      otpToken: null,
+      sessionToken: null,
+      businessName: '',
+      phone: '',
+      businessType: '',
+      projectDesc: '',
+      escalate: false,
+      threadToken: null,
+      threadId: null,
+      lastPolledAt: null,
+      pollTimer: null,
+    };
+
+    function addBot(text) {
+      const el = document.createElement('div');
+      el.className = 'chat-msg from-bot';
+      el.innerHTML = '<div class="bubble"></div>';
+      el.querySelector('.bubble').textContent = text;
+      thread.appendChild(el);
+      scrollThreadBottom();
+    }
+    function addUser(text) {
+      const el = document.createElement('div');
+      el.className = 'chat-msg from-user';
+      el.innerHTML = '<div class="bubble"></div>';
+      el.querySelector('.bubble').textContent = text;
+      thread.appendChild(el);
+      scrollThreadBottom();
+    }
+    function showTyping() {
+      const el = document.createElement('div');
+      el.className = 'chat-msg from-bot';
+      el.dataset.typing = '1';
+      el.innerHTML = '<div class="chat-typing"><span></span><span></span><span></span></div>';
+      thread.appendChild(el);
+      scrollThreadBottom();
+      return el;
+    }
+    function removeTyping(el) { if (el && el.parentNode) el.parentNode.removeChild(el); }
+    function scrollThreadBottom() { thread.scrollTop = thread.scrollHeight; }
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.classList.add('is-shown');
+      setTimeout(() => errorBox.classList.remove('is-shown'), 6000);
+    }
+
+    function setInputMode({ placeholder, type = 'text', sendLabel = '→', yesno: showYN = false, multiline = false }) {
+      yesno.style.display = showYN ? 'flex' : 'none';
+      inputBar.style.display = showYN ? 'none' : 'flex';
+      if (!showYN) {
+        const wanted = multiline ? 'TEXTAREA' : 'INPUT';
+        const cur = document.getElementById('chat-input');
+        if (cur.tagName !== wanted) {
+          const fresh = document.createElement(multiline ? 'textarea' : 'input');
+          fresh.id = 'chat-input';
+          if (!multiline) fresh.type = type;
+          fresh.placeholder = placeholder;
+          fresh.autocomplete = 'off';
+          cur.parentNode.replaceChild(fresh, cur);
+        } else {
+          if (!multiline) cur.type = type;
+          cur.placeholder = placeholder;
+          cur.value = '';
+        }
+        sendBtn.textContent = sendLabel;
+        sendBtn.disabled = false;
+        bindInput();
+        setTimeout(() => { const el = document.getElementById('chat-input'); if (el) el.focus(); }, 50);
+      }
+    }
+    function getInputEl() { return document.getElementById('chat-input'); }
+
+    function bindInput() {
+      const el = getInputEl();
+      if (!el) return;
+      el.onkeydown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          handleSubmit();
+        }
+      };
+    }
+
+    async function advanceTo(step) {
+      state.step = step;
+      switch (step) {
+        case 'email': {
+          const existingThread = loadThread();
+          if (existingThread) {
+            state.threadToken = existingThread.threadToken;
+            state.threadId    = existingThread.threadId;
+            addBot('Welcome back. Resuming your chat with Avilash…');
+            renderDoneButtons(true);
+            setInputMode({ placeholder: 'Type a message…', type: 'text', sendLabel: 'Send', multiline: true });
+            state.step = 'live';
+            await attachFirestoreListener(state.threadId);
+            return;
+          }
+          const existing = loadSession();
+          if (existing) {
+            state.email = existing.email;
+            state.sessionToken = existing.sessionToken;
+            addBot('Welcome back, ' + existing.email + '. Picking up where we left off.');
+            advanceTo('businessName');
+            return;
+          }
+          addBot('Hi! I’m the Infocomiva assistant. Let’s start — what’s your email? We’ll send a quick 6-digit code to verify it.');
+          setInputMode({ placeholder: 'you@company.com', type: 'email', sendLabel: 'Send' });
+          break;
+        }
+        case 'otp': {
+          addBot('Sent. Check your inbox (and the spam folder, just in case). Type the 6-digit code below.');
+          setInputMode({ placeholder: '123456', type: 'text', sendLabel: 'Verify' });
+          break;
+        }
+        case 'businessName': {
+          addBot('Verified ✅ May I know your business name?');
+          setInputMode({ placeholder: 'e.g. Amirah Technologies', type: 'text', sendLabel: '→' });
+          break;
+        }
+        case 'phone': {
+          addBot('Thanks. What’s the best phone or WhatsApp number to reach you?');
+          setInputMode({ placeholder: '+91 …', type: 'tel', sendLabel: '→' });
+          break;
+        }
+        case 'businessType': {
+          addBot('What kind of business is it? (e.g. logistics, fintech, hospitality, education)');
+          setInputMode({ placeholder: 'Logistics, fintech, …', type: 'text', sendLabel: '→' });
+          break;
+        }
+        case 'project': {
+          addBot('And what would you like us to build? One line is enough — we’ll dig in on the call.');
+          setInputMode({ placeholder: 'Multi-tenant SaaS for …', type: 'text', sendLabel: '→', multiline: true });
+          break;
+        }
+        case 'escalate': {
+          addBot('Last question — would you like to talk to our IT Analyst Avilash directly, right now on WhatsApp?');
+          setInputMode({ placeholder: '', yesno: true });
+          break;
+        }
+        case 'submitting': {
+          showTyping();
+          await submitLead();
+          break;
+        }
+        case 'done': {
+          addBot('Sent. We’ll reply on phone or email within 24 hours. Talk soon!');
+          renderDoneButtons(false);
+          inputBar.style.display = 'none';
+          yesno.style.display = 'none';
+          break;
+        }
+        case 'live': {
+          await startLiveChat();
+          break;
+        }
+      }
+    }
+
+    function renderDoneButtons(escalate) {
+      const wrap = document.createElement('div');
+      wrap.className = 'chat-yesno';
+      wrap.style.display = 'flex';
+      wrap.style.flexWrap = 'wrap';
+      wrap.style.padding = '0 12px 16px';
+      const waText = encodeURIComponent('Hi Infocomiva — I just left my details on the chat. I’m ' + (state.businessName || 'a prospect') + ', looking to build ' + (state.projectDesc || 'a custom product') + '.');
+      wrap.innerHTML = `
+        <a class="primary" style="text-align:center;text-decoration:none;display:inline-block;padding:11px 16px;border-radius:10px;font-size:14px;font-weight:700;background:linear-gradient(135deg,#25D366,#1ea54d);color:#fff;" target="_blank" rel="noopener" href="https://wa.me/918918897474?text=${waText}">WhatsApp now</a>
+        <a style="text-align:center;text-decoration:none;display:inline-block;padding:11px 16px;border-radius:10px;font-size:14px;font-weight:700;border:1.5px solid #ebebed;background:#fff;color:#0a0a0a;" href="tel:+918918897474">Call us</a>
+      `;
+      thread.parentNode.insertBefore(wrap, errorBox);
+      scrollThreadBottom();
+    }
+
+    async function handleSubmit() {
+      const el = getInputEl();
+      if (!el) return;
+      const raw = (el.value || '').trim();
+      if (!raw && state.step !== 'project') return;
+
+      switch (state.step) {
+        case 'email':         await onSubmitEmail(raw); break;
+        case 'otp':           await onSubmitOtp(raw);   break;
+        case 'businessName':  addUser(raw); state.businessName = raw.slice(0, 200); advanceTo('phone'); break;
+        case 'phone':         addUser(raw); state.phone        = raw.slice(0, 40);  advanceTo('businessType'); break;
+        case 'businessType':  addUser(raw); state.businessType = raw.slice(0, 200); advanceTo('project'); break;
+        case 'project':       addUser(raw || '(no description)'); state.projectDesc = raw.slice(0, 2000); advanceTo('escalate'); break;
+        case 'live':          {
+          getInputEl().value = '';
+          await sendVisitorMessage(raw);
+          break;
+        }
+      }
+    }
+
+    async function onSubmitEmail(email) {
+      const ok = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+      if (!ok) { showError('Please enter a valid email.'); return; }
+      addUser(email);
+      state.email = email.toLowerCase();
+      sendBtn.disabled = true; sendBtn.textContent = '…';
+      const typing = showTyping();
+      try {
+        const res = await fetch('https://infocomiva.live/api/send-otp', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email: state.email }),
+        });
+        const data = await res.json().catch(() => ({}));
+        removeTyping(typing);
+        if (!res.ok) { showError(data.error || 'Could not send the code.'); sendBtn.disabled = false; sendBtn.textContent = 'Send'; return; }
+        state.otpToken = data.token;
+        advanceTo('otp');
+      } catch (e) {
+        removeTyping(typing);
+        showError('Network error. Try again in a moment.');
+        sendBtn.disabled = false; sendBtn.textContent = 'Send';
+      }
+    }
+
+    async function onSubmitOtp(otp) {
+      if (!/^\d{6}$/.test(otp)) { showError('Enter the 6-digit code from your email.'); return; }
+      addUser(otp);
+      sendBtn.disabled = true; sendBtn.textContent = '…';
+      const typing = showTyping();
+      try {
+        const res = await fetch('https://infocomiva.live/api/verify-otp', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email: state.email, otp, token: state.otpToken }),
+        });
+        const data = await res.json().catch(() => ({}));
+        removeTyping(typing);
+        if (!res.ok || !data.verified) { showError(data.error || 'Verification failed.'); sendBtn.disabled = false; sendBtn.textContent = 'Verify'; return; }
+        state.sessionToken = data.sessionToken;
+        saveSession(state.email, state.sessionToken, data.expiresIn || 3600);
+        advanceTo('businessName');
+      } catch (e) {
+        removeTyping(typing);
+        showError('Network error. Try again in a moment.');
+        sendBtn.disabled = false; sendBtn.textContent = 'Verify';
+      }
+    }
+
+    async function submitLead() {
+      try {
+        const res = await fetch('https://infocomiva.live/api/submit-lead', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            sessionToken: state.sessionToken,
+            businessName: state.businessName,
+            phone:        state.phone,
+            businessType: state.businessType,
+            projectDesc:  state.projectDesc,
+            escalate:     state.escalate,
+            sourcePath:   location.pathname,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        const typingEls = thread.querySelectorAll('[data-typing="1"]');
+        typingEls.forEach((t) => t.remove());
+        if (!res.ok || !data.ok) {
+          showError(data.error || 'Could not save your details. Please WhatsApp +91 89188 97474.');
+          state.step = 'escalate';
+          inputBar.style.display = 'none';
+          yesno.style.display = 'flex';
+          return;
+        }
+        advanceTo(state.escalate ? 'live' : 'done');
+      } catch (e) {
+        const typingEls = thread.querySelectorAll('[data-typing="1"]');
+        typingEls.forEach((t) => t.remove());
+        showError('Network error. Please WhatsApp +91 89188 97474.');
+      }
+    }
+
+    let chatUnsubscribe = null;
+    const shownAdminIds = new Set();
+    let threadDocUnsubscribe = null;
+
+    async function attachFirestoreListener(threadId) {
+      if (chatUnsubscribe)      { try { chatUnsubscribe();      } catch {} chatUnsubscribe      = null; }
+      if (threadDocUnsubscribe) { try { threadDocUnsubscribe(); } catch {} threadDocUnsubscribe = null; }
+      shownAdminIds.clear();
+
+      const fbApp = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
+      const fbFs  = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+
+      const config = {
+        apiKey: 'AIzaSyAmJKD3Saep17Ij4jWN2vgZSypk17VjuZg',
+        authDomain: 'cargologic-saas.firebaseapp.com',
+        projectId: 'cargologic-saas',
+        storageBucket: 'cargologic-saas.firebasestorage.app',
+        messagingSenderId: '1005412538844',
+        appId: '1:1005412538844:web:26e6ce0ae52c6065c3d719',
+      };
+      let app;
+      try { app = fbApp.initializeApp(config, 'estimator-chat'); }
+      catch (e) { app = fbApp.getApp('estimator-chat'); }
+      const db = fbFs.getFirestore(app);
+
+      const ref = fbFs.collection(db, 'chatThreads', threadId, 'messages');
+      const q = fbFs.query(ref, fbFs.orderBy('createdAt', 'asc'));
+
+      chatUnsubscribe = fbFs.onSnapshot(
+        q,
+        (snap) => {
+          snap.docs.forEach((doc) => {
+            const data = doc.data();
+            if (data.from !== 'admin') return;
+            if (shownAdminIds.has(doc.id)) return;
+            shownAdminIds.add(doc.id);
+            if (data.text) addBot(data.text);
+          });
+        },
+        (err) => {
+          console.warn('[chat] onSnapshot error:', err);
+          showError('Live chat error: ' + (err.message || err.code || 'subscription failed'));
+        },
+      );
+
+      const threadDocRef = fbFs.doc(db, 'chatThreads', threadId);
+      let everExisted = false;
+      threadDocUnsubscribe = fbFs.onSnapshot(
+        threadDocRef,
+        (snap) => {
+          if (snap.exists()) { everExisted = true; return; }
+          if (everExisted) {
+            addBot('Avilash closed this conversation. Starting fresh — what would you like to chat about?');
+          } else {
+            addBot('This chat is no longer available. Starting a new one — what would you like to chat about?');
+          }
+          resetChatToWizard();
+        },
+        (err) => { console.warn('[chat] thread-doc onSnapshot error:', err); },
+      );
+    }
+
+    function resetChatToWizard() {
+      if (chatUnsubscribe)      { try { chatUnsubscribe();      } catch {} chatUnsubscribe      = null; }
+      if (threadDocUnsubscribe) { try { threadDocUnsubscribe(); } catch {} threadDocUnsubscribe = null; }
+      shownAdminIds.clear();
+      clearThread();
+      state.threadToken = null;
+      state.threadId    = null;
+      advanceTo('businessName');
+    }
+
+    async function startLiveChat() {
+      addBot('Opening a live chat with Avilash…');
+      try {
+        const res = await fetch('https://infocomiva.live/api/chat-start', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            sessionToken: state.sessionToken,
+            businessName: state.businessName,
+            phone:        state.phone,
+            businessType: state.businessType,
+            projectDesc:  state.projectDesc,
+            sourcePath:   location.pathname,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) {
+          showError(data.error || 'Could not open the live chat.');
+          renderDoneButtons(true);
+          addBot('You can WhatsApp or call Avilash directly using the buttons below.');
+          inputBar.style.display = 'none';
+          yesno.style.display = 'none';
+          return;
+        }
+        state.threadToken = data.threadToken;
+        state.threadId = data.threadId;
+        saveThread(data.threadToken, data.threadId, data.expiresIn || 24*3600);
+        await attachFirestoreListener(state.threadId);
+      } catch (e) {
+        showError('Network error opening chat.');
+        renderDoneButtons(true);
+        inputBar.style.display = 'none';
+        yesno.style.display = 'none';
+        return;
+      }
+
+      renderDoneButtons(true);
+      addBot('You’re connected. Type below — Avilash will reply here as soon as he sees this.');
+      setInputMode({ placeholder: 'Type a message…', type: 'text', sendLabel: 'Send', multiline: true });
+    }
+
+    async function sendVisitorMessage(text) {
+      if (!state.threadToken) return;
+      addUser(text);
+      try {
+        const res = await fetch('https://infocomiva.live/api/chat-send', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ threadToken: state.threadToken, text }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          if (res.status === 404 || res.status === 410 || res.status === 401) {
+            resetChatToWizard();
+            return;
+          }
+          showError(data.error || 'Could not send message.');
+        }
+      } catch (e) {
+        showError('Network error. Try again.');
+      }
+    }
+
+    sendBtn.addEventListener('click', handleSubmit);
+    yesno.querySelectorAll('[data-yn]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const yn = btn.dataset.yn;
+        state.escalate = (yn === 'yes');
+        addUser(yn === 'yes' ? 'Yes, connect me now' : 'No, just send my details');
+        advanceTo('submitting');
+      });
+    });
+    bindInput();
+
+    // Auto-open on load — the panel IS the page inside the iframe.
+    openPanel();
+  })();
+  </script>
+</body>
+</html>
