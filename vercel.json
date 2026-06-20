@@ -7,6 +7,12 @@
       ]
     }
   ],
+  "rewrites": [
+    { "source": "/blog",         "destination": "/api/blog" },
+    { "source": "/blog/",        "destination": "/api/blog" },
+    { "source": "/blog/:slug",   "destination": "/api/blog/:slug" },
+    { "source": "/blog/:slug/",  "destination": "/api/blog/:slug" }
+  ],
   "redirects": [
     {
       "source": "/:path*",
