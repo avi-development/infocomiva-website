@@ -3,11 +3,10 @@
 // listing of every published post (Firestore + the two hard-coded
 // legacy posts) on the fly.
 //
-// Why a serverless function instead of a Next.js page: this site is
-// vanilla static HTML + serverless API today, and migrating it to
-// Next would be a much bigger lift than just adding two Node handlers.
-// Cache-Control on the response keeps the per-request runQuery cost
-// manageable.
+// The visual structure is intentionally identical to the static blog
+// index that this function replaced: dark hero with the "Notes from
+// the people who ship the work." headline, vertical stack of post
+// cards, "More posts shipping soon" placeholder at the bottom.
 
 import {
   listPublishedPosts,
@@ -15,6 +14,7 @@ import {
   pageShell,
   esc,
   fmtDate,
+  readTimeFor,
 } from '../../lib/blog-shared.js';
 
 export default async function handler(req, res) {
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     pageShell({
       title: 'Blog — Infocomiva Technologies',
       description:
-        'Practical writing on building custom software, multi-tenant SaaS, and AI-augmented operations in India.',
+        'Practical writing on software development, SaaS architecture, agency engagement and engineering practice. Written for founders, COOs and operators who are evaluating a build.',
       ogImage: 'https://infocomiva.live/assets/og-image.jpg',
       canonical: 'https://infocomiva.live/blog/',
       body,
@@ -53,40 +53,69 @@ export default async function handler(req, res) {
   );
 }
 
-function renderIndex(posts) {
-  const cards = posts
-    .map(
-      (p) => `
-        <a href="/blog/${esc(p.slug)}/" class="group block rounded-2xl border border-ink-100 bg-white overflow-hidden hover:shadow-lg transition-shadow">
-          <div class="aspect-[16/9] bg-ink-100 overflow-hidden">
-            ${p.coverImage ? `<img src="${esc(p.coverImage)}" alt="" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform">` : ''}
-          </div>
-          <div class="p-6">
-            <div class="text-[11px] font-bold uppercase tracking-widest text-azure-500 mb-2">${esc(fmtDate(p.publishedAt))}</div>
-            <h2 class="font-display text-xl font-black tracking-tight leading-snug mb-2 group-hover:text-azure-500">${esc(p.title)}</h2>
-            <p class="text-sm text-ink-500 leading-relaxed line-clamp-3">${esc(p.excerpt || '')}</p>
-            <div class="mt-4 text-xs font-semibold text-ink-700">${esc(p.author)}</div>
-          </div>
-        </a>`,
-    )
-    .join('');
+function postCard(p) {
+  const tag = (p.tags && p.tags[0]) || 'Note';
+  const readTime = p.readTimeOverride || readTimeFor(p.body);
+  return `
+    <a href="/blog/${esc(p.slug)}/" class="post-card block bg-white border border-ink-100 rounded-2xl p-6 sm:p-8">
+      <div class="flex items-center gap-3 text-xs text-ink-500 mb-3 flex-wrap">
+        <span class="font-semibold text-azure-700 uppercase tracking-wider">${esc(tag)}</span>
+        <span aria-hidden="true">&middot;</span>
+        <span>${esc(fmtDate(p.publishedAt))}</span>
+        <span aria-hidden="true">&middot;</span>
+        <span>${esc(readTime)}</span>
+      </div>
+      <h2 class="font-display text-2xl sm:text-3xl font-black text-ink-900 leading-tight mb-3">
+        ${esc(p.title)}
+      </h2>
+      <p class="text-ink-700 text-sm sm:text-base leading-relaxed mb-4">
+        ${esc(p.excerpt || '')}
+      </p>
+      <span class="inline-flex items-center gap-1.5 text-azure-700 font-semibold text-sm">
+        Read the post &rarr;
+      </span>
+    </a>`;
+}
 
-  const emptyState = `
-    <div class="text-center max-w-xl mx-auto py-16">
-      <p class="text-[10px] font-black text-azure-500 uppercase tracking-widest mb-3">QUEUED</p>
-      <h2 class="font-display text-3xl font-black tracking-tight mb-3">Articles publishing soon.</h2>
-      <p class="text-ink-500 leading-relaxed">Our first technical writing drops here shortly. Keep an eye out.</p>
+function renderIndex(posts) {
+  const cards = posts.map(postCard).join('');
+
+  const placeholder = `
+    <div class="bg-ink-50 border border-dashed border-ink-200 rounded-2xl p-6 sm:p-8 text-center">
+      <div class="font-display font-black text-lg text-ink-900 mb-2">More posts shipping soon</div>
+      <p class="text-sm text-ink-700 leading-relaxed max-w-md mx-auto">
+        We publish here every few weeks &mdash; production observability, OCR pipelines, fixed-scope contracting, and the case studies behind the work we&rsquo;ve shipped.
+        <a href="/#contact" class="text-azure-700 underline underline-offset-2">Subscribe via email</a> if you want them in your inbox.
+      </p>
     </div>`;
 
   return `
-    <section class="max-w-6xl mx-auto px-5 pt-12 pb-6">
-      <div class="max-w-3xl">
-        <p class="text-[10px] font-black text-azure-500 uppercase tracking-widest mb-2">KNOWLEDGE</p>
-        <h1 class="font-display text-4xl sm:text-5xl font-black tracking-tight leading-tight mb-3">The Infocomiva blog.</h1>
-        <p class="text-ink-500 text-lg leading-relaxed">Field-tested writing on custom software, SaaS architecture, and AI-augmented operations for Indian businesses.</p>
+    <section class="bg-ink-900 text-white">
+      <div class="max-w-4xl mx-auto px-5 pt-12 pb-14 sm:pt-16 sm:pb-16">
+        <nav aria-label="Breadcrumb" class="text-xs text-white/55 mb-6">
+          <a href="/" class="hover:text-white">Home</a>
+          <span class="mx-2">/</span>
+          <span class="text-white/80">Blog</span>
+        </nav>
+        <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-500 uppercase mb-4">
+          Infocomiva Blog
+        </div>
+        <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-black leading-[1.05] tracking-tight">
+          Notes from the people who <span class="grad-text">ship the work.</span>
+        </h1>
+        <p class="mt-6 text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed">
+          Practical writing on software development, SaaS architecture, agency
+          engagement and engineering practice. Written for founders, COOs and operators
+          who are evaluating a build &mdash; the kind of pieces we wish more agencies
+          wrote before we worked with them.
+        </p>
       </div>
     </section>
-    <section class="max-w-6xl mx-auto px-5 py-10">
-      ${posts.length === 0 ? emptyState : `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">${cards}</div>`}
+
+    <section class="py-12 sm:py-16">
+      <div class="max-w-4xl mx-auto px-5 grid gap-5">
+        ${cards}
+        ${placeholder}
+      </div>
     </section>`;
 }
