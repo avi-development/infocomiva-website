@@ -15,7 +15,7 @@ import {
   pageShell,
   esc,
   fmtDate,
-} from '../_blog-shared.js';
+} from '../../lib/blog-shared.js';
 
 export default async function handler(req, res) {
   let firestorePosts = [];

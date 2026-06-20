@@ -12,7 +12,7 @@ import {
   fmtDate,
   readTimeFor,
   renderMarkdown,
-} from '../_blog-shared.js';
+} from '../../lib/blog-shared.js';
 
 export default async function handler(req, res) {
   const slug = (req.query && req.query.slug) || '';
