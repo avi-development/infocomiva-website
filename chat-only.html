@@ -468,7 +468,7 @@
       sendBtn.disabled = true; sendBtn.textContent = '…';
       const typing = showTyping();
       try {
-        const res = await fetch('https://infocomiva.live/api/send-otp', {
+        const res = await fetch('/api/send-otp', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ email: state.email }),
@@ -491,7 +491,7 @@
       sendBtn.disabled = true; sendBtn.textContent = '…';
       const typing = showTyping();
       try {
-        const res = await fetch('https://infocomiva.live/api/verify-otp', {
+        const res = await fetch('/api/verify-otp', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ email: state.email, otp, token: state.otpToken }),
@@ -511,7 +511,7 @@
 
     async function submitLead() {
       try {
-        const res = await fetch('https://infocomiva.live/api/submit-lead', {
+        const res = await fetch('/api/submit-lead', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
@@ -617,7 +617,7 @@
     async function startLiveChat() {
       addBot('Opening a live chat with Avilash…');
       try {
-        const res = await fetch('https://infocomiva.live/api/chat-start', {
+        const res = await fetch('/api/chat-start', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
@@ -659,7 +659,7 @@
       if (!state.threadToken) return;
       addUser(text);
       try {
-        const res = await fetch('https://infocomiva.live/api/chat-send', {
+        const res = await fetch('/api/chat-send', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ threadToken: state.threadToken, text }),
