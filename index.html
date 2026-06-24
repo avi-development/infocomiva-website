@@ -417,17 +417,28 @@
   <!-- giving the hero a piece of imagery without using stock photography. -->
   <!-- =================================================================== -->
   <section class="bg-ink-900 text-white relative overflow-hidden min-h-[88vh] flex items-center">
+    <!-- Static poster for instant first paint AND for phones (where
+         the <video> sits behind hidden md:block, so it never even
+         requests the MP4 on a cellular connection). 52 KB JPG keeps
+         the hero looking finished while the video downloads in the
+         background on larger screens. -->
+    <div aria-hidden="true"
+         class="absolute inset-0 w-full h-full bg-cover bg-center z-0"
+         style="background-image: url('/assets/hero-poster.jpg');"></div>
+
     <!-- Full-bleed cinematic hero video — a glassmorphism phone UI
          materialising in blue particle space. Plays muted/looped at
          autoplay (required by mobile browsers without user gesture).
          playsinline keeps it from going full-screen on iOS Safari.
-         poster + preload=metadata avoids a blank frame on slow nets.
-         Arena outro was trimmed off; this clip is the clean 5s loop. -->
+         Hidden below md so phones never download the 730 KB clip.
+         Arena outro was trimmed off; this clip is the clean 5s loop.
+         The poster div above is what mobile users actually see. -->
     <video
       autoplay muted loop playsinline
       preload="metadata"
+      poster="/assets/hero-poster.jpg"
       aria-hidden="true"
-      class="absolute inset-0 w-full h-full object-cover z-0"
+      class="absolute inset-0 w-full h-full object-cover z-0 hidden md:block"
     >
       <source src="/assets/hero.mp4" type="video/mp4">
     </video>
