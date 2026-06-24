@@ -318,6 +318,92 @@
     gtag('config', 'G-XXXXXXXXXX');
   </script>
   -->
+
+  <!-- GSAP + ScrollTrigger for site-wide cinematic motion: blob
+       parallax on dark sections, staggered card entries on grids,
+       gentle section scale-in on first viewport enter, hover
+       micro-glows on cards. Deferred so they don't block first
+       paint; the bootstrap script at the end of <body> waits for
+       window load. ~60 KB gzipped together. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+
+  <!-- Site-wide cinematic motion CSS. Glassmorphism for the service
+       /  why / process cards, animated gradient backdrops for dark
+       sections, and a tighter hover state that lifts + glows. The
+       reduced-motion guard is preserved at the bottom — these new
+       classes degrade to flat-static when the user opts out. -->
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(14px) saturate(150%);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      border: 1px solid rgba(37, 99, 235, 0.10);
+      box-shadow: 0 4px 24px -12px rgba(15, 31, 94, 0.12);
+      transition: transform .35s cubic-bezier(.2,.65,.25,1),
+                  box-shadow .35s cubic-bezier(.2,.65,.25,1),
+                  border-color .35s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 22px 48px -18px rgba(37, 99, 235, 0.28),
+                  0 4px 12px -4px rgba(37, 99, 235, 0.12);
+      border-color: rgba(37, 99, 235, 0.30);
+    }
+    .glass-card-dark {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform .35s cubic-bezier(.2,.65,.25,1),
+                  box-shadow .35s cubic-bezier(.2,.65,.25,1),
+                  border-color .35s ease,
+                  background .35s ease;
+    }
+    .glass-card-dark:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(96, 165, 250, 0.45);
+      box-shadow: 0 22px 48px -18px rgba(37, 99, 235, 0.45);
+    }
+
+    /* Drift-blobs site-wide — every dark section gets one or two of
+       these layered behind the content. GSAP scrolls them at a
+       slower rate than the foreground (parallax). */
+    .section-blob {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(90px);
+      pointer-events: none;
+      opacity: 0.5;
+      will-change: transform;
+    }
+
+    /* Section scale-in — used by GSAP for the first viewport entry
+       of every <section> below the hero. Starts at 0.985 / 95% opac,
+       lands at 1 / 100% over ~900ms with the same easing as cards. */
+    .section-enter {
+      transform: scale(0.985);
+      opacity: 0.0;
+      transform-origin: center top;
+    }
+    .section-enter.is-on {
+      transform: scale(1);
+      opacity: 1;
+      transition: transform .9s cubic-bezier(.16,.84,.32,1),
+                  opacity .9s ease-out;
+    }
+
+    /* Honor reduce-motion across all new effects. */
+    @media (prefers-reduced-motion: reduce) {
+      .glass-card, .glass-card-dark { transition: none; }
+      .glass-card:hover, .glass-card-dark:hover {
+        transform: none; box-shadow: none;
+      }
+      .section-enter { transform: none; opacity: 1; }
+      .section-enter.is-on { transition: none; }
+    }
+  </style>
 </head>
 <body class="bg-white text-ink-900 selection:bg-azure-500/20 selection:text-ink-900">
 
@@ -579,7 +665,7 @@
       <div data-fade-up class="mt-12 grid sm:grid-cols-2 gap-5">
 
         <!-- 1. Custom Software -->
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">01</div>
             <h3 class="font-display font-black text-xl text-ink-900">Custom Software</h3>
@@ -600,7 +686,7 @@
         </div>
 
         <!-- 2. Web Development -->
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">02</div>
             <h3 class="font-display font-black text-xl text-ink-900">Web &amp; E-Commerce</h3>
@@ -622,7 +708,7 @@
         </div>
 
         <!-- 3. Mobile Apps -->
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">03</div>
             <h3 class="font-display font-black text-xl text-ink-900">Mobile Applications</h3>
@@ -638,7 +724,7 @@
         </div>
 
         <!-- 4. Enterprise -->
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">04</div>
             <h3 class="font-display font-black text-xl text-ink-900">Enterprise (ERP, CRM, HR)</h3>
@@ -664,7 +750,7 @@
 
 
         <!-- 5. Design -->
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">05</div>
             <h3 class="font-display font-black text-xl text-ink-900">Design (UI / UX / Brand)</h3>
@@ -681,7 +767,7 @@
         </div>
 
         <!-- 6. IT Solutions -->
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">06</div>
             <h3 class="font-display font-black text-xl text-ink-900">IT Solutions &amp; Consulting</h3>
@@ -698,7 +784,7 @@
         </div>
 
         <!-- 7. AI / Emerging -->
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg grad-blue flex items-center justify-center text-white font-display font-black">07</div>
             <h3 class="font-display font-black text-xl text-ink-900">AI &amp; Emerging Tech</h3>
@@ -740,7 +826,7 @@
       </p>
 
       <div data-fade-up class="mt-12 grid sm:grid-cols-2 gap-5">
-        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-2xl text-ink-900 mb-2">No sub-contracting.</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Every line of code, every Figma frame, every campaign is written in-house. When we
@@ -748,14 +834,14 @@
             your CRM, the engineer has met the user.
           </p>
         </div>
-        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-2xl text-ink-900 mb-2">Same team after launch.</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             No handoff to a different support shop with a different SLA. The people who designed
             your product are the people who maintain it on day 500.
           </p>
         </div>
-        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-2xl text-ink-900 mb-2">Production-grade by default.</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Sentry error tracking, uptime monitoring, type-checked CI gates, automated backups &mdash;
@@ -763,7 +849,7 @@
             default, not an upsell.
           </p>
         </div>
-        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-2xl text-ink-900 mb-2">A fraction of the cost.</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             We reuse our own automation and engineering stack instead of rebuilding from
@@ -811,7 +897,7 @@
       <div class="mt-8 sm:mt-12 grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
 
         <!-- Amirah Technologies -->
-        <div class="bg-white border border-ink-100 rounded-2xl p-4 sm:p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+        <div class="glass-card rounded-2xl p-4 sm:p-6">
           <div class="h-16 sm:h-24 flex items-center mb-3 sm:mb-4">
             <img src="/assets/clients/amirah-technologies.png" alt="Amirah Technologies" data-asset-key="amirah" data-logo-fallback="AMIRAH&#10;TECHNOLOGIES" class="max-h-16 sm:max-h-24 w-auto object-contain">
           </div>
@@ -825,7 +911,7 @@
         </div>
 
         <!-- NextZen Fi-Tech -->
-        <div class="bg-white border border-ink-100 rounded-2xl p-4 sm:p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+        <div class="glass-card rounded-2xl p-4 sm:p-6">
           <div class="h-16 sm:h-24 flex items-center mb-3 sm:mb-4">
             <img src="/assets/clients/nextzen-fitech.png" alt="NextZen Fi-Tech" data-asset-key="nextzen" data-logo-fallback="NEXTZEN&#10;Fi-Tech" class="max-h-16 sm:max-h-24 w-auto object-contain">
           </div>
@@ -839,7 +925,7 @@
         </div>
 
         <!-- Bidisha Niketan -->
-        <div class="bg-white border border-ink-100 rounded-2xl p-4 sm:p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+        <div class="glass-card rounded-2xl p-4 sm:p-6">
           <div class="h-16 sm:h-24 flex items-center mb-3 sm:mb-4">
             <img src="/assets/clients/bidisha-niketan.png" alt="Bidisha Niketan" data-asset-key="bidisha" data-logo-fallback="BIDISHA&#10;NIKETAN" class="max-h-16 sm:max-h-24 w-auto object-contain">
           </div>
@@ -853,7 +939,7 @@
         </div>
 
         <!-- Hotel Deep -->
-        <div class="bg-white border border-ink-100 rounded-2xl p-4 sm:p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+        <div class="glass-card rounded-2xl p-4 sm:p-6">
           <div class="h-16 sm:h-24 flex items-center mb-3 sm:mb-4">
             <img src="/assets/clients/hotel-deep.png" alt="Hotel Deep" data-asset-key="hotelDeep" data-logo-fallback="HOTEL&#10;DEEP" class="max-h-16 sm:max-h-24 w-auto object-contain">
           </div>
@@ -867,7 +953,7 @@
         </div>
 
         <!-- Care of Future Foundation -->
-        <div class="bg-white border border-ink-100 rounded-2xl p-4 sm:p-6 transition hover:border-azure-500/40 hover:shadow-sm">
+        <div class="glass-card rounded-2xl p-4 sm:p-6">
           <div class="h-16 sm:h-24 flex items-center mb-3 sm:mb-4">
             <img src="/assets/clients/care-of-future-foundation.png" alt="Care of Future Foundation" data-asset-key="careOfFuture" data-logo-fallback="CARE OF FUTURE&#10;FOUNDATION" class="max-h-16 sm:max-h-24 w-auto object-contain">
           </div>
@@ -1083,22 +1169,22 @@
       </h2>
 
       <div data-fade-up class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-azure-700 text-sm mb-2">01 — Discover</div>
           <div class="font-semibold text-ink-900 mb-2">Understand the actual problem</div>
           <p class="text-sm text-ink-700 leading-relaxed">A short workshop. We see how you work today, where the bottleneck is, what data lives where.</p>
         </div>
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-azure-700 text-sm mb-2">02 — Design</div>
           <div class="font-semibold text-ink-900 mb-2">Prototype before code</div>
           <p class="text-sm text-ink-700 leading-relaxed">Click-through prototypes you approve before a single API endpoint is written.</p>
         </div>
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-azure-700 text-sm mb-2">03 — Ship</div>
           <div class="font-semibold text-ink-900 mb-2">2-week iterations</div>
           <p class="text-sm text-ink-700 leading-relaxed">Every two weeks you see something usable. Mid-project pivots are normal here — not chargeable surprises.</p>
         </div>
-        <div class="bg-white rounded-2xl p-6 ring-soft lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-azure-700 text-sm mb-2">04 — Support</div>
           <div class="font-semibold text-ink-900 mb-2">Same team, after launch</div>
           <p class="text-sm text-ink-700 leading-relaxed">No handoff to a different support shop. The people who built it are the people who maintain it.</p>
@@ -1136,7 +1222,7 @@
              Rates are intentionally discussed on the discovery call, not
              published — keeps commercial flexibility per engagement and
              avoids anchoring a prospect on a number before scope is real. -->
-        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-xl sm:text-2xl text-ink-900 mb-3">Marketing site</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Landing page, multi-page site, or content-driven site. SEO baseline, analytics,
@@ -1144,7 +1230,7 @@
           </p>
         </div>
 
-        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-xl sm:text-2xl text-ink-900 mb-3">Mobile app</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             iOS + Android (React Native or Flutter), auth, payments, push, store submission.
@@ -1152,7 +1238,7 @@
           </p>
         </div>
 
-        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-xl sm:text-2xl text-ink-900 mb-3">Custom SaaS / ERP</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Multi-user, role-based, production-grade. Includes the full observability stack &mdash;
@@ -1160,7 +1246,7 @@
           </p>
         </div>
 
-        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-xl sm:text-2xl text-ink-900 mb-3">AI / OCR pipeline</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Document OCR, classification, LLM-backed extraction, chat agents. Production-ready,
@@ -1168,7 +1254,7 @@
           </p>
         </div>
 
-        <div class="bg-ink-50 rounded-2xl p-6 lift-card">
+        <div class="glass-card rounded-2xl p-6">
           <div class="font-display font-black text-xl sm:text-2xl text-ink-900 mb-3">Post-launch retainer</div>
           <p class="text-sm text-ink-700 leading-relaxed">
             Optional after go-live. Same team that built it, on call. Cancel any
@@ -1195,8 +1281,13 @@
   <!-- a misfit prospect bounces here instead of after a 90-min call,     -->
   <!-- everyone wins.                                                       -->
   <!-- =================================================================== -->
-  <section id="anti" class="bg-ink-900 text-white py-16 sm:py-24">
-    <div class="max-w-6xl mx-auto px-5">
+  <section id="anti" class="bg-ink-900 text-white py-16 sm:py-24 relative overflow-hidden">
+    <!-- Parallax decoration: two soft gradient blobs that scroll at
+         ~70% of the foreground via the GSAP bootstrap at end of body.
+         Pointer-events off so they never block the CTA buttons. -->
+    <div aria-hidden="true" class="section-blob" style="width:480px; height:480px; top:-160px; right:-120px; background: radial-gradient(circle, rgba(37,99,235,0.45) 0%, rgba(37,99,235,0) 70%);"></div>
+    <div aria-hidden="true" class="section-blob" style="width:360px; height:360px; bottom:-100px; left:-80px; background: radial-gradient(circle, rgba(30,58,138,0.40) 0%, rgba(30,58,138,0) 70%);"></div>
+    <div class="max-w-6xl mx-auto px-5 relative z-10">
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-500 uppercase mb-4">
         Straight talk
       </div>
@@ -1274,8 +1365,12 @@
   <!-- =================================================================== -->
   <!-- CONTACT                                                              -->
   <!-- =================================================================== -->
-  <section id="contact" class="bg-ink-900 text-white py-16 sm:py-24">
-    <div class="max-w-3xl mx-auto px-5">
+  <section id="contact" class="bg-ink-900 text-white py-16 sm:py-24 relative overflow-hidden">
+    <!-- Parallax decoration matching the anti section above so the
+         page closes with the same visual vocabulary it opened with. -->
+    <div aria-hidden="true" class="section-blob" style="width:520px; height:520px; top:-180px; left:-140px; background: radial-gradient(circle, rgba(37,99,235,0.50) 0%, rgba(37,99,235,0) 70%);"></div>
+    <div aria-hidden="true" class="section-blob" style="width:380px; height:380px; bottom:-120px; right:-100px; background: radial-gradient(circle, rgba(30,58,138,0.40) 0%, rgba(30,58,138,0) 70%);"></div>
+    <div class="max-w-3xl mx-auto px-5 relative z-10">
       <div class="text-xs sm:text-sm font-semibold tracking-widest text-azure-500 uppercase mb-4 text-center">
         Let&rsquo;s build something
       </div>
@@ -1740,5 +1835,131 @@
     });
   </script>
   <script defer src="/assets/chat-bubble.js"></script>
+
+  <!-- ───────────────────────────────────────────────────────────────
+       SITE-WIDE CINEMATIC MOTION (GSAP + ScrollTrigger).
+       Bootstraps after window-load so it never races first paint.
+       Four effects layered together:
+         1. Parallax: every .drift-blob / .section-blob scrolls at
+            ~70% of foreground speed, giving depth without dizziness.
+         2. Stagger entries: children inside .grid containers fade
+            up in sequence (60 ms gap) when the parent enters the
+            viewport. Existing .fade-up IntersectionObserver still
+            fires for non-grid elements.
+         3. Section scale-in: every <section> below the hero gets a
+            once-off scale 0.985 → 1 + fade as it crosses 80% of
+            the viewport. Subtle "this page is alive" cue.
+         4. Cursor-aware tilt on cards: each .glass-card / .glass-
+            card-dark rotates ~3° toward the cursor while hovered,
+            giving the glassmorphism a real-glass parallax feel.
+       Bails on reduce-motion users entirely.
+       ─────────────────────────────────────────────────────────── */
+  <script defer>
+    (function () {
+      function boot() {
+        // GSAP loads with defer, so it may not be ready when boot()
+        // fires on a slow CDN. Retry a few times before giving up.
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+          if ((boot.tries = (boot.tries || 0) + 1) > 40) return;
+          return setTimeout(boot, 50);
+        }
+
+        // Respect the OS reduce-motion setting — skip everything.
+        var rm = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (rm.matches) return;
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ── 1. PARALLAX ──────────────────────────────────────────
+        // Every drift-blob inside ANY section gets a slow vertical
+        // counter-drift as the page scrolls. yPercent: -25 means
+        // by the time the section exits the top of the viewport,
+        // the blob has only travelled 75% of the section's height.
+        gsap.utils.toArray('.drift-blob, .section-blob').forEach(function (blob) {
+          var parent = blob.closest('section') || blob.parentElement;
+          if (!parent) return;
+          gsap.to(blob, {
+            yPercent: -28,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: parent,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.8,
+            },
+          });
+        });
+
+        // ── 2. STAGGERED GRID ENTRIES ────────────────────────────
+        // Any tailwind .grid (services / why / clients / process /
+        // pricing). Children fade up 24 px, 60 ms stagger. Only the
+        // first row of a long list animates — anything past 12 lands
+        // instant, otherwise the page feels slow on long sections.
+        gsap.utils.toArray('section .grid').forEach(function (grid) {
+          var kids = Array.prototype.slice.call(grid.children, 0, 12);
+          if (kids.length < 2) return;
+          gsap.from(kids, {
+            opacity: 0,
+            y: 24,
+            duration: 0.75,
+            ease: 'power2.out',
+            stagger: 0.06,
+            scrollTrigger: {
+              trigger: grid,
+              start: 'top 88%',
+              once: true,
+            },
+          });
+        });
+
+        // ── 3. SECTION SCALE-IN ──────────────────────────────────
+        // Every <section> after the hero gets a one-off scale +
+        // fade on first viewport enter. The hero (which already
+        // plays its own video reveal) is skipped via the
+        // [data-skip-enter] hook below — wire it on the hero in
+        // the markup if you ever add one explicitly. Right now we
+        // just skip the first <section> in <main>.
+        var sections = document.querySelectorAll('main > section');
+        sections.forEach(function (s, i) {
+          if (i === 0) return; // skip the hero
+          if (s.hasAttribute('data-skip-enter')) return;
+          s.classList.add('section-enter');
+          ScrollTrigger.create({
+            trigger: s,
+            start: 'top 90%',
+            once: true,
+            onEnter: function () { s.classList.add('is-on'); },
+          });
+        });
+
+        // ── 4. CURSOR-AWARE GLASS-CARD TILT ──────────────────────
+        // Each card rotates a few degrees toward the cursor while
+        // hovered. Tiny effect, big "premium" feel. Uses pointer
+        // events for tablet+stylus compatibility and bails on
+        // coarse-pointer (touch-only) devices where tilt feels
+        // gimmicky without a hover state.
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+          document.querySelectorAll('.glass-card, .glass-card-dark').forEach(function (card) {
+            var maxTilt = 4; // degrees
+            card.addEventListener('pointermove', function (e) {
+              var r = card.getBoundingClientRect();
+              var x = (e.clientX - r.left) / r.width  - 0.5;
+              var y = (e.clientY - r.top)  / r.height - 0.5;
+              card.style.transform =
+                'translateY(-4px) ' +
+                'rotateX(' + (-y * maxTilt).toFixed(2) + 'deg) ' +
+                'rotateY(' + ( x * maxTilt).toFixed(2) + 'deg)';
+            });
+            card.addEventListener('pointerleave', function () {
+              card.style.transform = '';
+            });
+          });
+        }
+      }
+
+      if (document.readyState === 'complete') boot();
+      else window.addEventListener('load', boot);
+    })();
+  </script>
 </body>
 </html>
