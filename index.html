@@ -416,98 +416,73 @@
   <!-- on >=lg screens as a stylized "dashboard / stack of work" mark,      -->
   <!-- giving the hero a piece of imagery without using stock photography. -->
   <!-- =================================================================== -->
-  <section class="bg-ink-900 text-white relative overflow-hidden">
-    <!-- Decorative gradient drift-blobs. Marked aria-hidden so screen
-         readers skip them; pointer-events handled in CSS. -->
-    <div aria-hidden="true" class="drift-blob" style="width:520px; height:520px; top:-160px; left:-120px; background: radial-gradient(circle, rgba(37,99,235,0.55) 0%, rgba(37,99,235,0) 70%);"></div>
-    <div aria-hidden="true" class="drift-blob" style="width:420px; height:420px; top:120px; right:-100px; background: radial-gradient(circle, rgba(30,58,138,0.55) 0%, rgba(30,58,138,0) 70%); animation-duration: 28s; animation-direction: reverse;"></div>
-    <div aria-hidden="true" class="drift-blob" style="width:340px; height:340px; bottom:-120px; left:30%; background: radial-gradient(circle, rgba(37,99,235,0.35) 0%, rgba(37,99,235,0) 70%); animation-duration: 34s;"></div>
+  <section class="bg-ink-900 text-white relative overflow-hidden min-h-[88vh] flex items-center">
+    <!-- Full-bleed cinematic hero video — a glassmorphism phone UI
+         materialising in blue particle space. Plays muted/looped at
+         autoplay (required by mobile browsers without user gesture).
+         playsinline keeps it from going full-screen on iOS Safari.
+         poster + preload=metadata avoids a blank frame on slow nets.
+         Arena outro was trimmed off; this clip is the clean 5s loop. -->
+    <video
+      autoplay muted loop playsinline
+      preload="metadata"
+      aria-hidden="true"
+      class="absolute inset-0 w-full h-full object-cover z-0"
+    >
+      <source src="/assets/hero.mp4" type="video/mp4">
+    </video>
 
-    <div class="max-w-6xl mx-auto px-5 pt-12 pb-20 sm:pt-20 sm:pb-28 relative">
-      <div class="grid lg:grid-cols-[1fr_auto] gap-10 items-center">
-        <div>
-          <!-- Hero USP chip removed: the persistent sticky announcement
-               bar above the nav now carries "Custom prototype in 24 hours"
-               on every section of the page, so the in-hero chip became
-               redundant noise. H1 leads instead. -->
-          <h1 data-fade-up class="font-display text-4xl sm:text-6xl md:text-7xl font-black leading-[1.05] tracking-tight max-w-4xl">
-            We build what you <span class="grad-text">envision</span> &mdash;
-            from a clean idea to a live product.
-          </h1>
-          <p data-fade-up class="mt-6 text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed">
-            Founded by operators from automation and business development, we ship software,
-            web &amp; mobile, ERP, AI and automation for Indian businesses &mdash; enterprise-grade
-            systems for a <span class="text-white font-semibold">monthly fraction of the usual cost.</span>
-            Production-grade by default, same team through discovery, launch and day-500 support.
-          </p>
-          <div data-fade-up class="mt-8 flex flex-col sm:flex-row gap-3">
-            <a href="#contact" data-lead class="inline-flex items-center justify-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-6 py-3 rounded-lg text-sm font-semibold">
-              Get Your Prototype In 24h
-            </a>
-            <a href="#why" class="inline-flex items-center justify-center gap-1.5 border border-white/15 hover:border-white/35 transition px-6 py-3 rounded-lg text-sm font-semibold">
-              Why hire us (read first)
-            </a>
-          </div>
-          <div data-fade-up class="mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-xl text-sm">
-            <div>
-              <div class="font-display font-black text-2xl sm:text-3xl text-white">24h</div>
-              <div class="text-white/55 text-xs sm:text-sm leading-tight mt-1">From idea to a custom prototype</div>
-            </div>
-            <div>
-              <div class="font-display font-black text-2xl sm:text-3xl text-white">5+</div>
-              <div class="text-white/55 text-xs sm:text-sm leading-tight mt-1">Live products in production today</div>
-            </div>
-            <div>
-              <div class="font-display font-black text-2xl sm:text-3xl text-white">Own</div>
-              <div class="text-white/55 text-xs sm:text-sm leading-tight mt-1">Your code, domain &amp; cloud &mdash; from day one</div>
-            </div>
-          </div>
+    <!-- Twin overlay: a strong dark wash on the LEFT for headline
+         legibility, fading to near-transparent on the RIGHT so the
+         video's phone-UI focal point reads through. Bottom-fade so
+         the hero blends into the carousel section beneath. -->
+    <div aria-hidden="true" class="absolute inset-0 z-[1]"
+         style="background: linear-gradient(90deg, rgba(10,16,32,0.92) 0%, rgba(10,16,32,0.78) 35%, rgba(10,16,32,0.35) 70%, rgba(10,16,32,0.10) 100%);"></div>
+    <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-32 z-[1]"
+         style="background: linear-gradient(180deg, transparent 0%, rgba(10,16,32,0.85) 100%);"></div>
+
+    <!-- Drift-blobs kept on the dark (left) side as a fallback glow
+         in case the video fails to load or autoplay is blocked. They
+         layer under the dark wash so they don't fight with the video. -->
+    <div aria-hidden="true" class="drift-blob z-0" style="width:520px; height:520px; top:-160px; left:-120px; background: radial-gradient(circle, rgba(37,99,235,0.55) 0%, rgba(37,99,235,0) 70%);"></div>
+    <div aria-hidden="true" class="drift-blob z-0" style="width:340px; height:340px; bottom:-120px; left:18%; background: radial-gradient(circle, rgba(37,99,235,0.35) 0%, rgba(37,99,235,0) 70%); animation-duration: 34s;"></div>
+
+    <div class="max-w-6xl mx-auto px-5 pt-12 pb-20 sm:pt-20 sm:pb-28 relative z-10 w-full">
+      <!-- Single left-aligned column. The right side of the section is
+           the video's focal area — no SVG dashboard there anymore, the
+           live UI mockup IS the visual. -->
+      <div class="max-w-2xl">
+        <h1 data-fade-up class="font-display text-4xl sm:text-6xl md:text-7xl font-black leading-[1.05] tracking-tight">
+          We build what you <span class="grad-text">envision</span> &mdash;
+          from a clean idea to a live product.
+        </h1>
+        <p data-fade-up class="mt-6 text-white/80 text-base sm:text-lg leading-relaxed">
+          Founded by operators from automation and business development, we ship software,
+          web &amp; mobile, ERP, AI and automation for Indian businesses &mdash; enterprise-grade
+          systems for a <span class="text-white font-semibold">monthly fraction of the usual cost.</span>
+          Production-grade by default, same team through discovery, launch and day-500 support.
+        </p>
+        <div data-fade-up class="mt-8 flex flex-col sm:flex-row gap-3">
+          <a href="#contact" data-lead class="inline-flex items-center justify-center gap-1.5 bg-azure-500 hover:bg-azure-600 transition px-6 py-3 rounded-lg text-sm font-semibold shadow-lg shadow-azure-500/30">
+            Get Your Prototype In 24h
+          </a>
+          <a href="#why" class="inline-flex items-center justify-center gap-1.5 border border-white/25 hover:border-white/50 transition px-6 py-3 rounded-lg text-sm font-semibold backdrop-blur-sm bg-white/5">
+            Why hire us (read first)
+          </a>
         </div>
-
-        <!-- Decorative SVG illustration: a stylized "dashboard stack" —
-             three nested cards with a tiny chart and a row of bars.
-             Hidden below lg so it never crowds the headline on phones
-             or tablets. aria-hidden because it conveys no information
-             a screen reader would need; the H1 + paragraph carry the
-             meaning. Animated glow ring uses the same drift keyframes
-             so the whole hero shares one motion vocabulary. -->
-        <div aria-hidden="true" class="hidden lg:block relative w-[360px] h-[360px]" data-fade-up>
-          <div class="drift-blob" style="inset:0; background: radial-gradient(circle, rgba(37,99,235,0.4) 0%, rgba(37,99,235,0) 65%); animation-duration: 20s;"></div>
-          <svg viewBox="0 0 360 360" class="relative w-full h-full">
-            <defs>
-              <linearGradient id="card-grad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#2563eb" stop-opacity="0.85"/>
-                <stop offset="100%" stop-color="#1e3a8a" stop-opacity="0.85"/>
-              </linearGradient>
-              <linearGradient id="bar-grad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#60a5fa"/>
-                <stop offset="100%" stop-color="#2563eb"/>
-              </linearGradient>
-            </defs>
-            <!-- Back card -->
-            <rect x="60" y="50" width="240" height="160" rx="16" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-            <!-- Middle card -->
-            <rect x="40" y="90" width="240" height="160" rx="16" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
-            <!-- Front card (the "dashboard") -->
-            <rect x="20" y="130" width="260" height="180" rx="18" fill="url(#card-grad)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-            <!-- Header line + dot row inside front card -->
-            <rect x="40" y="150" width="80" height="8" rx="4" fill="rgba(255,255,255,0.7)"/>
-            <rect x="40" y="166" width="140" height="6" rx="3" fill="rgba(255,255,255,0.35)"/>
-            <circle cx="252" cy="156" r="4" fill="rgba(255,255,255,0.45)"/>
-            <circle cx="240" cy="156" r="4" fill="rgba(255,255,255,0.45)"/>
-            <circle cx="228" cy="156" r="4" fill="rgba(255,255,255,0.45)"/>
-            <!-- Bar chart -->
-            <rect x="40"  y="240" width="22" height="50" rx="4" fill="url(#bar-grad)"/>
-            <rect x="72"  y="220" width="22" height="70" rx="4" fill="url(#bar-grad)"/>
-            <rect x="104" y="200" width="22" height="90" rx="4" fill="url(#bar-grad)"/>
-            <rect x="136" y="180" width="22" height="110" rx="4" fill="url(#bar-grad)"/>
-            <rect x="168" y="210" width="22" height="80" rx="4" fill="url(#bar-grad)"/>
-            <rect x="200" y="170" width="22" height="120" rx="4" fill="url(#bar-grad)"/>
-            <rect x="232" y="150" width="22" height="140" rx="4" fill="url(#bar-grad)"/>
-            <!-- Trend line over the bars -->
-            <polyline points="51,240 83,220 115,200 147,180 179,210 211,170 243,150" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="243" cy="150" r="5" fill="#fff"/>
-          </svg>
+        <div data-fade-up class="mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-xl text-sm">
+          <div>
+            <div class="font-display font-black text-2xl sm:text-3xl text-white">24h</div>
+            <div class="text-white/65 text-xs sm:text-sm leading-tight mt-1">From idea to a custom prototype</div>
+          </div>
+          <div>
+            <div class="font-display font-black text-2xl sm:text-3xl text-white">5+</div>
+            <div class="text-white/65 text-xs sm:text-sm leading-tight mt-1">Live products in production today</div>
+          </div>
+          <div>
+            <div class="font-display font-black text-2xl sm:text-3xl text-white">Own</div>
+            <div class="text-white/65 text-xs sm:text-sm leading-tight mt-1">Your code, domain &amp; cloud &mdash; from day one</div>
+          </div>
         </div>
       </div>
     </div>
