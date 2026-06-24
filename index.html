@@ -516,24 +516,32 @@
          materialising in blue particle space. Plays muted/looped at
          autoplay (required by mobile browsers without user gesture).
          playsinline keeps it from going full-screen on iOS Safari.
-         Hidden below md so phones never download the 730 KB clip.
-         Arena outro was trimmed off; this clip is the clean 5s loop.
-         The poster div above is what mobile users actually see. -->
+         Plays on every screen size now; the 738 KB 720p H.264 is
+         small enough that mobile cellular handles it comfortably,
+         and the poster div above paints instantly while it loads.
+         Arena outro was trimmed off; this clip is the clean 5s loop. -->
     <video
       autoplay muted loop playsinline
       preload="metadata"
       poster="/assets/hero-poster.jpg"
       aria-hidden="true"
-      class="absolute inset-0 w-full h-full object-cover z-0 hidden md:block"
+      class="absolute inset-0 w-full h-full object-cover z-0"
     >
       <source src="/assets/hero.mp4" type="video/mp4">
     </video>
 
-    <!-- Twin overlay: a strong dark wash on the LEFT for headline
-         legibility, fading to near-transparent on the RIGHT so the
-         video's phone-UI focal point reads through. Bottom-fade so
-         the hero blends into the carousel section beneath. -->
-    <div aria-hidden="true" class="absolute inset-0 z-[1]"
+    <!-- Mobile-first overlay: vertical wash on phones (top dark for
+         the headline, bottom transparent so the phone UI in the
+         video shows underneath). Hidden at md+ where the desktop
+         horizontal overlay below takes over. -->
+    <div aria-hidden="true" class="absolute inset-0 z-[1] md:hidden"
+         style="background: linear-gradient(180deg, rgba(10,16,32,0.92) 0%, rgba(10,16,32,0.85) 35%, rgba(10,16,32,0.55) 60%, rgba(10,16,32,0.15) 100%);"></div>
+
+    <!-- Desktop overlay: strong dark wash on the LEFT for the H1 /
+         CTA column, fading to near-transparent on the RIGHT where
+         the video's phone-UI focal point sits. Hidden below md so
+         only one overlay paints at a time. -->
+    <div aria-hidden="true" class="absolute inset-0 z-[1] hidden md:block"
          style="background: linear-gradient(90deg, rgba(10,16,32,0.92) 0%, rgba(10,16,32,0.78) 35%, rgba(10,16,32,0.35) 70%, rgba(10,16,32,0.10) 100%);"></div>
     <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-32 z-[1]"
          style="background: linear-gradient(180deg, transparent 0%, rgba(10,16,32,0.85) 100%);"></div>
